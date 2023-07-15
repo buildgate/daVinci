@@ -1,0 +1,35 @@
+
+.davinci_container{
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    margin: 100px;
+    border: 1px black solid;
+}
+.davinci_body{
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+}
+.davinci_toolbar{
+    box-sizing: border-box;
+    height: 100px;
+    width: 50px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+}
+.davinci_coordinateTip{
+    box-sizing: border-box;
+    height: 20px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    background: #eed4c9;
+    color: black;
+    font-size: 10px;
+    pointer-events: none;
+}
