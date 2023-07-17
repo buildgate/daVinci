@@ -1,5 +1,6 @@
 //
 export class daVinci {
+  //基础变量
   Dcanvas = document.createElement("canvas");
   DToolbar = document.createElement("div");
   Dcontainer = document.createElement("div");
@@ -12,6 +13,9 @@ export class daVinci {
   preX = 0;
   preY = 0;
   resizeWatcher: ResizeObserver;
+
+  //画像相关变量
+  lineWidth = 1;
 
   constructor(fundElement: string) {
     let self = this;
@@ -34,15 +38,21 @@ export class daVinci {
       "mousemove",
       this.throttle((e: MouseEvent) => {
         self.DcoordinateTip.innerText = `${e.offsetX},${e.offsetY}`;
-        self.draw(
-          { x: self.preX, y: self.preY },
-          { x: e.offsetX, y: e.offsetY }
-        );
+        if (this.painting) {
+          self.draw(
+            { x: self.preX, y: self.preY },
+            { x: e.offsetX, y: e.offsetY }
+          );
+        }
+
+        this.preX = e.offsetX;
+        this.preY = e.offsetY;
       })
     );
 
     this.Dcanvas.addEventListener("mousedown", function (e: MouseEvent) {
       self.painting = true;
+      self.drawSpot({ x: e.offsetX, y: e.offsetY });
       self.preX = e.offsetX;
       self.preY = e.offsetY;
     });
@@ -74,16 +84,26 @@ export class daVinci {
     };
   }
 
-  //绘画开始
+  //绘画开始,解决断点问题
   draw(start: _type_coordinate, end: _type_coordinate) {
-    if (!this.painting) {
-      return;
-    }
+    (<CanvasRenderingContext2D>this.ctx).lineWidth = this.lineWidth;
+
     (<CanvasRenderingContext2D>this.ctx).beginPath();
     (<CanvasRenderingContext2D>this.ctx).moveTo(start.x, start.y);
     (<CanvasRenderingContext2D>this.ctx).lineTo(end.x, end.y);
     (<CanvasRenderingContext2D>this.ctx).stroke();
-    this.preX = end.x;
-    this.preY = end.y;
+  }
+
+  //单点绘画
+  drawSpot(position: _type_coordinate) {
+    (<CanvasRenderingContext2D>this.ctx).beginPath();
+    (<CanvasRenderingContext2D>this.ctx).arc(
+      position.x,
+      position.y,
+      this.lineWidth / 2,
+      0,
+      2 * Math.PI
+    );
+    (<CanvasRenderingContext2D>this.ctx).stroke();
   }
 }
