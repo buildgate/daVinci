@@ -12,15 +12,6 @@
     width: 100%;
     height: 100%;
 }
-.davinci_toolbar{
-    box-sizing: border-box;
-    height: 100px;
-    width: 50px;
-    position: absolute;
-    left: 0;
-    top: 0;
-    pointer-events: none;
-}
 .davinci_coordinateTip{
     box-sizing: border-box;
     height: 20px;
