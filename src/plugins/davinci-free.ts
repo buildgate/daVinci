@@ -1,5 +1,5 @@
 //
-export class daVinci {
+export class daVinci_free {
   //基础变量
   Dcanvas = document.createElement("canvas");
   Dcontainer = document.createElement("div");
@@ -31,10 +31,10 @@ export class daVinci {
 
     //保证画布填满容器
     this.resizeWatcher = new ResizeObserver(() => {
-      self.Dcanvas.width = (self.originElement as HTMLDivElement).offsetWidth;
-      self.Dcanvas.height = (self.originElement as HTMLDivElement).offsetHeight;
+      this.Dcanvas.width = (this.originElement as HTMLDivElement).offsetWidth;
+      this.Dcanvas.height = (this.originElement as HTMLDivElement).offsetHeight;
     });
-    this.resizeWatcher.observe(self.originElement as HTMLDivElement);
+    this.resizeWatcher.observe(this.originElement as HTMLDivElement);
 
     //选项初始化
     this.setOptions(options);
@@ -43,16 +43,16 @@ export class daVinci {
     this.Dcanvas.addEventListener(
       "mousemove",
       this.throttle((e: MouseEvent) => {
-        if (self.coordinateTip) {
-          self.coordinateTip.coordinate = {
+        if (this.coordinateTip) {
+          this.coordinateTip.coordinate = {
             //若不整个对象赋值将不会出发setText函数
             x: e.offsetX,
             y: e.offsetY,
           };
         }
         if (this.painting) {
-          self.drawContinuous(
-            { x: self.preX, y: self.preY },
+          this.drawContinuous(
+            { x: this.preX, y: this.preY },
             { x: e.offsetX, y: e.offsetY }
           );
         }
@@ -61,27 +61,37 @@ export class daVinci {
         this.preY = e.offsetY;
       })
     );
-
-    this.Dcanvas.addEventListener("mousedown", function (e: MouseEvent) {
-      self.painting = true;
-      self.drawSpot({ x: e.offsetX, y: e.offsetY });
-      self.preX = e.offsetX;
-      self.preY = e.offsetY;
-      self.x = e.offsetX;
-      self.y = e.offsetY;
+    this.Dcanvas.addEventListener("mousedown", (e: MouseEvent) => {
+      this.painting = true;
+      this.drawSpot({ x: e.offsetX, y: e.offsetY });
+      this.preX = e.offsetX;
+      this.preY = e.offsetY;
+      this.x = e.offsetX;
+      this.y = e.offsetY;
     });
-
-    this.Dcanvas.addEventListener("mouseup", function (e: MouseEvent) {
-      self.painting = false;
-      if (self.mode === "straight" && self.ctx) {
-        self.ctx.beginPath();
-        self.ctx.lineWidth = self.lineWidth;
-        self.ctx.strokeStyle = self.lineColor;
-        self.ctx.lineCap = self.lineCap;
-        self.ctx.moveTo(self.x, self.y);
-        self.ctx.lineTo(e.offsetX, e.offsetY);
-        self.ctx.stroke();
+    this.Dcanvas.addEventListener("mouseup", (e: MouseEvent) => {
+      this.painting = false;
+      if (this.mode === "straight" && this.ctx) {
+        this.ctx.beginPath();
+        this.ctx.lineWidth = this.lineWidth;
+        this.ctx.strokeStyle = this.lineColor;
+        this.ctx.lineCap = this.lineCap;
+        this.ctx.moveTo(this.x, this.y);
+        this.ctx.lineTo(e.offsetX, e.offsetY);
+        this.ctx.stroke();
       }
+    });
+    this.Dcanvas.addEventListener("mouseleave", (e: MouseEvent) => {
+      if (this.painting && this.mode === "straight" && this.ctx) {
+        this.ctx.beginPath();
+        this.ctx.lineWidth = this.lineWidth;
+        this.ctx.strokeStyle = this.lineColor;
+        this.ctx.lineCap = this.lineCap;
+        this.ctx.moveTo(this.x, this.y);
+        this.ctx.lineTo(e.offsetX, e.offsetY);
+        this.ctx.stroke();
+      }
+      this.painting = false;
     });
 
     //基础元素载入
@@ -156,7 +166,7 @@ export class daVinci {
 
 //坐标提示类
 class DcoordinateTip {
-  Dentity: daVinci | null = null;
+  Dentity: daVinci_free | null = null;
   element = document.createElement("div");
 
   coordinate: _type_coordinate = {
@@ -164,7 +174,7 @@ class DcoordinateTip {
     y: 0,
   };
 
-  constructor(daVinci_entity: daVinci) {
+  constructor(daVinci_entity: daVinci_free) {
     let self = this;
     if (!daVinci_entity) {
       throw Error("未指定有效实体");
