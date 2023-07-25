@@ -227,10 +227,12 @@ export class davinci_visual {
 
   //保存快照
   quickSave() {
-    this.quickCtx = new Image(this.Dcanvas.width, this.Dcanvas.height);
+    this.quickCtx.width = this.Dcanvas.width;
+    this.quickCtx.height = this.Dcanvas.height;
     this.quickCtx.src = this.Dcanvas.toDataURL("image/png", 1);
 
-    this.quickShadowCtx = new Image(this.Dcanvas.width, this.Dcanvas.height);
+    this.quickShadowCtx.width = this.Dcanvas.width;
+    this.quickShadowCtx.height = this.Dcanvas.height;
     this.quickShadowCtx.src = this.shadowCanvas.toDataURL("image/png", 1);
   }
 
