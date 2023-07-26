@@ -1,26 +1,45 @@
-declare interface _type_coordinate {
+declare type _type_coordinate = {
   x: number;
   y: number;
-}
+};
 
-declare interface _type_options {
+declare type _type_options = {
   coordinateTip?: boolean;
   lineColor?: string;
   lineWidth?: number;
   lineCap?: CanvasLineCap;
   mode?: string;
-}
+};
 
-declare interface _type_shape {
-  hashID: string | number;
-  type: string;
+declare type _type_rect = {
   positionX: number;
   positionY: number;
   width: number;
   height: number;
-  radius?: number;
+  zIndex?: number;
+  image?: string;
   fillColor?: string;
-  pathList?: Array<_type_coordinate>;
-  originImage?: any;
-  zIndex: number;
-}
+};
+
+declare type _type_arc = {
+  positionX: number;
+  positionY: number;
+  radius: number;
+  zIndex?: number;
+  image?: string;
+  fillColor?: string;
+};
+
+declare type _type_polygon = {
+  positionX: number;
+  positionY: number;
+  pathList: Array<_type_coordinate>;
+  zIndex?: number;
+  image?: string;
+  fillColor?: string;
+};
+
+declare type _type_shape = (_type_rect | _type_arc | _type_polygon) & {
+  type: string;
+  [key: string]: any;
+};

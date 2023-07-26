@@ -83,7 +83,7 @@ export class davinci_visual_classic {
           this.currentShape.positionY += e.offsetY - this.preY;
           this.ctx.clearRect(0, 0, this.Dcanvas.width, this.Dcanvas.height);
           this.quickDraw();
-          this.drawRect(this.currentShape);
+          this.drawShape(this.currentShape);
         }
 
         this.preX = e.offsetX;
@@ -120,7 +120,7 @@ export class davinci_visual_classic {
       this.quickSave();
 
       //绘制当前对象
-      this.drawRect(this.currentShape);
+      this.drawShape(this.currentShape);
     });
     this.Dcanvas.addEventListener("mouseup", (e) => {
       if (!this.isMouseDown) {
@@ -159,29 +159,62 @@ export class davinci_visual_classic {
     this.originElement?.append(this.Dcontainer);
   }
 
-  //创建形状绘制并录入信息
-  createRect(
-    positionX: number,
-    positionY: number,
-    width: number,
-    height: number,
-    fillcolor: string,
-    zIndex?: number
-  ) {
-    if (zIndex && zIndex > this.maxIdx) {
-      this.maxIdx = zIndex + 1;
+  //创建矩形绘制并录入信息
+  createRect(shape: _type_rect) {
+    if (shape.zIndex && shape.zIndex > this.maxIdx) {
+      this.maxIdx = shape.zIndex + 1;
     }
     let shapeData = {
       hashID: this.hashCount++,
       type: "rect",
-      positionX: positionX,
-      positionY: positionY,
-      width: width,
-      height: height,
-      fillColor: fillcolor,
-      zIndex: zIndex || this.maxIdx++,
+      positionX: shape.positionX,
+      positionY: shape.positionY,
+      width: shape.width,
+      height: shape.height,
+      pathList: [],
+      fillColor: shape.fillColor,
+      zIndex: shape.zIndex || this.maxIdx++,
     };
-    console.log(shapeData.zIndex, this.maxIdx);
+    this.shapeList.push(shapeData);
+    this.shapeSort();
+    this.drawAll();
+  }
+  //创建圆形绘制并录入信息
+  createArc(shape: _type_arc) {
+    if (shape.zIndex && shape.zIndex > this.maxIdx) {
+      this.maxIdx = shape.zIndex + 1;
+    }
+    let shapeData = {
+      hashID: this.hashCount++,
+      type: "arc",
+      positionX: shape.positionX,
+      positionY: shape.positionY,
+      radius: shape.radius,
+      pathList: [],
+      fillColor: shape.fillColor,
+      image: shape.image,
+      zIndex: shape.zIndex || this.maxIdx++,
+    };
+    this.shapeList.push(shapeData);
+    this.shapeSort();
+    this.drawAll();
+  }
+  //创建圆形绘制并录入信息
+  createPolygon(shape: _type_polygon) {
+    if (shape.zIndex && shape.zIndex > this.maxIdx) {
+      this.maxIdx = shape.zIndex + 1;
+    }
+    let shapeData = {
+      hashID: this.hashCount++,
+      type: "arc",
+      positionX: shape.positionX,
+      positionY: shape.positionY,
+      pathList: [...shape.pathList],
+      fillColor: shape.fillColor,
+      image: shape.image,
+      zIndex: shape.zIndex || this.maxIdx++,
+    };
+    let arr: Array<_type_polygon> = [shapeData];
     this.shapeList.push(shapeData);
     this.shapeSort();
     this.drawAll();
@@ -194,12 +227,35 @@ export class davinci_visual_classic {
     }
     this.shadowCtx.clearRect(0, 0, this.Dcanvas.width, this.Dcanvas.height); //可不清理
     this.shadowCtx.beginPath();
-    this.shadowCtx.rect(
-      shape.positionX,
-      shape.positionY,
-      shape.width,
-      shape.height
-    );
+    //以下操作均在影子画布下绘制
+    switch (shape.type) {
+      case "rect":
+        this.shadowCtx.rect(
+          shape.positionX,
+          shape.positionY,
+          shape.width,
+          shape.height
+        );
+        break;
+      case "arc":
+        this.shadowCtx.arc(
+          shape.positionX,
+          shape.positionY,
+          shape.radius,
+          0,
+          Math.PI * 2
+        );
+        break;
+      case "polygon":
+        this.shadowCtx.moveTo(shape.pathList[0].x, shape.pathList[0].y);
+        shape.pathList.forEach((o: _type_coordinate) => {
+          this.shadowCtx?.lineTo(o.x, o.y);
+        });
+        this.shadowCtx.closePath;
+        break;
+      default:
+        break;
+    }
     if (this.shadowCtx.isPointInPath(point.x, point.y)) {
       return true;
     } else {
@@ -208,17 +264,41 @@ export class davinci_visual_classic {
   }
 
   //形状绘制
-  drawRect(shape: _type_shape) {
+  drawShape(shape: _type_shape) {
     if (!this.ctx) {
       throw Error("initialization error");
     }
-    this.ctx.fillStyle = shape.fillColor as string;
-    this.ctx.fillRect(
-      shape.positionX,
-      shape.positionY,
-      shape.width,
-      shape.height
-    );
+    this.ctx.fillStyle = shape.fillColor || "#000000"; //暂时未支持图片输入
+    this.ctx.beginPath();
+    switch (shape.type) {
+      case "rect":
+        this.ctx.rect(
+          shape.positionX,
+          shape.positionY,
+          shape.width,
+          shape.height
+        );
+        break;
+      case "arc":
+        this.ctx.arc(
+          shape.positionX,
+          shape.positionY,
+          shape.radius,
+          0,
+          Math.PI * 2
+        );
+        break;
+      case "polygon":
+        this.ctx.moveTo(shape.pathList[0].x, shape.pathList[0].y);
+        shape.pathList.forEach((o: _type_coordinate) => {
+          this.ctx?.lineTo(o.x, o.y);
+        });
+        this.ctx.closePath;
+        break;
+      default:
+        break;
+    }
+    this.ctx.fill();
   }
 
   //保存快照
@@ -242,19 +322,24 @@ export class davinci_visual_classic {
   //图形信息更新
   shapeSort(order: string = "desc") {
     if (order === "desc") {
-      this.shapeList.sort((a, b) => b.zIndex - a.zIndex);
+      this.shapeList.sort(
+        (a, b) => (b.zIndex as number) - (a.zIndex as number)
+      );
     } else {
-      this.shapeList.sort((a, b) => a.zIndex - b.zIndex);
+      this.shapeList.sort(
+        (a, b) => (a.zIndex as number) - (b.zIndex as number)
+      );
     }
   }
 
   //全绘制
   drawAll(except?: Array<number>) {
+    //由于排序原因需要逆向遍历
     for (let i = this.shapeList.length - 1; i >= 0; i--) {
       if (except?.includes(this.shapeList[i].hashID as number)) {
         continue;
       } else {
-        this.drawRect(this.shapeList[i]);
+        this.drawShape(this.shapeList[i]);
       }
     }
   }
