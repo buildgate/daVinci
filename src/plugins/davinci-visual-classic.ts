@@ -1,4 +1,4 @@
-export class davinci_visual {
+export class davinci_visual_classic {
   Dcanvas = document.createElement("canvas");
   Dcontainer = document.createElement("div");
   ctx = this.Dcanvas.getContext("2d", { alpha: true });
@@ -28,6 +28,7 @@ export class davinci_visual {
 
   //图形数据
   shapeList: Array<_type_shape> = [];
+  maxIdx = 0;
 
   //节流
   throttle(fn: (...rest: any) => any) {
@@ -69,16 +70,20 @@ export class davinci_visual {
     this.Dcanvas.addEventListener(
       "mousemove",
       this.throttle((e: MouseEvent) => {
-        if (!this.ctx || !this.shadowCtx || !this.isMouseDown) {
+        if (!this.ctx || !this.shadowCtx) {
+          throw Error("initialization error");
+        }
+
+        if (!this.isMouseDown) {
           return;
         }
 
         if (this.currentShape) {
           this.currentShape.positionX += e.offsetX - this.preX;
           this.currentShape.positionY += e.offsetY - this.preY;
-          this.cleanAllCanvas();
+          this.ctx.clearRect(0, 0, this.Dcanvas.width, this.Dcanvas.height);
           this.quickDraw();
-          this.createRectCache(this.currentShape);
+          this.drawRect(this.currentShape);
         }
 
         this.preX = e.offsetX;
@@ -93,51 +98,45 @@ export class davinci_visual {
       this.y = e.offsetY;
 
       if (!this.ctx || !this.shadowCtx) {
-        return;
+        throw Error("initialization error");
       }
 
-      let shadowPoint = this.shadowCtx.getImageData(e.offsetX, e.offsetY, 1, 1);
-      this.currentShape = this.shapeList.find(
-        (o) => o.hashID === rgb2hex(shadowPoint.data)
+      this.currentShape = this.shapeList.find((o) =>
+        this.checkPointInPath(o, { x: e.offsetX, y: e.offsetY })
       );
 
       if (!this.currentShape) {
+        //未命中目标
         return;
       }
 
       //清空画布
-      this.cleanAllCanvas();
+      this.ctx.clearRect(0, 0, this.Dcanvas.width, this.Dcanvas.height);
 
       //重塑画布
-      this.shapeList.forEach((o) => {
-        if (o.hashID === this.currentShape?.hashID) {
-          return;
-        }
-        this.createRectCache(o);
-      });
+      this.drawAll([this.currentShape?.hashID as number]);
 
       //缓存当前状态
       this.quickSave();
 
       //绘制当前对象
-      this.createRectCache(this.currentShape);
+      this.drawRect(this.currentShape);
     });
     this.Dcanvas.addEventListener("mouseup", (e) => {
       if (!this.isMouseDown) {
         return;
       }
       this.isMouseDown = false;
+
       if (!this.ctx || !this.shadowCtx) {
-        return;
+        throw Error("initialization error");
       }
 
       //清空画布
-      this.cleanAllCanvas();
+      this.ctx.clearRect(0, 0, this.Dcanvas.width, this.Dcanvas.height);
 
       //重塑画布
-      this.shapeList.forEach((o) => {
-        this.createRectCache(o);
-      });
+      this.drawAll();
     });
     this.Dcanvas.addEventListener("mouseleave", (e) => {
       if (!this.isMouseDown) {
@@ -145,16 +144,14 @@ export class davinci_visual {
       }
       this.isMouseDown = false;
       if (!this.ctx || !this.shadowCtx) {
-        return;
+        throw Error("initialization error");
       }
 
       //清空画布
-      this.cleanAllCanvas();
+      this.ctx.clearRect(0, 0, this.Dcanvas.width, this.Dcanvas.height);
 
       //重塑画布
-      this.shapeList.forEach((o) => {
-        this.createRectCache(o);
-      });
+      this.drawAll();
     });
 
     //基础元素载入
@@ -162,19 +159,18 @@ export class davinci_visual {
     this.originElement?.append(this.Dcontainer);
   }
 
+  //创建形状绘制并录入信息
   createRect(
     positionX: number,
     positionY: number,
     width: number,
     height: number,
-    fillcolor: string
+    fillcolor: string,
+    zIndex?: number
   ) {
-    if (!this.ctx) {
-      return;
+    if (zIndex && zIndex > this.maxIdx) {
+      this.maxIdx = zIndex + 1;
     }
-    this.ctx.fillStyle = fillcolor;
-    this.ctx.fillRect(positionX, positionY, width, height);
-
     let shapeData = {
       hashID: this.hashCount++,
       type: "rect",
@@ -183,22 +179,38 @@ export class davinci_visual {
       width: width,
       height: height,
       fillColor: fillcolor,
-      zIndex: 1,
+      zIndex: zIndex || this.maxIdx++,
     };
-
+    console.log(shapeData.zIndex, this.maxIdx);
     this.shapeList.push(shapeData);
-
-    //虚拟画布操作
-    if (!this.shadowCtx) {
-      return;
-    }
-    this.shadowCtx.fillStyle = hexFormat(shapeData.hashID.toString(16));
-    this.shadowCtx.fillRect(positionX, positionY, width, height);
+    this.shapeSort();
+    this.drawAll();
   }
 
-  createRectCache(shape: _type_shape) {
+  //检测点是否在路径上
+  checkPointInPath(shape: _type_shape, point: _type_coordinate) {
+    if (!this.shadowCtx) {
+      throw Error("initialization error");
+    }
+    this.shadowCtx.clearRect(0, 0, this.Dcanvas.width, this.Dcanvas.height); //可不清理
+    this.shadowCtx.beginPath();
+    this.shadowCtx.rect(
+      shape.positionX,
+      shape.positionY,
+      shape.width,
+      shape.height
+    );
+    if (this.shadowCtx.isPointInPath(point.x, point.y)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //形状绘制
+  drawRect(shape: _type_shape) {
     if (!this.ctx) {
-      return;
+      throw Error("initialization error");
     }
     this.ctx.fillStyle = shape.fillColor as string;
     this.ctx.fillRect(
@@ -207,22 +219,6 @@ export class davinci_visual {
       shape.width,
       shape.height
     );
-    //虚拟画布操作
-    if (!this.shadowCtx) {
-      return;
-    }
-    this.shadowCtx.fillStyle = hexFormat(shape.hashID.toString(16));
-    this.shadowCtx.fillRect(
-      shape.positionX,
-      shape.positionY,
-      shape.width,
-      shape.height
-    );
-  }
-
-  cleanAllCanvas() {
-    this.ctx?.clearRect(0, 0, this.Dcanvas.width, this.Dcanvas.height);
-    this.shadowCtx?.clearRect(0, 0, this.Dcanvas.width, this.Dcanvas.height);
   }
 
   //保存快照
@@ -230,10 +226,6 @@ export class davinci_visual {
     this.quickCtx.width = this.Dcanvas.width;
     this.quickCtx.height = this.Dcanvas.height;
     this.quickCtx.src = this.Dcanvas.toDataURL("image/png", 1);
-
-    this.quickShadowCtx.width = this.Dcanvas.width;
-    this.quickShadowCtx.height = this.Dcanvas.height;
-    this.quickShadowCtx.src = this.shadowCanvas.toDataURL("image/png", 1);
   }
 
   //绘制快照
@@ -245,13 +237,26 @@ export class davinci_visual {
       this.Dcanvas.width,
       this.Dcanvas.height
     );
-    this.shadowCtx?.drawImage(
-      this.quickShadowCtx,
-      0,
-      0,
-      this.Dcanvas.width,
-      this.Dcanvas.height
-    );
+  }
+
+  //图形信息更新
+  shapeSort(order: string = "desc") {
+    if (order === "desc") {
+      this.shapeList.sort((a, b) => b.zIndex - a.zIndex);
+    } else {
+      this.shapeList.sort((a, b) => a.zIndex - b.zIndex);
+    }
+  }
+
+  //全绘制
+  drawAll(except?: Array<number>) {
+    for (let i = this.shapeList.length - 1; i >= 0; i--) {
+      if (except?.includes(this.shapeList[i].hashID as number)) {
+        continue;
+      } else {
+        this.drawRect(this.shapeList[i]);
+      }
+    }
   }
 }
 
