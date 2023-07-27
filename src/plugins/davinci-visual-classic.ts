@@ -1,14 +1,14 @@
 export class davinci_visual_classic {
-  Dcanvas = document.createElement("canvas");
+  Dcanvas = document.createElement("canvas"); //表画布
   Dcontainer = document.createElement("div");
   ctx = this.Dcanvas.getContext("2d", { alpha: true });
   originElement: Element | null = null;
   resizeWatcher: ResizeObserver;
 
-  shadowCanvas = document.createElement("canvas");
+  shadowCanvas = document.createElement("canvas"); //里画布
   shadowCtx = this.shadowCanvas.getContext("2d");
 
-  patternSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  patternSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg"); //纹理画布
   patternMatrix = this.patternSVG.createSVGMatrix();
 
   hashCount = 1;
@@ -67,12 +67,6 @@ export class davinci_visual_classic {
       this.shadowCanvas.height = (
         this.originElement as HTMLDivElement
       ).offsetHeight;
-      // this.patternCanvas.width = (
-      //   this.originElement as HTMLDivElement
-      // ).offsetWidth;
-      // this.patternCanvas.height = (
-      //   this.originElement as HTMLDivElement
-      // ).offsetHeight;
     });
     this.resizeWatcher.observe(this.originElement as HTMLDivElement);
 
