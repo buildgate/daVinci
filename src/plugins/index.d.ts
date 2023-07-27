@@ -19,7 +19,8 @@ declare type _type_rect = {
   zIndex?: number;
   image?: string;
   fillColor?: string;
-  pattern?: HTMLImageElement;
+  patternOrigin?: HTMLImageElement;
+  pattern?: CanvasPattern;
 };
 
 declare type _type_arc = {
@@ -29,7 +30,8 @@ declare type _type_arc = {
   zIndex?: number;
   image?: string;
   fillColor?: string;
-  pattern?: HTMLImageElement;
+  patternOrigin?: HTMLImageElement;
+  pattern?: CanvasPattern;
 };
 
 declare type _type_polygon = {
@@ -41,7 +43,8 @@ declare type _type_polygon = {
   maxWidth?: number;
   maxHeight?: number;
   fillColor?: string;
-  pattern?: HTMLImageElement;
+  patternOrigin?: HTMLImageElement;
+  pattern?: CanvasPattern;
   patternOffsetX?: number; //底图对于第一个点的偏移量
   patternOffsetY?: number;
 };

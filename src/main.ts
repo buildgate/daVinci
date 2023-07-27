@@ -67,8 +67,9 @@ setTimeout(() => {
   test.createArc({
     positionX: 80,
     positionY: 80,
-    radius: 20,
-    fillColor: "brown",
+    radius: 50,
+    image:
+      "https://img1.baidu.com/it/u=1458656822,2078909008&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=750",
     zIndex: 8,
   });
   test.createPolygon({
@@ -76,10 +77,15 @@ setTimeout(() => {
     positionY: 80,
     pathList: [
       { x: 10, y: 10 },
-      { x: 50, y: 50 },
-      { x: 10, y: 50 },
+      { x: 110, y: 110 },
+      { x: 10, y: 110 },
     ],
-    fillColor: "brown",
+    image:
+      "https://img1.baidu.com/it/u=1458656822,2078909008&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=750",
+    maxWidth: 100,
+    maxHeight: 100,
+    patternOffsetX: 0,
+    patternOffsetY: 0,
     zIndex: 9,
   });
   test.drawAll();

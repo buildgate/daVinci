@@ -8,6 +8,9 @@ export class davinci_visual_classic {
   shadowCanvas = document.createElement("canvas");
   shadowCtx = this.shadowCanvas.getContext("2d");
 
+  patternSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  patternMatrix = this.patternSVG.createSVGMatrix();
+
   hashCount = 1;
 
   //画布设置
@@ -64,6 +67,12 @@ export class davinci_visual_classic {
       this.shadowCanvas.height = (
         this.originElement as HTMLDivElement
       ).offsetHeight;
+      // this.patternCanvas.width = (
+      //   this.originElement as HTMLDivElement
+      // ).offsetWidth;
+      // this.patternCanvas.height = (
+      //   this.originElement as HTMLDivElement
+      // ).offsetHeight;
     });
     this.resizeWatcher.observe(this.originElement as HTMLDivElement);
 
@@ -162,6 +171,9 @@ export class davinci_visual_classic {
 
   //创建矩形绘制并录入信息
   createRect(shape: _type_rect) {
+    if (!this.ctx) {
+      throw Error("initialization error");
+    }
     if (shape.zIndex && shape.zIndex > this.maxIdx) {
       this.maxIdx = shape.zIndex + 1;
     }
@@ -178,11 +190,13 @@ export class davinci_visual_classic {
       image: shape.image,
     };
     if (shape.image) {
-      shapeData.pattern = new Image();
-      shapeData.pattern.crossOrigin = "anonymous";
-      shapeData.pattern.src = shape.image;
-      shapeData.pattern.width = shape.width;
-      shapeData.pattern.height = shape.height;
+      shapeData.patternOrigin = new Image(shape.width, shape.height);
+      shapeData.patternOrigin.crossOrigin = "anonymous";
+      shapeData.patternOrigin.src = shape.image;
+      shapeData.pattern = this.ctx.createPattern(
+        shapeData.patternOrigin,
+        "no-repeat"
+      ) as CanvasPattern;
     }
 
     this.shapeList.push(shapeData);
@@ -190,6 +204,9 @@ export class davinci_visual_classic {
   }
   //创建圆形绘制并录入信息
   createArc(shape: _type_arc) {
+    if (!this.ctx) {
+      throw Error("initialization error");
+    }
     if (shape.zIndex && shape.zIndex > this.maxIdx) {
       this.maxIdx = shape.zIndex + 1;
     }
@@ -205,17 +222,22 @@ export class davinci_visual_classic {
       zIndex: shape.zIndex || this.maxIdx++,
     };
     if (shape.image) {
-      shapeData.pattern = new Image();
-      shapeData.pattern.crossOrigin = "anonymous";
-      shapeData.pattern.src = shape.image;
-      shapeData.pattern.width = shape.radius;
-      shapeData.pattern.height = shape.radius;
+      shapeData.patternOrigin = new Image(shape.radius, shape.radius);
+      shapeData.patternOrigin.crossOrigin = "anonymous";
+      shapeData.patternOrigin.src = shape.image;
+      shapeData.pattern = this.ctx.createPattern(
+        shapeData.patternOrigin,
+        "no-repeat"
+      ) as CanvasPattern;
     }
     this.shapeList.push(shapeData);
     this.shapeSort();
   }
   //创建圆形绘制并录入信息
   createPolygon(shape: _type_polygon) {
+    if (!this.ctx) {
+      throw Error("initialization error");
+    }
     if (shape.zIndex && shape.zIndex > this.maxIdx) {
       this.maxIdx = shape.zIndex + 1;
     }
@@ -230,15 +252,21 @@ export class davinci_visual_classic {
       zIndex: shape.zIndex || this.maxIdx++,
       patternOffsetX: shape.patternOffsetX || 0,
       patternOffsetY: shape.patternOffsetY || 0,
+      maxHeight: shape.maxHeight,
+      maxWidth: shape.maxWidth,
     };
     if (shape.image) {
-      shapeData.pattern = new Image();
-      shapeData.pattern.crossOrigin = "anonymous";
-      shapeData.pattern.src = shape.image;
-      shapeData.pattern.width =
-        shape.maxWidth || shapeData.pattern.naturalWidth; //多边形没有赋予最大宽度和高度将取原始高度和宽度
-      shapeData.pattern.height =
-        shape.maxHeight || shapeData.pattern.naturalHeight;
+      shapeData.patternOrigin = new Image();
+      shapeData.patternOrigin.crossOrigin = "anonymous";
+      shapeData.patternOrigin.src = shape.image;
+      shapeData.patternOrigin.width =
+        shape.maxWidth || shapeData.patternOrigin.naturalWidth; //多边形没有赋予最大宽度和高度将取原始高度和宽度
+      shapeData.patternOrigin.height =
+        shape.maxHeight || shapeData.patternOrigin.naturalHeight;
+      shapeData.pattern = this.ctx.createPattern(
+        shapeData.patternOrigin,
+        "no-repeat"
+      ) as CanvasPattern;
     }
     this.shapeList.push(shapeData);
     this.shapeSort();
@@ -290,37 +318,46 @@ export class davinci_visual_classic {
     }
   }
 
-  //图形背景图像设置,涉及渲染模式切勿私自调用
+  //处理形状pattern
   drawPattern(shape: _type_shape) {
-    if (!this.ctx || !shape.pattern) {
+    if (!this.ctx) {
       throw Error("initialization error");
     }
     switch (shape.type) {
       case "rect":
-        this.ctx.drawImage(
-          shape.pattern,
-          shape.positionX,
-          shape.positionY,
-          shape.width,
-          shape.height
+        (shape.pattern as CanvasPattern).setTransform(
+          this.patternMatrix
+            .translate(shape.positionX, shape.positionY)
+            .scale(
+              shape.width / (shape.patternOrigin as any).naturalWidth,
+              shape.height / (shape.patternOrigin as any).naturalHeight
+            )
         );
         break;
       case "arc":
-        this.ctx.drawImage(
-          shape.pattern,
-          shape.positionX - shape.radius,
-          shape.positionY - shape.radius,
-          shape.radius,
-          shape.radius
+        (shape.pattern as CanvasPattern).setTransform(
+          this.patternMatrix
+            .translate(
+              shape.positionX - shape.radius,
+              shape.positionY - shape.radius
+            )
+            .scale(
+              (shape.radius * 2) / (shape.patternOrigin as any).naturalWidth,
+              (shape.radius * 2) / (shape.patternOrigin as any).naturalHeight
+            )
         );
         break;
       case "polygon":
-        this.ctx.drawImage(
-          shape.pattern,
-          shape.pathList[0].x + shape.positionX + shape.patternOffsetX,
-          shape.pathList[0].y + shape.positionY + shape.patternOffsetY,
-          shape.maxWidth,
-          shape.maxHeight
+        (shape.pattern as CanvasPattern).setTransform(
+          this.patternMatrix
+            .translate(
+              shape.positionX + shape.pathList[0].x + shape.patternOffsetX,
+              shape.positionY + shape.pathList[0].y + shape.patternOffsetY
+            )
+            .scale(
+              shape.maxWidth / (shape.patternOrigin as any).naturalWidth,
+              shape.maxHeight / (shape.patternOrigin as any).naturalHeight
+            )
         );
         break;
       default:
@@ -368,11 +405,11 @@ export class davinci_visual_classic {
       default:
         break;
     }
-    // if (shape.image) {
-    //   this.ctx.globalCompositeOperation = "source-out";
-    //   this.drawPattern(shape);
-    //   this.ctx.globalCompositeOperation = "source-over";
-    // }//未完善
+
+    if (shape.image) {
+      this.drawPattern(shape);
+      this.ctx.fillStyle = shape.pattern || this.ctx.fillStyle;
+    }
     this.ctx.fill();
   }
 
