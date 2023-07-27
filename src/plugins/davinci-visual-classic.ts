@@ -84,16 +84,41 @@ export class davinci_visual_classic {
           throw Error("initialization error");
         }
 
-        if (!this.isMouseDown) {
-          return;
-        }
+        let exTarget = this.currentShape;
 
-        if (this.currentShape) {
-          this.currentShape.positionX += e.offsetX - this.preX;
-          this.currentShape.positionY += e.offsetY - this.preY;
-          this.ctx.clearRect(0, 0, this.Dcanvas.width, this.Dcanvas.height);
-          this.quickDraw();
-          this.render(this.currentShape);
+        if (this.isMouseDown) {
+          if (this.currentShape) {
+            this.currentShape.positionX += e.offsetX - this.preX;
+            this.currentShape.positionY += e.offsetY - this.preY;
+            this.ctx.clearRect(0, 0, this.Dcanvas.width, this.Dcanvas.height);
+            this.quickDraw();
+            this.render(this.currentShape, true);
+          }
+        } else {
+          this.currentShape = this.shapeList.find((o) =>
+            this.checkPointInPath(o, { x: e.offsetX, y: e.offsetY })
+          );
+          if (this.currentShape) {
+            //命中目标
+            if (this.currentShape.hashID !== exTarget?.hashID) {
+              //目标不与前目标一致则重新渲染
+              //清空画布
+              this.ctx.clearRect(0, 0, this.Dcanvas.width, this.Dcanvas.height);
+
+              //重塑画布
+              this.drawAll([this.currentShape.hashID]);
+
+              //绘制当前对象
+              this.render(this.currentShape, true);
+            }
+          } else {
+            //没有命中目标
+            if (exTarget) {
+              //前目标不为空时重新渲染
+              this.ctx.clearRect(0, 0, this.Dcanvas.width, this.Dcanvas.height);
+              this.drawAll();
+            }
+          }
         }
 
         this.preX = e.offsetX;
@@ -130,7 +155,7 @@ export class davinci_visual_classic {
       this.quickSave();
 
       //绘制当前对象
-      this.render(this.currentShape);
+      this.render(this.currentShape, true);
     });
     this.Dcanvas.addEventListener("mouseup", (e) => {
       if (!this.isMouseDown) {
@@ -366,7 +391,7 @@ export class davinci_visual_classic {
   }
 
   //形状绘制
-  render(shape: _type_shape) {
+  render(shape: _type_shape, actived: boolean = false) {
     if (!this.ctx) {
       throw Error("initialization error");
     }
@@ -410,6 +435,15 @@ export class davinci_visual_classic {
       this.drawPattern(shape);
       this.ctx.fillStyle = shape.pattern || this.ctx.fillStyle;
     }
+    this.ctx.save();
+    if (actived) {
+      this.ctx.strokeStyle = "#F56C6C";
+      this.ctx.lineWidth = 5;
+      this.ctx.shadowColor = "black";
+      this.ctx.shadowBlur = 15;
+      this.ctx.stroke();
+    }
+    this.ctx.restore();
     this.ctx.fill();
   }
 
