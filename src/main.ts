@@ -8,7 +8,7 @@ const test = new davinci_visual_classic("#app");
 
 setTimeout(() => {
   test.createRect({
-    positionX: 20,
+    positionX: 10,
     positionY: 10,
     width: 100,
     height: 100,
@@ -17,57 +17,70 @@ setTimeout(() => {
   });
   test.createRect({
     positionX: 20,
-    positionY: 10,
+    positionY: 20,
     width: 100,
     height: 100,
     fillColor: "green",
     zIndex: 2,
   });
   test.createRect({
-    positionX: 20,
-    positionY: 10,
+    positionX: 30,
+    positionY: 30,
     width: 100,
     height: 100,
     fillColor: "yellow",
     zIndex: 3,
   });
   test.createRect({
-    positionX: 20,
-    positionY: 10,
+    positionX: 40,
+    positionY: 40,
     width: 100,
     height: 100,
     fillColor: "gray",
     zIndex: 4,
   });
   test.createRect({
-    positionX: 20,
-    positionY: 10,
+    positionX: 50,
+    positionY: 50,
     width: 100,
     height: 100,
     fillColor: "blue",
     zIndex: 5,
   });
   test.createRect({
-    positionX: 20,
-    positionY: 10,
+    positionX: 60,
+    positionY: 60,
     width: 100,
     height: 100,
     fillColor: "purple",
     zIndex: 6,
   });
   test.createRect({
-    positionX: 20,
-    positionY: 10,
+    positionX: 70,
+    positionY: 70,
     width: 100,
     height: 100,
-    fillColor: "black",
+    image:
+      "https://img1.baidu.com/it/u=1458656822,2078909008&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=750",
     zIndex: 7,
   });
   test.createArc({
-    positionX: 20,
-    positionY: 10,
+    positionX: 80,
+    positionY: 80,
     radius: 20,
     fillColor: "brown",
     zIndex: 8,
   });
+  test.createPolygon({
+    positionX: 80,
+    positionY: 80,
+    pathList: [
+      { x: 10, y: 10 },
+      { x: 50, y: 50 },
+      { x: 10, y: 50 },
+    ],
+    fillColor: "brown",
+    zIndex: 9,
+  });
+  test.drawAll();
 }, 1000);
