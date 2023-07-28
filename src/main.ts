@@ -88,5 +88,4 @@ setTimeout(() => {
     patternOffsetY: 0,
     zIndex: 9,
   });
-  test.drawAll();
 }, 1000);

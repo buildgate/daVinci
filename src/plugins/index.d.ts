@@ -53,3 +53,60 @@ declare type _type_shape = (_type_rect | _type_arc | _type_polygon) & {
   type: string;
   [key: string]: any;
 };
+
+//引擎类
+
+//坐标类型
+type Dcoordinate = {
+  x: number;
+  y: number;
+};
+
+//碰撞图形类型
+type Dshape_type = "rect" | "arc" | "polygon" | "composite";
+
+//碰撞图形路径类型
+type Dpath_rect = {
+  width: number;
+  height: number;
+};
+type Dpath_arc = {
+  radius: number;
+};
+type Dpath_polygon = {
+  pointList: Array<Dcoordinate>;
+};
+type Dpath = Dpath_rect | Dpath_arc | Dpath_polygon;
+
+//碰撞图形数据类型
+type Dshape_data_rect = {
+  type: "rect";
+  path: Dpath_rect;
+};
+type Dshape_data_arc = {
+  type: "arc";
+  path: Dpath_arc;
+};
+type Dshape_data_polygon = {
+  type: "polygon";
+  path: Dpath_polygon;
+};
+type Dshape_data = Dshape_data_rect | Dshape_data_arc | Dshape_data_polygon;
+
+//角色对象类型
+type Dcharacter_data = {
+  id?: string | number | symbol;
+  name?: string | number;
+  width?: number;
+  height?: number;
+  x?: number;
+  y?: number;
+  focusX: number;
+  focusY: number;
+  shape?: Dshape;
+  fillColor?: CanvasFillStrokeStyles["fillStyle"];
+  texture?: string;
+  children?: Array<Dcharacter>;
+  parent?: Dcharacter;
+  zidx?: number;
+};
