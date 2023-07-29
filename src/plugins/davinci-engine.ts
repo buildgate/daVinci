@@ -494,6 +494,7 @@ export class davinci {
 }
 
 class Dcharacter {
+  position: string = "relative";
   uid: number | string;
   id: string | number | symbol = "";
   name: string | number = "";
@@ -522,9 +523,15 @@ class Dcharacter {
   parent: Dcharacter | null | undefined = null;
 
   //事件列
-  onMouseDown = () => {};
-  onMouseUp = () => {};
-  onMouseMove = () => {};
+  onmousedown: (event: Devent) => any = () => {};
+  onmouseup: (event: Devent) => any = () => {};
+  onmousemove: (event: Devent) => any = () => {};
+  onmouseenter: (event: Devent) => any = () => {};
+  onmouseleave: (event: Devent) => any = () => {};
+  onmouseover: (event: Devent) => any = () => {};
+
+  onkeydown: (event: Devent) => any = () => {};
+  onkeyup: (event: Devent) => any = () => {};
 
   constructor(data: Dcharacter_data, DM: davinci) {
     const self = this;
@@ -540,6 +547,7 @@ class Dcharacter {
     this.focusX = data.focusX || this.width / 2;
     this.focusY = data.focusY || this.height / 2;
     this.zidx = data.zidx || 0;
+    this.position = data.position || this.position;
     this.dm = DM;
 
     this.children = data.children || [];
@@ -573,12 +581,19 @@ class Dcharacter {
             //触发render
             break;
           case "name":
+            Reflect.set(target, key, value, receiver);
             //不触发render
             break;
           case "id":
+            Reflect.set(target, key, value, receiver);
+            //不触发render
+            break;
+          case "uid":
+            throw Error('"uid" is Not modifiable!!!');
             //不触发render
             break;
           default:
+            Reflect.set(target, key, value, receiver);
             new Promise(function (resolve, reject) {
               resolve("start render");
             }).then(() => {
@@ -587,7 +602,7 @@ class Dcharacter {
             //其余属性均需要触发render
             break;
         }
-        return Reflect.set(target, key, value, receiver);
+        return true;
       },
     });
   }
@@ -630,10 +645,12 @@ class Dcharacter {
 
   //渲染器
   render(relativeX: number = 0, relativeY: number = 0) {
+    let rx = this.position === "relative" ? relativeX : 0;
+    let rY = this.position === "relative" ? relativeY : 0;
     if (!this.shape) {
       //没有图形不作渲染
       this.children.forEach((o) => {
-        o.render(this.x + relativeX, this.y + relativeY);
+        o.render(this.x + rx, this.y + rY);
       });
       return;
     }
@@ -642,8 +659,8 @@ class Dcharacter {
       case "rect":
         shape = (this.shape as Dshape_data_rect).path;
         this.dm.ctx.rect(
-          this.x + relativeX + this.focusX - shape.width / 2,
-          this.y + relativeY + this.focusY - shape.height / 2,
+          this.x + rx + this.focusX - shape.width / 2,
+          this.y + rY + this.focusY - shape.height / 2,
           shape.width,
           shape.height
         );
@@ -651,8 +668,8 @@ class Dcharacter {
       case "arc":
         shape = (this.shape as Dshape_data_arc).path;
         this.dm.ctx.arc(
-          this.x + relativeX + this.focusX,
-          this.y + relativeY + this.focusY,
+          this.x + rx + this.focusX,
+          this.y + rY + this.focusY,
           shape.radius,
           0,
           Math.PI * 2
@@ -662,14 +679,11 @@ class Dcharacter {
         shape = (this.shape as Dshape_data_polygon).path;
         this.dm.ctx.beginPath();
         this.dm.ctx.moveTo(
-          shape.pointList[0].x + this.x + relativeX,
-          shape.pointList[0].y + this.y + relativeY
+          shape.pointList[0].x + this.x + rx,
+          shape.pointList[0].y + this.y + rY
         );
         shape.pointList.forEach((point) => {
-          this.dm.ctx.lineTo(
-            point.x + this.x + relativeX,
-            point.y + this.y + relativeY
-          );
+          this.dm.ctx.lineTo(point.x + this.x + rx, point.y + this.y + rY);
         });
         this.dm.ctx.closePath();
         break;
@@ -684,18 +698,20 @@ class Dcharacter {
         ); //纹理画布
         this.textureMatrix = this.textureSVG.createSVGMatrix();
       }
-      this.textureRender(relativeX, relativeY);
+      this.textureRender(rx, rY);
       this.dm.ctx.fillStyle = this.texture || this.dm.ctx.fillStyle;
     }
     this.dm.ctx.fill();
     this.childrenSort();
     this.children.forEach((o) => {
-      o.render(this.x + relativeX, this.y + relativeY);
+      o.render(this.x + rx, this.y + rY);
     });
   }
 
   //纹理渲染
   textureRender(relativeX: number, relativeY: number) {
+    let rx = this.position === "relative" ? relativeX : 0;
+    let rY = this.position === "relative" ? relativeY : 0;
     if (!this.shape) {
       //无形状不渲染
       return;
@@ -709,26 +725,27 @@ class Dcharacter {
       return;
     }
     this.texture.setTransform(
-      this.textureMatrix.translate(this.x + relativeX, this.y + relativeY)
+      this.textureMatrix.translate(this.x + rx, this.y + rY)
     );
   }
 
-  //判断是否当前目标，并优先返回子级对象，默认阻止冒泡
-  isHit(
-    eventX: number,
-    eventY: number,
+  //判断是否当前目标，并优先返回顶层对象，默认阻止冒泡
+  trigger(
+    event: Devent,
     relativeX: number = 0,
     relativeY: number = 0,
     stop: boolean = true
   ): Dcharacter | undefined {
+    let rx = this.position === "relative" ? relativeX : 0;
+    let rY = this.position === "relative" ? relativeY : 0;
+
     let currentTarget: Dcharacter | undefined = undefined;
     if (this.children.length) {
       for (let i = this.children.length - 1; i >= 0; i--) {
-        currentTarget = this.children[i].isHit(
-          eventX,
-          eventY,
-          this.x + relativeX,
-          this.y + relativeY
+        currentTarget = this.children[i].trigger(
+          event,
+          this.x + rx,
+          this.y + rY
         );
         if (currentTarget) {
           break;
@@ -750,8 +767,8 @@ class Dcharacter {
       case "rect":
         shape = (this.shape as Dshape_data_rect).path;
         this.dm.ctx.rect(
-          this.x + relativeX + this.focusX - shape.width / 2,
-          this.y + relativeY + this.focusY - shape.height / 2,
+          this.x + rx + this.focusX - shape.width / 2,
+          this.y + rY + this.focusY - shape.height / 2,
           shape.width,
           shape.height
         );
@@ -759,8 +776,8 @@ class Dcharacter {
       case "arc":
         shape = (this.shape as Dshape_data_arc).path;
         this.dm.ctx.arc(
-          this.x + relativeX + this.focusX,
-          this.y + relativeY + this.focusY,
+          this.x + rx + this.focusX,
+          this.y + rY + this.focusY,
           shape.radius,
           0,
           Math.PI * 2
@@ -770,28 +787,53 @@ class Dcharacter {
         shape = (this.shape as Dshape_data_polygon).path;
         this.dm.ctx.beginPath();
         this.dm.ctx.moveTo(
-          shape.pointList[0].x + this.x + relativeX,
-          shape.pointList[0].y + this.y + relativeY
+          shape.pointList[0].x + this.x + rx,
+          shape.pointList[0].y + this.y + rY
         );
         shape.pointList.forEach((point) => {
-          this.dm.ctx.lineTo(
-            point.x + this.x + relativeX,
-            point.y + this.y + relativeY
-          );
+          this.dm.ctx.lineTo(point.x + this.x + rx, point.y + this.y + rY);
         });
         this.dm.ctx.closePath();
         break;
       default:
         break;
     }
-    if (this.dm.shadowCtx.isPointInPath(eventX, eventY)) {
+    if (this.dm.shadowCtx.isPointInPath(event.x, event.y)) {
+      let nextEvent = { ...event };
+
       //
       // 执行本体事件
       //
+      switch (event.type) {
+        case "mousemove":
+          if (event.preTarge.uid !== this.uid) {
+            nextEvent.preTarge = this;
+            nextEvent.type = "mouseleave";
+            event.preTarge.onmouseleave(event);
+            this.onmouseenter(event);
+          } else {
+            this.onmousemove(event);
+          }
+          break;
+        case "mousedown":
+          this.onmousedown(event);
+          break;
+        case "mouseup":
+          this.onmouseup(event);
+          break;
+        default:
+          break;
+      }
+
       return currentTarget || this;
     } else {
       return currentTarget;
     }
+  }
+
+  //监听器
+  addEventListener(type: Devent_type, fn: (event: Devent) => any) {
+    this[`on${type}`] = fn;
   }
 }
 

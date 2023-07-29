@@ -97,6 +97,7 @@ type Dshape_data = Dshape_data_rect | Dshape_data_arc | Dshape_data_polygon;
 type Dcharacter_data = {
   id?: string | number | symbol;
   name?: string | number;
+  position?: string;
   width?: number;
   height?: number;
   x?: number;
@@ -110,3 +111,18 @@ type Dcharacter_data = {
   parent?: Dcharacter;
   zidx?: number;
 };
+
+//事件类型
+type Devent = {
+  x: number;
+  y: number;
+  type: Devent_type;
+  preTarge: Dcharacter;
+  //后续有更多内容
+};
+type Devent_type =
+  | "mouseenter"
+  | "mouseleave"
+  | "mousedown"
+  | "mouseup"
+  | "mousemove";
