@@ -13,19 +13,19 @@ setTimeout(() => {
     path: { width: 200, height: 300 },
   });
 
-  test.DcanvasCharacter.children.push(
-    new Dcharacter(
-      {
-        x: 10,
-        y: 10,
-        width: 200,
-        height: 300,
-        fillColor: "red",
-        shape: shape,
-      },
-      test
-    )
+  let testRect = new Dcharacter(
+    {
+      x: 10,
+      y: 10,
+      width: 200,
+      height: 300,
+      fillColor: "red",
+      shape: shape,
+    },
+    test
   );
+
+  test.DcanvasCharacter.children.push(testRect);
 
   let shape2 = new Dshape({
     type: "arc",
@@ -33,10 +33,10 @@ setTimeout(() => {
   });
   let testCycle = new Dcharacter(
     {
-      x: 100,
-      y: 40,
-      width: 200,
-      height: 300,
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
       fillColor: "black",
       shape: shape2,
       texture:
@@ -49,12 +49,13 @@ setTimeout(() => {
     console.log("ok");
   });
   testCycle.addEventListener("mouseup", () => {
-    testCycle.x += 20;
+    testRect.x += 20;
   });
 
-  test.DcanvasCharacter.children.push(testCycle);
-
+  testRect.children.push(testCycle);
+  test.allowRender = true;
   test.render();
+
   //非引擎版本
   // test.createRect({
   //   positionX: 10,

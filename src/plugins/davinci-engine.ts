@@ -11,6 +11,8 @@ export class davinci {
 
   DcanvasCharacter: Dcharacter; //必须建立一个基础元素
 
+  allowRender: boolean = false; //防止初始化时多次渲染，默认为false
+
   //画布设置
   width: number = 500;
   height: number = 500;
@@ -154,7 +156,7 @@ export class Dcharacter {
 
   constructor(data: Dcharacter_data, DM: davinci) {
     const self = this;
-    this.uid = +new Date() + Math.floor(Math.random() * 10000) + 1;
+    this.uid = +new Date() + Math.floor(Math.random() * (10000 - 1)) + 1;
     this.id = data.id || +new Date();
     this.name = data.name || "";
     this.fillColor = data.fillColor || "#000000";
@@ -183,18 +185,14 @@ export class Dcharacter {
         switch (key) {
           case "width":
             Reflect.set(target, "focusX", value / 2, receiver);
-            new Promise(function (resolve, reject) {
-              resolve("start render");
-            }).then(() => {
+            self.throttle(() => {
               target.dm.render();
             });
             //触发render
             break;
           case "height":
             Reflect.set(target, "focusY", value / 2, receiver);
-            new Promise(function (resolve, reject) {
-              resolve("start render");
-            }).then(() => {
+            self.throttle(() => {
               target.dm.render();
             });
             //触发render
@@ -211,11 +209,17 @@ export class Dcharacter {
             throw Error('"uid" is Not modifiable!!!');
             //不触发render
             break;
+          case "textureSVG":
+            //不触发render
+            Reflect.set(target, key, value, receiver);
+            break;
+          case "textureMatrix":
+            //不触发render
+            Reflect.set(target, key, value, receiver);
+            break;
           default:
             Reflect.set(target, key, value, receiver);
-            new Promise(function (resolve, reject) {
-              resolve("start render");
-            }).then(() => {
+            self.throttle(() => {
               target.dm.render();
             });
             //其余属性均需要触发render
@@ -224,6 +228,22 @@ export class Dcharacter {
         return true;
       },
     });
+  }
+
+  //按帧节流
+  throttle(fn: (...rest: any) => any) {
+    let block = false;
+    return function (this: object) {
+      let self = this;
+      let args = arguments;
+      if (!block) {
+        block = true;
+        window.requestAnimationFrame(() => {
+          block = false;
+          fn.apply(self, args as any);
+        });
+      }
+    };
   }
 
   //子角色对象排序，按照zidx由小到大排序
@@ -263,6 +283,10 @@ export class Dcharacter {
 
   //渲染器
   render(relativeX: number = 0, relativeY: number = 0) {
+    if (!this.dm.allowRender) {
+      //中断渲染
+      return;
+    }
     let rx = this.position === "relative" ? relativeX : 0;
     let rY = this.position === "relative" ? relativeY : 0;
     if (!this.shape) {
@@ -323,6 +347,7 @@ export class Dcharacter {
     }
     this.dm.Dctx.fill();
     this.childrenSort();
+
     this.children.forEach((o) => {
       o.render(this.x + rx, this.y + rY);
     });
