@@ -102,8 +102,8 @@ type Dcharacter_data = {
   height?: number;
   x?: number;
   y?: number;
-  focusX: number;
-  focusY: number;
+  focusX?: number;
+  focusY?: number;
   shape?: Dshape;
   fillColor?: CanvasFillStrokeStyles["fillStyle"];
   texture?: string;
@@ -126,3 +126,9 @@ type Devent_type =
   | "mousedown"
   | "mouseup"
   | "mousemove";
+
+//
+type Doptions = {
+  width?: number;
+  height?: number;
+};
