@@ -185,16 +185,12 @@ export class Dcharacter {
         switch (key) {
           case "width":
             Reflect.set(target, "focusX", value / 2, receiver);
-            self.throttle(() => {
-              target.dm.render();
-            });
+            target.dm.render();
             //触发render
             break;
           case "height":
             Reflect.set(target, "focusY", value / 2, receiver);
-            self.throttle(() => {
-              target.dm.render();
-            });
+            target.dm.render();
             //触发render
             break;
           case "name":
@@ -219,9 +215,7 @@ export class Dcharacter {
             break;
           default:
             Reflect.set(target, key, value, receiver);
-            self.throttle(() => {
-              target.dm.render();
-            });
+            target.dm.render();
             //其余属性均需要触发render
             break;
         }
