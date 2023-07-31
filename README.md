@@ -46,6 +46,14 @@ class Dcharacter {
   focusY: number = 0;
   fillColor: CanvasFillStrokeStyles["fillStyle"] = "#000000"; //填充颜色
 
+  shadowOptions = {
+    //阴影选项，阴影是相对与视觉图形生成的
+    color: "#000000",
+    blur: 0,
+    offsetX: 0,
+    offsetY: 0,
+  };
+
   dm: davinci; //画布实例，实例化时传入
   shape: Dshape | null = null; //视觉图形
   collider: Dcollider | null = null; //碰撞图形

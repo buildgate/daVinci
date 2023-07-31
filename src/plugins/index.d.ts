@@ -111,6 +111,12 @@ type Dcharacter_data = {
   children?: Array<Dcharacter>;
   parent?: Dcharacter;
   zidx?: number;
+  shadowOptions?: {
+    color: string;
+    blur: number;
+    offsetX: number;
+    offsetY: number;
+  };
 };
 
 //事件类型

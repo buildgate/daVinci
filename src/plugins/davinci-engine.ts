@@ -207,6 +207,12 @@ export class Dcharacter {
   focusX: number = 0;
   focusY: number = 0;
   fillColor: CanvasFillStrokeStyles["fillStyle"] = "#000000";
+  shadowOptions = {
+    color: "#000000",
+    blur: 0,
+    offsetX: 0,
+    offsetY: 0,
+  };
 
   dm: Davinci; //画布实例
   shape: Dshape | null = null;
@@ -258,6 +264,9 @@ export class Dcharacter {
     this.zidx = data.zidx || 0;
     this.position = data.position || this.position;
     this.dm = DM;
+    this.shadowOptions = data.shadowOptions
+      ? { ...data.shadowOptions }
+      : this.shadowOptions;
 
     this.children = data.children || [];
     if (this.children.length) {
@@ -483,6 +492,12 @@ export class Dcharacter {
     } else {
       this.dm.Dctx.fillStyle = this.fillColor;
     }
+
+    this.dm.Dctx.shadowBlur = this.shadowOptions.blur;
+    this.dm.Dctx.shadowColor = this.shadowOptions.color;
+    this.dm.Dctx.shadowOffsetX = this.shadowOptions.offsetX;
+    this.dm.Dctx.shadowOffsetY = this.shadowOptions.offsetY;
+
     this.dm.Dctx.fill();
     this.childrenSort();
 

@@ -41,6 +41,12 @@ setTimeout(() => {
       fillColor: "black",
       shape: shape2,
       collider: shape2,
+      shadowOptions: {
+        color: "black",
+        blur: 10,
+        offsetX: 10,
+        offsetY: 20,
+      },
       texture:
         "https://img1.baidu.com/it/u=1458656822,2078909008&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=750",
     },
