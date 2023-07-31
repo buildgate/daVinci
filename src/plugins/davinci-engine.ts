@@ -196,6 +196,7 @@ export class Davinci {
 }
 
 export class Dcharacter {
+  autoRender: boolean = true; //决定这个类的属性更改是否自动更新视图，默认会自动更新
   position: string = "relative";
   uid: number;
   id: string | number | symbol = "";
@@ -249,6 +250,7 @@ export class Dcharacter {
 
   constructor(data: Dcharacter_data, DM: Davinci) {
     const self = this;
+    this.autoRender = data.autoRender === undefined ? true : data.autoRender;
     this.uid = +new Date() + Math.floor(Math.random() * (10000 - 1)) + 1;
     this.id = data.id || +new Date();
     this.name = data.name || "";
@@ -283,12 +285,16 @@ export class Dcharacter {
         switch (key) {
           case "width":
             Reflect.set(target, "focusX", value / 2, receiver);
-            target.dm.render(target.uid);
+            if (target.autoRender) {
+              target.dm.render(target.uid);
+            }
             //触发render
             break;
           case "height":
             Reflect.set(target, "focusY", value / 2, receiver);
-            target.dm.render(target.uid);
+            if (target.autoRender) {
+              target.dm.render(target.uid);
+            }
             //触发render
             break;
           case "name":
@@ -319,7 +325,9 @@ export class Dcharacter {
           case "zidx":
             //触发render
             Reflect.set(target, key, value, receiver);
-            target.dm.render(target.parent?.uid);
+            if (target.autoRender) {
+              target.dm.render(target.parent?.uid); //注意，如果修改的是zidx，改变的实际是父级的内容，所以这里的uid需要用父级的
+            }
             break;
           case "snapshot":
             //不触发render
@@ -327,7 +335,9 @@ export class Dcharacter {
             break;
           default:
             Reflect.set(target, key, value, receiver);
-            target.dm.render(target.uid);
+            if (target.autoRender) {
+              target.dm.render(target.uid);
+            }
             //其余属性均需要触发render
             break;
         }

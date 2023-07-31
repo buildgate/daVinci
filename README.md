@@ -30,12 +30,21 @@ class Dcollider {
 
 角色类：是视觉类和碰撞类的载体，角色类需要绑定在画布类里才有实际作用
 
-<font color=#F56C6C>！！注意！！</font>因为角色类返回的是 proxy 类型，所以除了少部分属性不会触发视图渲染外，其他属性均会触发视图渲染，
+<font color=#F56C6C>！！注意！！</font>因为角色类返回的是 proxy 类型，且 autoRender 属性默认为 true，所以除了少部分属性不会触发视图渲染外，其他属性均会触发视图渲染。
+
 如果是批量设置属性，则可以设置 Davinic 类下的 allowrender 属性为 false，避免触发多次渲染，在批量修改完后再设置 allowrender 为 true,
 然后进行全局渲染或者局部渲染；初始化时同样适用；
 
+或者将 autoRender 设置成 false,那么角色对象的属性更改将不会自动触发 render，需要在更改属性后手动进行一次全局渲染或者局部渲染；
+
+值得注意的一点是如果是使用局部渲染，那么在更改 zidx 时候传入的 uid 应该为父级的 uid，因为改变 zidx 实际上改变的是父级的 children 排序，如果不能确定传入的 uid 则可以使用全局渲染，虽然性能
+可能会因此下降；
+
+两种设置方案都可以实现批量修改不多次触发视图，虽然视觉层可以等待渲染，但是交互层的路径是会实时变化的，这一点也值得注意，具体的实现方案可以酌情选择，渲染时机可以由开发者自行定义。
+
 ```typescript
 class Dcharacter {
+  autoRender: boolean = true; //决定这个类的属性更改是否自动更新视图，默认会自动更新
   position: string = "relative"; //定位类型
   uid: number; //唯一ID，不可修改
   id: string | number | symbol = "";

@@ -95,6 +95,7 @@ type Dshape_data = Dshape_data_rect | Dshape_data_arc | Dshape_data_polygon;
 
 //角色对象类型
 type Dcharacter_data = {
+  autoRender?: boolean;
   id?: string | number | symbol;
   name?: string | number;
   position?: string;
