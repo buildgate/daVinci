@@ -105,6 +105,7 @@ type Dcharacter_data = {
   focusX?: number;
   focusY?: number;
   shape?: Dshape;
+  collider?: Dcollider;
   fillColor?: CanvasFillStrokeStyles["fillStyle"];
   texture?: string;
   children?: Array<Dcharacter>;

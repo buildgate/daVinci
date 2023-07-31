@@ -3,9 +3,9 @@ import "./plugins/davinci.css";
 import { davinci_visual_hash } from "./plugins/davinci-visual-hash.ts";
 import { davinci_visual_classic } from "./plugins/davinci-visual-classic.ts";
 import { daVinci_free } from "./plugins/davinci-free.ts";
-import { Dcharacter, davinci, Dshape } from "./plugins/davinci-engine.ts";
+import { Dcharacter, Davinci, Dshape } from "./plugins/davinci-engine.ts";
 
-const test = new davinci("#app");
+const test = new Davinci("#app");
 
 setTimeout(() => {
   let shape = new Dshape({
@@ -21,11 +21,12 @@ setTimeout(() => {
       height: 300,
       fillColor: "red",
       shape: shape,
+      collider: shape,
     },
     test
   );
 
-  test.DcanvasCharacter.children.push(testRect);
+  test.DcanvasCharacter.addChild(testRect);
 
   let shape2 = new Dshape({
     type: "arc",
@@ -39,22 +40,38 @@ setTimeout(() => {
       height: 100,
       fillColor: "black",
       shape: shape2,
+      collider: shape2,
       texture:
         "https://img1.baidu.com/it/u=1458656822,2078909008&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=750",
     },
     test
   );
 
-  testCycle.addEventListener("mousedown", () => {
-    console.log("ok");
-  });
-  testCycle.addEventListener("mouseup", () => {
-    testRect.x += 20;
+  testRect.addEventListener("mousedown", () => {
+    testCycle.texture =
+      "https://img1.baidu.com/it/u=2328766673,3584364392&fm=253&fmt=auto?w=130&h=170";
   });
 
-  testRect.children.push(testCycle);
-  test.allowRender = true;
-  test.render();
+  testCycle.addEventListener("mousedown", () => {
+    console.log("mousedown");
+  });
+  testCycle.addEventListener("mouseup", () => {
+    testCycle.x += 20;
+  });
+  testCycle.addEventListener("mouseenter", () => {
+    console.log("mouseenter");
+  });
+  testCycle.addEventListener("mouseleave", () => {
+    console.log("mouseleave");
+  });
+
+  testRect.addChild(testCycle);
+
+  test.onGlobalTextureComplete = () => {
+    test.collisionDetect = true;
+    test.allowRender = true;
+    test.render();
+  };
 
   //非引擎版本
   // test.createRect({
