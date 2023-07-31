@@ -4,7 +4,7 @@
 
 ### Dshape
 
-视觉图形类：用于定义视图部分的形状，所有图形都可以使用透明图片等效替换
+视觉图形类：用于定义视图部分的形状，所有图形都可以使用透明图片等效替换,但是内置的阴影渲染是基于视觉图形生成的。
 
 ```typescript
 class Dshape {
@@ -17,7 +17,7 @@ class Dshape {
 
 碰撞类：用于定义触发鼠标事件的触发形状，可以与视觉图形不一致
 
-目前碰撞类继承于视觉图形类
+目前碰撞类继承于视觉图形类，所以可以大部分情况可以与视觉类一同使用
 
 ```typescript
 class Dcollider {
@@ -30,7 +30,9 @@ class Dcollider {
 
 角色类：是视觉类和碰撞类的载体，角色类需要绑定在画布类里才有实际作用
 
-目前碰撞类继承于视觉图形类
+<font color=#F56C6C>！！注意！！</font>因为角色类返回的是 proxy 类型，所以除了少部分属性不会触发视图渲染外，其他属性均会触发视图渲染，
+如果是批量设置属性，则可以设置 Davinic 类下的 allowrender 属性为 false，避免触发多次渲染，在批量修改完后再设置 allowrender 为 true,
+然后进行全局渲染或者局部渲染；初始化时同样适用；
 
 ```typescript
 class Dcharacter {
@@ -46,7 +48,7 @@ class Dcharacter {
   focusY: number = 0;
   fillColor: CanvasFillStrokeStyles["fillStyle"] = "#000000"; //填充颜色
 
-  shadowOptions = {
+  shadow = {
     //阴影选项，阴影是相对与视觉图形生成的
     color: "#000000",
     blur: 0,
@@ -97,7 +99,7 @@ class Dcharacter {
 
 ### Davinci
 
-主类：引擎的主类，所有事件均以来这个类型触发
+主类：引擎的主类，所有事件均依赖这个类型触发
 
 ```typescript
 class Davinci {

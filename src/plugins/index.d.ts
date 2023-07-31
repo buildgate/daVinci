@@ -111,7 +111,7 @@ type Dcharacter_data = {
   children?: Array<Dcharacter>;
   parent?: Dcharacter;
   zidx?: number;
-  shadowOptions?: {
+  shadow?: {
     color: string;
     blur: number;
     offsetX: number;

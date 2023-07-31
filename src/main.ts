@@ -41,7 +41,7 @@ setTimeout(() => {
       fillColor: "black",
       shape: shape2,
       collider: shape2,
-      shadowOptions: {
+      shadow: {
         color: "black",
         blur: 10,
         offsetX: 10,

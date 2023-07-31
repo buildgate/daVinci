@@ -207,7 +207,7 @@ export class Dcharacter {
   focusX: number = 0;
   focusY: number = 0;
   fillColor: CanvasFillStrokeStyles["fillStyle"] = "#000000";
-  shadowOptions = {
+  shadow = {
     color: "#000000",
     blur: 0,
     offsetX: 0,
@@ -264,9 +264,7 @@ export class Dcharacter {
     this.zidx = data.zidx || 0;
     this.position = data.position || this.position;
     this.dm = DM;
-    this.shadowOptions = data.shadowOptions
-      ? { ...data.shadowOptions }
-      : this.shadowOptions;
+    this.shadow = data.shadow ? { ...data.shadow } : this.shadow;
 
     this.children = data.children || [];
     if (this.children.length) {
@@ -493,10 +491,10 @@ export class Dcharacter {
       this.dm.Dctx.fillStyle = this.fillColor;
     }
 
-    this.dm.Dctx.shadowBlur = this.shadowOptions.blur;
-    this.dm.Dctx.shadowColor = this.shadowOptions.color;
-    this.dm.Dctx.shadowOffsetX = this.shadowOptions.offsetX;
-    this.dm.Dctx.shadowOffsetY = this.shadowOptions.offsetY;
+    this.dm.Dctx.shadowBlur = this.shadow.blur;
+    this.dm.Dctx.shadowColor = this.shadow.color;
+    this.dm.Dctx.shadowOffsetX = this.shadow.offsetX;
+    this.dm.Dctx.shadowOffsetY = this.shadow.offsetY;
 
     this.dm.Dctx.fill();
     this.childrenSort();
