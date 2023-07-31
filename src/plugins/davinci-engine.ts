@@ -68,12 +68,20 @@ export class Davinci {
     this.Dcanvas.addEventListener(
       "mousemove",
       this.throttle((e: MouseEvent) => {
+        this.preX = this.x;
+        this.preY = this.y;
+
+        this.x = e.offsetX;
+        this.y = e.offsetY;
+
         this.preTarget = this.currentTarget;
         let Devent: Devent = {
           x: e.offsetX,
           y: e.offsetY,
+          preX: this.preX,
+          preY: this.preY,
           type: "mousemove",
-          preTarge: this.currentTarget,
+          preTarge: this.preTarget,
         };
         this.currentTarget = this.DcanvasCharacter.colliderTrigger(
           Devent,
@@ -85,7 +93,9 @@ export class Davinci {
           Devent = {
             x: e.offsetX,
             y: e.offsetY,
-            type: "mousemove",
+            preX: this.preX,
+            preY: this.preY,
+            type: "mouseleave",
             preTarge: null,
           };
           this.preTarget.onmouseleave(Devent);
@@ -93,9 +103,17 @@ export class Davinci {
       })
     );
     this.Dcanvas.addEventListener("mousedown", (e: MouseEvent) => {
+      this.preX = this.x;
+      this.preY = this.y;
+
+      this.x = e.offsetX;
+      this.y = e.offsetY;
+
       let Devent: Devent = {
         x: e.offsetX,
         y: e.offsetY,
+        preX: this.preX,
+        preY: this.preY,
         type: "mousedown",
         preTarge: this.currentTarget,
       };
@@ -107,9 +125,17 @@ export class Davinci {
       );
     });
     this.Dcanvas.addEventListener("mouseup", (e) => {
+      this.preX = this.x;
+      this.preY = this.y;
+
+      this.x = e.offsetX;
+      this.y = e.offsetY;
+
       let Devent: Devent = {
         x: e.offsetX,
         y: e.offsetY,
+        preX: this.preX,
+        preY: this.preY,
         type: "mouseup",
         preTarge: this.currentTarget,
       };

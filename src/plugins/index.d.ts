@@ -117,6 +117,8 @@ type Dcharacter_data = {
 type Devent = {
   x: number;
   y: number;
+  preX: number;
+  preY: number;
   type: Devent_type;
   preTarge: Dcharacter;
   //后续有更多内容

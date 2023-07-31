@@ -47,9 +47,23 @@ setTimeout(() => {
     test
   );
 
+  let mousedown = false;
+
   testRect.addEventListener("mousedown", () => {
+    mousedown = true;
     testCycle.texture =
       "https://img1.baidu.com/it/u=2328766673,3584364392&fm=253&fmt=auto?w=130&h=170";
+  });
+
+  testRect.addEventListener("mouseup", () => {
+    mousedown = false;
+  });
+
+  testRect.addEventListener("mousemove", (e) => {
+    if (mousedown) {
+      testRect.x += e.x - e.preX;
+      testRect.y += e.y - e.preY;
+    }
   });
 
   testCycle.addEventListener("mousedown", () => {
