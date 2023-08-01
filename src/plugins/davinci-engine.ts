@@ -98,7 +98,9 @@ export class Davinci {
             type: "mouseleave",
             preTarge: null,
           };
-          this.preTarget.onmouseleave(Devent);
+          this.preTarget?.onmouseleave.forEach((o) => {
+            o(Devent);
+          });
         }
       })
     );
@@ -196,6 +198,7 @@ export class Davinci {
 }
 
 export class Dcharacter {
+  [key: string]: any;
   autoRender: boolean = true; //决定这个类的属性更改是否自动更新视图，默认会自动更新
   position: string = "relative";
   uid: number;
@@ -236,11 +239,11 @@ export class Dcharacter {
   parent: Dcharacter | null | undefined = null;
 
   //事件列
-  onmousedown: (event: Devent) => any = () => {};
-  onmouseup: (event: Devent) => any = () => {};
-  onmousemove: (event: Devent) => any = () => {};
-  onmouseenter: (event: Devent) => any = () => {};
-  onmouseleave: (event: Devent) => any = () => {};
+  onmousedown = new Map();
+  onmouseup = new Map();
+  onmousemove = new Map();
+  onmouseenter = new Map();
+  onmouseleave = new Map();
   // onmouseover: (event: Devent) => any = () => {}; 未支持
 
   ontextureonload: () => any = () => {};
@@ -279,7 +282,7 @@ export class Dcharacter {
     } else {
       this.textureComplete = true;
     }
-
+    //返回proxy
     return new Proxy(this, {
       set: function (target, key, value, receiver) {
         switch (key) {
@@ -332,6 +335,26 @@ export class Dcharacter {
           case "snapshot":
             //不触发render
             Reflect.set(target, key, value, receiver);
+            break;
+          case "onmouseenter":
+            //不触发render
+            throw Error('"onmouseenter" is Not modifiable!!!');
+            break;
+          case "onmouseleave":
+            //不触发render
+            throw Error('"onmouseleave" is Not modifiable!!!');
+            break;
+          case "onmousedown":
+            //不触发render
+            throw Error('"onmousedown" is Not modifiable!!!');
+            break;
+          case "onmouseup":
+            //不触发render
+            throw Error('"onmouseup" is Not modifiable!!!');
+            break;
+          case "onmousemove":
+            //不触发render
+            throw Error('"onmousemove" is Not modifiable!!!');
             break;
           default:
             Reflect.set(target, key, value, receiver);
@@ -619,17 +642,27 @@ export class Dcharacter {
           if (event.preTarge?.uid !== this.uid) {
             nextEvent.preTarge = this;
             nextEvent.type = "mouseleave";
-            event.preTarge?.onmouseleave(event);
-            this.onmouseenter(event);
+            event.preTarge?.onmouseleave.forEach((o: any) => {
+              o(event);
+            });
+            this.onmouseenter.forEach((o) => {
+              o(event);
+            });
           } else {
-            this.onmousemove(event);
+            this.onmousemove.forEach((o) => {
+              o(event);
+            });
           }
           break;
         case "mousedown":
-          this.onmousedown(event);
+          this.onmousedown.forEach((o) => {
+            o(event);
+          });
           break;
         case "mouseup":
-          this.onmouseup(event);
+          this.onmouseup.forEach((o) => {
+            o(event);
+          });
           break;
         default:
           break;
@@ -643,7 +676,19 @@ export class Dcharacter {
 
   //监听器
   addEventListener(type: Devent_type, fn: (event: Devent) => any) {
-    this[`on${type}`] = fn;
+    this[`on${type}`].set(
+      fn.name ||
+        `fn${+new Date()}${Math.floor(Math.random() * (10000 - 1)) + 1}`,
+      fn
+    );
+  }
+  //删除监听器只需要输入函数名，匿名函数无法删除,如果不输入函数名称，则清空整个事件
+  removeEventListener(type: Devent_type, fn_name?: string) {
+    if (fn_name) {
+      this[`on${type}`].delete(fn_name);
+    } else {
+      this[`on${type}`].clear();
+    }
   }
 
   //添加子级

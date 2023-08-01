@@ -94,6 +94,9 @@ class Dcharacter {
  //监听器 目前支持mouseenter,mouseleave,mousemove,mousedown,mouseup,交互内容在此设置
   addEventListener(type: Devent_type, fn: (event: Devent) => any){...}
 
+  //删除监听器只需要输入函数名，匿名函数无法删除,如果不输入函数名称，则清空整个事件
+  removeEventListener(type: Devent_type, fn?: string){...}
+
   //添加子级
   addChild(child: Dcharacter){...}
 

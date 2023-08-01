@@ -72,9 +72,16 @@ setTimeout(() => {
     }
   });
 
-  testCycle.addEventListener("mousedown", () => {
+  testCycle.addEventListener("mousedown", (e) => {
+    console.log(e);
     console.log("mousedown");
   });
+  testCycle.addEventListener("mousedown", function a(e) {
+    console.log(e);
+    console.log("mousedown1");
+  });
+  testCycle.removeEventListener("mousedown", "a");
+
   testCycle.addEventListener("mouseup", () => {
     testCycle.x += 20;
   });
