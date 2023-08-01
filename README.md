@@ -53,6 +53,8 @@ class Dcharacter {
   height: number = 100;
   x: number = 0; //相对父级的位置
   y: number = 0;
+  realX: number = 0; //相对于画布的定位，私自修改无意义，只是一个参考值
+  realY: number = 0;
   focusX: number = 0; //焦点位置，初始化的时候会与宽度同步修改，尽量避免修改
   focusY: number = 0;
   fillColor: CanvasFillStrokeStyles["fillStyle"] = "#000000"; //填充颜色

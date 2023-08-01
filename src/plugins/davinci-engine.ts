@@ -251,6 +251,8 @@ export class Dcharacter {
   height: number = 100;
   x: number = 0;
   y: number = 0;
+  realX: number = 0; //相对于画布的定位，私自修改无意义，只是一个参考值
+  realY: number = 0;
   focusX: number = 0;
   focusY: number = 0;
   fillColor: CanvasFillStrokeStyles["fillStyle"] = "#000000";
@@ -379,6 +381,14 @@ export class Dcharacter {
             //不触发render
             throw Error('"dm" is Not modifiable!!!');
             break;
+          case "realX":
+            //不触发render
+            Reflect.set(target, key, value, receiver);
+            break;
+          case "realY":
+            //不触发render
+            Reflect.set(target, key, value, receiver);
+            break;
           default:
             Reflect.set(target, key, value, receiver);
             if (target.autoRender) {
@@ -502,8 +512,12 @@ export class Dcharacter {
       //中断渲染
       return;
     }
-    let rx = this.position === "relative" ? relativeX : 0;
+
+    let rX = this.position === "relative" ? relativeX : 0;
     let rY = this.position === "relative" ? relativeY : 0;
+
+    this.realX = rX + this.x; //赋值实际的x
+    this.realY = rY + this.y; //赋值实际Y
 
     if (!this.snapshot) {
       this.snapshot = this.dm.Dctx.getImageData(
@@ -519,7 +533,7 @@ export class Dcharacter {
         } else {
           this.childrenSort();
           this.children.forEach((o) => {
-            o.render(this.x + rx, this.y + rY, snapshotID);
+            o.render(this.x + rX, this.y + rY, snapshotID);
           });
           return;
         }
@@ -536,7 +550,7 @@ export class Dcharacter {
     if (!this.shape) {
       //没有图形不作渲染
       this.children.forEach((o) => {
-        o.render(this.x + rx, this.y + rY);
+        o.render(this.x + rX, this.y + rY);
       });
       return;
     }
@@ -547,7 +561,7 @@ export class Dcharacter {
       case "rect":
         shape = (this.shape as Dshape_data_rect).path;
         this.dm.Dctx.rect(
-          this.x + rx + this.focusX - shape.width / 2,
+          this.x + rX + this.focusX - shape.width / 2,
           this.y + rY + this.focusY - shape.height / 2,
           shape.width,
           shape.height
@@ -556,7 +570,7 @@ export class Dcharacter {
       case "arc":
         shape = (this.shape as Dshape_data_arc).path;
         this.dm.Dctx.arc(
-          this.x + rx + this.focusX,
+          this.x + rX + this.focusX,
           this.y + rY + this.focusY,
           shape.radius,
           0,
@@ -566,11 +580,11 @@ export class Dcharacter {
       case "polygon":
         shape = (this.shape as Dshape_data_polygon).path;
         this.dm.Dctx.moveTo(
-          shape.pointList[0].x + this.x + rx,
+          shape.pointList[0].x + this.x + rX,
           shape.pointList[0].y + this.y + rY
         );
         shape.pointList.forEach((point) => {
-          this.dm.Dctx.lineTo(point.x + this.x + rx, point.y + this.y + rY);
+          this.dm.Dctx.lineTo(point.x + this.x + rX, point.y + this.y + rY);
         });
         this.dm.Dctx.closePath();
         break;
@@ -578,7 +592,7 @@ export class Dcharacter {
         break;
     }
     if (this.texture) {
-      this.textureRender(rx, rY);
+      this.textureRender(rX, rY);
       this.dm.Dctx.fillStyle = this.texturePattern || this.dm.Dctx.fillStyle;
     } else {
       this.dm.Dctx.fillStyle = this.fillColor;
@@ -593,7 +607,7 @@ export class Dcharacter {
     this.childrenSort();
 
     this.children.forEach((o) => {
-      o.render(this.x + rx, this.y + rY);
+      o.render(this.x + rX, this.y + rY);
     });
   }
 
