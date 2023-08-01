@@ -62,6 +62,7 @@ setTimeout(() => {
   });
 
   testRect.addEventListener("mouseup", () => {
+    console.log("mouseup");
     mousedown = false;
   });
 
@@ -72,24 +73,26 @@ setTimeout(() => {
     }
   });
 
+  testCycle.addEventListener("mouseup", () => {
+    console.log("mouseup2");
+  });
+
   testCycle.addEventListener("mousedown", (e) => {
-    console.log(e);
     console.log("mousedown");
   });
   testCycle.addEventListener("mousedown", function a(e) {
-    console.log(e);
     console.log("mousedown1");
   });
   testCycle.removeEventListener("mousedown", "a");
 
-  testCycle.addEventListener("mouseup", () => {
+  testCycle.addEventListener("mousedown", () => {
     testCycle.x += 20;
   });
   testCycle.addEventListener("mouseenter", () => {
-    console.log("mouseenter");
+    console.log("mouseenter2");
   });
   testCycle.addEventListener("mouseleave", () => {
-    console.log("mouseleave");
+    console.log("mouseleave2");
   });
 
   testRect.addChild(testCycle);

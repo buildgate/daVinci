@@ -91,6 +91,11 @@ class Dcharacter {
 #### 方法
 
 ```typescript
+
+  //初始化数据使用，也可以用作批量设置时使用，因为函数会先停止自动渲染，赋值完后再把自动渲染的开关设置为原来的值;
+  //DM值是当前画布对象，如非必要尽量不要更改，否则可能会出现一些未知的问题,建议只修改data
+  initData(data: Dcharacter_data, DM?: Davinci){...}
+
  //监听器 目前支持mouseenter,mouseleave,mousemove,mousedown,mouseup,交互内容在此设置
   addEventListener(type: Devent_type, fn: (event: Devent) => any){...}
 
@@ -151,6 +156,9 @@ class Davinci {
 #### 方法
 
 ```typescript
+//用与设置画布的宽高,同时会改变底层画布交互对象的宽高,需要主动调用render才会重新渲染
+  initData(options?: Doptions)
+
  //全局渲染,如果输入uid则只会渲染目标的上层，下层对象将会使用快照渲染，速度会快很多，请尽量使用uid进行渲染；
   render(uid?: number){...}
 

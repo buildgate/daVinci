@@ -109,7 +109,6 @@ type Dcharacter_data = {
   collider?: Dcollider;
   fillColor?: CanvasFillStrokeStyles["fillStyle"];
   texture?: string;
-  children?: Array<Dcharacter>;
   parent?: Dcharacter;
   zidx?: number;
   shadow?: {
