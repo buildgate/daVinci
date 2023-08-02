@@ -31,7 +31,8 @@ export class Davinci {
   preTarget: Dcharacter | null | undefined = null;
 
   //节流相关
-  waittingQueue: Array<number> = [];
+  nextRenderUid: number = 0;
+  nextRenderAll: boolean = false;
   block: boolean = false;
 
   //按帧节流
@@ -222,24 +223,33 @@ export class Davinci {
     if (!this.block) {
       this.block = true;
       this.Dctx.clearRect(0, 0, this.width, this.height);
+      this.nextRenderUid = 0;
+      this.nextRenderAll = false;
       this.DcanvasCharacter.render(0, 0, uid);
+
       window.requestAnimationFrame(() => {
         this.block = false;
-        if (this.waittingQueue.length) {
-          if (
-            this.waittingQueue.length === 1 &&
-            this.waittingQueue[0] === uid
-          ) {
-            this.waittingQueue = [];
-            this.render(uid);
-          } else {
-            this.waittingQueue = [];
+
+        if (this.nextRenderUid === 0) {
+          return;
+        } else {
+          if (this.nextRenderAll) {
             this.render();
+          } else {
+            this.render(this.nextRenderUid);
           }
         }
       });
     } else {
-      this.waittingQueue.push(uid || 0);
+      if (this.nextRenderAll) {
+        return;
+      }
+      if (!uid) {
+        this.nextRenderAll = true;
+        return;
+      }
+      this.nextRenderAll = this.nextRenderUid !== uid || this.nextRenderAll;
+      this.nextRenderUid = uid;
     }
   }
 
