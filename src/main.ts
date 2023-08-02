@@ -128,6 +128,7 @@ setTimeout(() => {
 
   setInterval(() => {
     tri.x += 0.5;
+    testCycle.x += 0.5;
   }, 50);
 
   //非引擎版本
