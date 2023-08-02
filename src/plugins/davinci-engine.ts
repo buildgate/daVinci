@@ -214,6 +214,9 @@ export class Davinci {
 
   //全局渲染
   render(uid?: number) {
+    if (!this.allowRender) {
+      return;
+    }
     this.Dctx.clearRect(0, 0, this.width, this.height);
     this.DcanvasCharacter.render(0, 0, uid);
   }
@@ -350,6 +353,7 @@ export class Dcharacter {
             //触发render
             Reflect.set(target, key, value, receiver);
             if (target.autoRender) {
+              target.parent?.childrenSort();
               target.dm.render(target.parent?.uid); //注意，如果修改的是zidx，改变的实际是父级的内容，所以这里的uid需要用父级的
             }
             break;
@@ -506,11 +510,12 @@ export class Dcharacter {
     };
   }
 
-  //渲染器
+  //渲染器，区分快照渲染和常规渲染
   render(relativeX: number = 0, relativeY: number = 0, snapshotID?: number) {
+    let found = false; //判断是否已经找到快照渲染的对象
     if (!this.dm.allowRender) {
       //中断渲染
-      return;
+      return found;
     }
 
     let rX = this.position === "relative" ? relativeX : 0;
@@ -520,6 +525,7 @@ export class Dcharacter {
     this.realY = rY + this.y; //赋值实际Y
 
     if (!this.snapshot) {
+      //若无快照，证明是第一次渲染，那么先保存快照，然后子级全部不使用快照渲染
       this.snapshot = this.dm.Dctx.getImageData(
         0,
         0,
@@ -527,17 +533,25 @@ export class Dcharacter {
         this.dm.height
       );
     } else {
+      //若有快照，则先检测是否快照渲染的对象
       if (snapshotID) {
         if (snapshotID === this.uid) {
+          //uid匹配则后面全部使用常规渲染
           this.dm.Dctx.putImageData(this.snapshot, 0, 0);
+          found = true;
         } else {
-          this.childrenSort();
           this.children.forEach((o) => {
-            o.render(this.x + rX, this.y + rY, snapshotID);
+            //循环没个子级，如果在子级中找到目标，则返回true
+            if (found) {
+              o.render(this.x + rX, this.y + rY);
+            } else {
+              found = o.render(this.x + rX, this.y + rY, snapshotID) || found;
+            }
           });
-          return;
+          return found;
         }
       } else {
+        //无目标id则常规渲染，先保存当前快照
         this.snapshot = this.dm.Dctx.getImageData(
           0,
           0,
@@ -552,8 +566,9 @@ export class Dcharacter {
       this.children.forEach((o) => {
         o.render(this.x + rX, this.y + rY);
       });
-      return;
+      return found;
     }
+
     let shape;
     this.dm.Dctx.beginPath();
 
@@ -604,11 +619,12 @@ export class Dcharacter {
     this.dm.Dctx.shadowOffsetY = this.shadow.offsetY;
 
     this.dm.Dctx.fill();
-    this.childrenSort();
 
     this.children.forEach((o) => {
       o.render(this.x + rX, this.y + rY);
     });
+
+    return found;
   }
 
   //纹理渲染

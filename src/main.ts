@@ -95,7 +95,33 @@ setTimeout(() => {
     console.log("mouseleave2");
   });
 
+  const shape3 = new Dshape({
+    type: "polygon",
+    path: {
+      pointList: [
+        { x: 10, y: 10 },
+        { x: 110, y: 110 },
+        { x: 10, y: 110 },
+      ],
+    },
+  });
+
+  const tri = new Dcharacter(
+    {
+      x: 10,
+      y: 10,
+      width: 200,
+      height: 300,
+      fillColor: "green",
+      shape: shape3,
+      collider: shape3,
+    },
+    test
+  );
+
   testRect.addChild(testCycle);
+
+  test.DcanvasCharacter.addChild(tri);
 
   test.onGlobalTextureComplete = () => {
     test.collisionDetect = true;
