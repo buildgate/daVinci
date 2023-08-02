@@ -73,11 +73,9 @@ type Dpath_rect = {
 type Dpath_arc = {
   radius: number;
 };
-type Dpath_polygon = {
-  pointList: Array<
-    [number, number] | [number, number, number, number, number, number]
-  >;
-};
+type Dpath_polygon = Array<
+  [number, number] | [number, number, number, number, number, number]
+>;
 type Dpath = Dpath_rect | Dpath_arc | Dpath_polygon;
 
 //碰撞图形数据类型

@@ -97,13 +97,11 @@ setTimeout(() => {
 
   const shape3 = new Dshape({
     type: "polygon",
-    path: {
-      pointList: [
-        [10, 10],
-        [110, 110, 120, 130, 140, 140],
-        [10, 110],
-      ],
-    },
+    path: [
+      [10, 10],
+      [110, 110, 120, 130, 140, 140],
+      [10, 110],
+    ],
   });
 
   const tri = new Dcharacter(

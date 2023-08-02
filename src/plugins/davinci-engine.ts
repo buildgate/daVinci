@@ -614,10 +614,10 @@ export class Dcharacter {
       case "polygon":
         shape = (this.shape as Dshape_data_polygon).path;
         this.dm.Dctx.moveTo(
-          shape.pointList[0][0] + this.x + rX,
-          shape.pointList[0][1] + this.y + rY
+          shape[0][0] + this.x + rX,
+          shape[0][1] + this.y + rY
         );
-        shape.pointList.forEach((point) => {
+        shape.forEach((point) => {
           if (point.length == 2) {
             this.dm.Dctx.lineTo(point[0] + this.x + rX, point[1] + this.y + rY);
           }
@@ -741,10 +741,10 @@ export class Dcharacter {
       case "polygon":
         collider = (this.shape as Dshape_data_polygon).path;
         this.dm.Sctx.moveTo(
-          collider.pointList[0][0] + this.x + rX,
-          collider.pointList[0][1] + this.y + rY
+          collider[0][0] + this.x + rX,
+          collider[0][1] + this.y + rY
         );
-        collider.pointList.forEach((point) => {
+        collider.forEach((point) => {
           if (point.length == 2) {
             this.dm.Sctx.lineTo(point[0] + this.x + rX, point[1] + this.y + rY);
           }
