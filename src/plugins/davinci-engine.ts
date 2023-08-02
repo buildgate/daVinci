@@ -614,11 +614,23 @@ export class Dcharacter {
       case "polygon":
         shape = (this.shape as Dshape_data_polygon).path;
         this.dm.Dctx.moveTo(
-          shape.pointList[0].x + this.x + rX,
-          shape.pointList[0].y + this.y + rY
+          shape.pointList[0][0] + this.x + rX,
+          shape.pointList[0][1] + this.y + rY
         );
         shape.pointList.forEach((point) => {
-          this.dm.Dctx.lineTo(point.x + this.x + rX, point.y + this.y + rY);
+          if (point.length == 2) {
+            this.dm.Dctx.lineTo(point[0] + this.x + rX, point[1] + this.y + rY);
+          }
+          if (point.length == 6) {
+            this.dm.Dctx.bezierCurveTo(
+              point[0] + this.x + rX,
+              point[1] + this.y + rY,
+              point[2] + this.x + rX,
+              point[3] + this.y + rY,
+              point[4] + this.x + rX,
+              point[5] + this.y + rY
+            );
+          }
         });
         this.dm.Dctx.closePath();
         break;
@@ -678,7 +690,7 @@ export class Dcharacter {
       return;
     }
 
-    let rx = this.position === "relative" ? relativeX : 0;
+    let rX = this.position === "relative" ? relativeX : 0;
     let rY = this.position === "relative" ? relativeY : 0;
 
     let currentTarget: Dcharacter | undefined = undefined;
@@ -686,7 +698,7 @@ export class Dcharacter {
       for (let i = this.children.length - 1; i >= 0; i--) {
         currentTarget = this.children[i].colliderTrigger(
           event,
-          this.x + rx,
+          this.x + rX,
           this.y + rY
         );
         if (currentTarget) {
@@ -710,7 +722,7 @@ export class Dcharacter {
       case "rect":
         collider = (this.collider as Dshape_data_rect).path;
         this.dm.Sctx.rect(
-          this.x + rx + this.focusX - collider.width / 2,
+          this.x + rX + this.focusX - collider.width / 2,
           this.y + rY + this.focusY - collider.height / 2,
           collider.width,
           collider.height
@@ -719,7 +731,7 @@ export class Dcharacter {
       case "arc":
         collider = (this.shape as Dshape_data_arc).path;
         this.dm.Sctx.arc(
-          this.x + rx + this.focusX,
+          this.x + rX + this.focusX,
           this.y + rY + this.focusY,
           collider.radius,
           0,
@@ -729,11 +741,23 @@ export class Dcharacter {
       case "polygon":
         collider = (this.shape as Dshape_data_polygon).path;
         this.dm.Sctx.moveTo(
-          collider.pointList[0].x + this.x + rx,
-          collider.pointList[0].y + this.y + rY
+          collider.pointList[0][0] + this.x + rX,
+          collider.pointList[0][1] + this.y + rY
         );
         collider.pointList.forEach((point) => {
-          this.dm.Sctx.lineTo(point.x + this.x + rx, point.y + this.y + rY);
+          if (point.length == 2) {
+            this.dm.Sctx.lineTo(point[0] + this.x + rX, point[1] + this.y + rY);
+          }
+          if (point.length == 6) {
+            this.dm.Sctx.bezierCurveTo(
+              point[0] + this.x + rX,
+              point[1] + this.y + rY,
+              point[2] + this.x + rX,
+              point[3] + this.y + rY,
+              point[4] + this.x + rX,
+              point[5] + this.y + rY
+            );
+          }
         });
         this.dm.Sctx.closePath();
         break;
