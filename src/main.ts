@@ -128,7 +128,7 @@ setTimeout(() => {
 
   setInterval(() => {
     tri.x += 0.5;
-  }, 20);
+  }, 50);
 
   //非引擎版本
   // test.createRect({
