@@ -123,11 +123,12 @@ setTimeout(() => {
 
   test.DcanvasCharacter.addChild(tri);
 
-  test.onGlobalTextureComplete = () => {
-    test.collisionDetect = true;
-    test.allowRender = true;
-    test.render();
-  };
+  test.collisionDetect = true;
+  test.render();
+
+  setInterval(() => {
+    tri.x += 0.5;
+  }, 20);
 
   //非引擎版本
   // test.createRect({

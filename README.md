@@ -44,7 +44,6 @@ class Dcollider {
 
 ```typescript
 class Dcharacter {
-  autoRender: boolean = true; //决定这个类的属性更改是否自动更新视图，默认会自动更新
   position: string = "relative"; //定位类型
   uid: number; //唯一ID，不可修改
   id: string | number | symbol = "";
@@ -135,7 +134,7 @@ class Davinci {
 
   DcanvasCharacter: Dcharacter; //实例化时会自动构建画布的角色类
 
-  allowRender: boolean = false; //防止初始化时多次渲染，默认为false
+  allowRender: boolean = true; //是否允许渲染
   collisionDetect: boolean = false; //碰撞检测开关，默认为false，防止误触需要手动开启
 
   //画布设置

@@ -12,7 +12,7 @@ export class Davinci {
 
   DcanvasCharacter: Dcharacter; //必须建立一个基础元素
 
-  allowRender: boolean = false; //防止初始化时多次渲染，默认为false
+  allowRender: boolean = true; //防止初始化时多次渲染，默认为false
   collisionDetect: boolean = false; //碰撞检测开关，默认为false，防止误触需要手动开启
 
   //画布设置
@@ -30,10 +30,14 @@ export class Davinci {
   currentTarget: Dcharacter | null | undefined = null;
   preTarget: Dcharacter | null | undefined = null;
 
+  //节流相关
+  waittingCount: number = 0;
+  block: boolean = false;
+
   //按帧节流
   throttle(fn: (...rest: any) => any) {
     let block = false;
-    return function (this: object) {
+    return function (this: object, ...rest: any) {
       let self = this;
       let args = arguments;
       if (!block) {
@@ -90,11 +94,8 @@ export class Davinci {
     this.Scanvas.width = this.width;
     this.Scanvas.height = this.height;
 
-    let allowRenderT = this.allowRender;
-    this.allowRender = false;
     this.DcanvasCharacter.width = this.width;
     this.DcanvasCharacter.height = this.height;
-    this.allowRender = allowRenderT;
   }
 
   //初始化触发事件
@@ -217,8 +218,21 @@ export class Davinci {
     if (!this.allowRender) {
       return;
     }
-    this.Dctx.clearRect(0, 0, this.width, this.height);
-    this.DcanvasCharacter.render(0, 0, uid);
+
+    if (!this.block) {
+      this.block = true;
+      this.Dctx.clearRect(0, 0, this.width, this.height);
+      this.DcanvasCharacter.render(0, 0, uid);
+      window.requestAnimationFrame(() => {
+        this.block = false;
+        if (this.waittingCount) {
+          this.waittingCount = 0;
+          this.render();
+        }
+      });
+    } else {
+      this.waittingCount += 1;
+    }
   }
 
   //全局纹理加载检测
@@ -245,7 +259,6 @@ export class Davinci {
 
 export class Dcharacter {
   [key: string]: any;
-  autoRender: boolean = true; //决定这个类的属性更改是否自动更新视图，默认会自动更新
   position: string = "relative";
   uid: number;
   id: string | number | symbol = +new Date();
@@ -294,7 +307,9 @@ export class Dcharacter {
   onmouseleave = new Map();
   // onmouseover: (event: Devent) => any = () => {}; 未支持
 
-  ontextureonload: () => any = () => {};
+  ontextureonload: () => any = () => {
+    this.dm.render(this.uid);
+  };
 
   onkeydown: (event: Devent) => any = () => {};
   onkeyup: (event: Devent) => any = () => {};
@@ -312,16 +327,12 @@ export class Dcharacter {
         switch (key) {
           case "width":
             Reflect.set(target, "focusX", value / 2, receiver);
-            if (target.autoRender) {
-              target.dm.render(target.uid);
-            }
+            target.dm.render(target.uid);
             //触发render
             break;
           case "height":
             Reflect.set(target, "focusY", value / 2, receiver);
-            if (target.autoRender) {
-              target.dm.render(target.uid);
-            }
+            target.dm.render(target.uid);
             //触发render
             break;
           case "name":
@@ -337,9 +348,9 @@ export class Dcharacter {
             //不触发render
             break;
           case "texture":
-            //不触发render
             Reflect.set(target, key, value, receiver);
             target.initTexture(value);
+            //不触发render
             break;
           case "textureSVG":
             //不触发render
@@ -352,10 +363,8 @@ export class Dcharacter {
           case "zidx":
             //触发render
             Reflect.set(target, key, value, receiver);
-            if (target.autoRender) {
-              target.parent?.childrenSort();
-              target.dm.render(target.parent?.uid); //注意，如果修改的是zidx，改变的实际是父级的内容，所以这里的uid需要用父级的
-            }
+            target.parent?.childrenSort();
+            target.dm.render(target.parent?.uid); //注意，如果修改的是zidx，改变的实际是父级的内容，所以这里的uid需要用父级的
             break;
           case "snapshot":
             //不触发render
@@ -395,9 +404,7 @@ export class Dcharacter {
             break;
           default:
             Reflect.set(target, key, value, receiver);
-            if (target.autoRender) {
-              target.dm.render(target.uid);
-            }
+            target.dm.render(target.uid);
             //其余属性均需要触发render
             break;
         }
@@ -409,8 +416,6 @@ export class Dcharacter {
   //初始化数据
   initData(data: Dcharacter_data, DM?: Davinci) {
     const self = this;
-    const autoRenderT = this.autoRender;
-    this.autoRender = false;
     //先停止自动渲染，批量赋值完成后就设置回来
 
     this.dm = DM || this.dm;
@@ -437,10 +442,6 @@ export class Dcharacter {
     } else {
       this.textureComplete = true;
     }
-
-    //将自动渲染设置回来
-    this.autoRender =
-      data.autoRender === undefined ? autoRenderT : data.autoRender;
   }
 
   //按帧节流
