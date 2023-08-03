@@ -85,8 +85,9 @@ class Dcharacter {
   parent: Dcharacter | null | undefined = null; //自动赋值
 
   scaleX: number = 1; //现在缩放和旋转已经支持应用到子角色上了，！！注意！！变换顺序是位移，缩放，旋转，所以最终本体的坐标系是参照父级元素的。如果需要设置位移可以设置x和y
-  scaleY: number = 1;
+  scaleY: number = 1; //这四项变化都会影响到子级
   rotate: number = 0;
+  opacity: number = 1;
 }
 ```
 
@@ -141,7 +142,6 @@ class Davinci {
   //画布设置
   width: number = 500;
   height: number = 500;
-  globalAlpha = 0;
   globalCompositeOperation = "source-over";
 
   //鼠标事件参数

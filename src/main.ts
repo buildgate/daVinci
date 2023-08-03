@@ -25,6 +25,7 @@ setTimeout(() => {
       texture:
         "https://img1.baidu.com/it/u=1458656822,2078909008&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=750",
       rotate: (45 * Math.PI) / 180,
+      opacity: 1,
       // scaleX: 0.5,
       // scaleY: 0.5,
     },
@@ -46,14 +47,15 @@ setTimeout(() => {
       fillColor: "black",
       shape: shape2,
       collider: shape2,
+      opacity: 0.5,
       shadow: {
         color: "black",
         blur: 10,
         offsetX: 10,
         offsetY: 20,
       },
-      texture:
-        "https://img1.baidu.com/it/u=1458656822,2078909008&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=750",
+      // texture:
+      //   "https://img1.baidu.com/it/u=1458656822,2078909008&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=750",
     },
     test
   );
@@ -100,36 +102,36 @@ setTimeout(() => {
     console.log("mouseleave2");
   });
 
-  // const shape3 = new Dshape({
-  //   type: "polygon",
-  //   path: [
-  //     [10, 10],
-  //     [110, 110],
-  //     [10, 110],
-  //   ],
-  // });
+  const shape3 = new Dshape({
+    type: "polygon",
+    path: [
+      [10, 10],
+      [110, 110, 110, 10, 110, 110],
+      [10, 110],
+    ],
+  });
 
-  // const tri = new Dcharacter(
-  //   {
-  //     x: 10,
-  //     y: 10,
-  //     width: 200,
-  //     height: 300,
-  //     fillColor: "green",
-  //     shape: shape3,
-  //     collider: shape3,
-  //     rotate: (45 * Math.PI) / 180,
-  //   },
-  //   test
-  // );
+  const tri = new Dcharacter(
+    {
+      x: 10,
+      y: 10,
+      width: 200,
+      height: 300,
+      fillColor: "green",
+      shape: shape3,
+      collider: shape3,
+      // rotate: (45 * Math.PI) / 180,
+    },
+    test
+  );
 
-  // tri.addEventListener("mousedown", () => {
-  //   console.log("mousedown3");
-  // });
+  tri.addEventListener("mousedown", () => {
+    console.log("mousedown3");
+  });
 
   testRect.addChild(testCycle);
 
-  // test.DcanvasCharacter.addChild(tri);
+  test.DcanvasCharacter.addChild(tri);
 
   test.collisionDetect = true;
   test.render();

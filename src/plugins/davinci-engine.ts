@@ -18,7 +18,6 @@ export class Davinci {
   //画布设置
   width: number = 500;
   height: number = 500;
-  globalAlpha = 0;
   globalCompositeOperation = "source-over";
 
   //鼠标事件参数
@@ -284,6 +283,7 @@ export class Dcharacter {
   scaleX: number = 1;
   scaleY: number = 1;
   rotate: number = 0;
+  opacity: number = 1;
 
   dm: Davinci; //画布实例
   shape: Dshape | null = null;
@@ -433,6 +433,7 @@ export class Dcharacter {
     this.scaleX = data.scaleX ?? this.scaleX;
     this.scaleY = data.scaleY ?? this.scaleY;
     this.rotate = data.rotate ?? this.rotate;
+    this.opacity = data.opacity ?? this.opacity;
 
     this.shadow = data.shadow ? { ...data.shadow } : this.shadow;
 
@@ -516,9 +517,11 @@ export class Dcharacter {
     ctx.translate(this.x + this.focusX, this.y + this.focusY);
     ctx.scale(this.scaleX, this.scaleY);
     ctx.rotate(this.rotate);
+    ctx.globalAlpha *= this.opacity;
   }
   resetTF(ctx: CanvasRenderingContext2D) {
     //恢复形变
+    ctx.globalAlpha /= this.opacity;
     ctx.rotate(-this.rotate);
     ctx.scale(1 / this.scaleX, 1 / this.scaleY);
     ctx.translate(-(this.x + this.focusX), -(this.y + this.focusY));

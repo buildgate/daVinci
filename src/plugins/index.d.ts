@@ -122,6 +122,7 @@ type Dcharacter_data = {
   scaleX?: number;
   scaleY?: number;
   rotate?: number;
+  opacity?: number;
 };
 
 //事件类型
