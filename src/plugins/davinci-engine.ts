@@ -69,6 +69,8 @@ export class Davinci {
       {
         width: this.width,
         height: this.height,
+        focusX: 0,
+        focusY: 0,
         fillColor: "#00000000",
         shape: canvasShape,
       },
@@ -121,8 +123,6 @@ export class Davinci {
         };
         this.currentTarget = this.DcanvasCharacter.colliderTrigger(
           Devent,
-          0,
-          0,
           true
         );
         if (!this.currentTarget && this.preTarget) {
@@ -155,12 +155,7 @@ export class Davinci {
         type: "mousedown",
         preTarge: this.currentTarget,
       };
-      this.currentTarget = this.DcanvasCharacter.colliderTrigger(
-        Devent,
-        0,
-        0,
-        true
-      );
+      this.currentTarget = this.DcanvasCharacter.colliderTrigger(Devent, true);
     });
     this.Dcanvas.addEventListener("mouseup", (e) => {
       this.preX = this.x;
@@ -177,12 +172,7 @@ export class Davinci {
         type: "mouseup",
         preTarge: this.currentTarget,
       };
-      this.currentTarget = this.DcanvasCharacter.colliderTrigger(
-        Devent,
-        0,
-        0,
-        true
-      );
+      this.currentTarget = this.DcanvasCharacter.colliderTrigger(Devent, true);
     });
     this.Dcanvas.addEventListener("mouseleave", (e) => {
       //当鼠标离开画布的监控区域，那么就会被判断为mouseup和mouseleave先后触发
@@ -201,12 +191,7 @@ export class Davinci {
         preTarge: this.currentTarget,
       };
 
-      this.currentTarget = this.DcanvasCharacter.colliderTrigger(
-        Devent,
-        0,
-        0,
-        true
-      );
+      this.currentTarget = this.DcanvasCharacter.colliderTrigger(Devent, true);
 
       this.currentTarget?.onmouseleave.forEach((o) => {
         o(event);
@@ -225,7 +210,7 @@ export class Davinci {
       this.Dctx.clearRect(0, 0, this.width, this.height);
       this.nextRenderUid = 0;
       this.nextRenderAll = false;
-      this.DcanvasCharacter.render(0, 0, uid);
+      this.DcanvasCharacter.render(uid);
 
       window.requestAnimationFrame(() => {
         this.block = false;
@@ -346,16 +331,6 @@ export class Dcharacter {
     return new Proxy(this, {
       set: function (target, key, value, receiver) {
         switch (key) {
-          case "width":
-            Reflect.set(target, "focusX", value / 2, receiver);
-            target.dm.render(target.uid);
-            //触发render
-            break;
-          case "height":
-            Reflect.set(target, "focusY", value / 2, receiver);
-            target.dm.render(target.uid);
-            //触发render
-            break;
           case "name":
             Reflect.set(target, key, value, receiver);
             //不触发render
@@ -446,18 +421,18 @@ export class Dcharacter {
     this.fillColor = data.fillColor || this.fillColor;
     this.shape = data.shape || this.shape;
     this.collider = data.collider || this.collider;
-    this.width = data.width || this.width;
-    this.height = data.height || this.height;
-    this.x = data.x || this.x;
-    this.y = data.y || this.y;
-    this.focusX = data.focusX || this.width / 2;
-    this.focusY = data.focusY || this.height / 2;
-    this.zidx = data.zidx || this.zidx;
+    this.width = data.width ?? this.width;
+    this.height = data.height ?? this.height;
+    this.x = data.x ?? this.x;
+    this.y = data.y ?? this.y;
+    this.focusX = data.focusX ?? this.width / 2;
+    this.focusY = data.focusY ?? this.height / 2;
+    this.zidx = data.zidx ?? this.zidx;
     this.position = data.position || this.position;
 
-    this.scaleX = data.scaleX || this.scaleX;
-    this.scaleY = data.scaleY || this.scaleY;
-    this.rotate = data.rotate || this.rotate;
+    this.scaleX = data.scaleX ?? this.scaleX;
+    this.scaleY = data.scaleY ?? this.scaleY;
+    this.rotate = data.rotate ?? this.rotate;
 
     this.shadow = data.shadow ? { ...data.shadow } : this.shadow;
 
@@ -536,19 +511,26 @@ export class Dcharacter {
     };
   }
 
+  setTF(ctx: CanvasRenderingContext2D) {
+    //设置形变
+    ctx.translate(this.x + this.focusX, this.y + this.focusY);
+    ctx.scale(this.scaleX, this.scaleY);
+    ctx.rotate(this.rotate);
+  }
+  resetTF(ctx: CanvasRenderingContext2D) {
+    //恢复形变
+    ctx.rotate(-this.rotate);
+    ctx.scale(1 / this.scaleX, 1 / this.scaleY);
+    ctx.translate(-(this.x + this.focusX), -(this.y + this.focusY));
+  }
+
   //渲染器，区分快照渲染和常规渲染
-  render(relativeX: number = 0, relativeY: number = 0, snapshotID?: number) {
+  render(snapshotID?: number) {
     let found = false; //判断是否已经找到快照渲染的对象
     if (!this.dm.allowRender) {
       //中断渲染
       return found;
     }
-
-    let rX = this.position === "relative" ? relativeX : 0;
-    let rY = this.position === "relative" ? relativeY : 0;
-
-    this.realX = rX + this.x; //赋值实际的x
-    this.realY = rY + this.y; //赋值实际Y
 
     if (!this.snapshot) {
       //若无快照，证明是第一次渲染，那么先保存快照，然后子级全部不使用快照渲染
@@ -566,14 +548,16 @@ export class Dcharacter {
           this.dm.Dctx.putImageData(this.snapshot, 0, 0);
           found = true;
         } else {
+          this.setTF(this.dm.Dctx);
           this.children.forEach((o) => {
             //循环没个子级，如果在子级中找到目标，则返回true
             if (found) {
-              o.render(this.x + rX, this.y + rY);
+              o.render();
             } else {
-              found = o.render(this.x + rX, this.y + rY, snapshotID) || found;
+              found = o.render(snapshotID) || found;
             }
           });
+          this.resetTF(this.dm.Dctx);
           return found;
         }
       } else {
@@ -589,26 +573,17 @@ export class Dcharacter {
 
     if (!this.shape) {
       //没有图形不作渲染
+      this.setTF(this.dm.Dctx);
       this.children.forEach((o) => {
-        o.render(this.x + rX, this.y + rY);
+        o.render();
       });
+      this.resetTF(this.dm.Dctx);
       return found;
     }
 
     let shape;
     this.dm.Dctx.beginPath();
-    this.dm.Dctx.save();
-
-    this.dm.Dctx.setTransform(
-      this.scaleX,
-      0,
-      0,
-      this.scaleY,
-      this.x + rX + this.focusX,
-      this.y + rY + this.focusY
-    );
-    this.dm.Dctx.rotate(this.rotate);
-
+    this.setTF(this.dm.Dctx);
     switch (this.shape.type) {
       case "rect":
         shape = (this.shape as Dshape_data_rect).path;
@@ -646,6 +621,7 @@ export class Dcharacter {
       default:
         break;
     }
+
     if (this.texture) {
       this.textureRender();
       this.dm.Dctx.fillStyle = this.texturePattern || this.dm.Dctx.fillStyle;
@@ -660,11 +636,11 @@ export class Dcharacter {
 
     this.dm.Dctx.fill();
 
-    this.dm.Dctx.restore();
-
     this.children.forEach((o) => {
-      o.render(this.x + rX, this.y + rY);
+      o.render();
     });
+
+    this.resetTF(this.dm.Dctx);
 
     return found;
   }
@@ -689,31 +665,21 @@ export class Dcharacter {
   }
 
   //判断是否当前目标，并优先返回顶层对象，默认阻止冒泡
-  colliderTrigger(
-    event: Devent,
-    relativeX: number = 0,
-    relativeY: number = 0,
-    stop: boolean = true
-  ): Dcharacter | undefined {
+  colliderTrigger(event: Devent, stop: boolean = true): Dcharacter | undefined {
     if (!this.dm.collisionDetect) {
       return;
     }
 
-    let rX = this.position === "relative" ? relativeX : 0;
-    let rY = this.position === "relative" ? relativeY : 0;
-
     let currentTarget: Dcharacter | undefined = undefined;
     if (this.children.length) {
+      this.setTF(this.dm.Sctx);
       for (let i = this.children.length - 1; i >= 0; i--) {
-        currentTarget = this.children[i].colliderTrigger(
-          event,
-          this.x + rX,
-          this.y + rY
-        );
+        currentTarget = this.children[i].colliderTrigger(event);
         if (currentTarget) {
           break;
         }
       }
+      this.resetTF(this.dm.Sctx);
     }
 
     if (currentTarget && stop) {
@@ -726,23 +692,20 @@ export class Dcharacter {
     }
 
     this.dm.Sctx.beginPath();
-    this.dm.Sctx.save();
 
-    this.dm.Sctx.setTransform(
-      this.scaleX,
-      0,
-      0,
-      this.scaleY,
-      this.x + rX + this.focusX,
-      this.y + rY + this.focusY
-    );
-    this.dm.Sctx.rotate(this.rotate);
+    this.setTF(this.dm.Sctx);
 
     let collider;
     switch (this.collider.type) {
       case "rect":
         collider = (this.collider as Dshape_data_rect).path;
         this.dm.Sctx.rect(
+          -this.focusX,
+          -this.focusY,
+          collider.width,
+          collider.height
+        );
+        this.dm.Dctx.rect(
           -this.focusX,
           -this.focusY,
           collider.width,
@@ -778,7 +741,7 @@ export class Dcharacter {
         break;
     }
 
-    this.dm.Sctx.restore();
+    this.resetTF(this.dm.Sctx);
 
     if (this.dm.Sctx.isPointInPath(event.x, event.y)) {
       let nextEvent = { ...event };

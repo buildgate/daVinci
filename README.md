@@ -87,13 +87,13 @@ class Dcharacter {
   //父角色模块，若无则是默认画布
   parent: Dcharacter | null | undefined = null; //自动赋值
 
-  scaleX: number = 1; //缩放和选择设置，但是这里的变换不会影响下级
+  scaleX: number = 1; //现在缩放和旋转已经支持应用到子角色上了，！！注意！！变换顺序是位移，缩放，旋转，所以最终本体的坐标系是参照父级元素的。如果需要设置位移可以设置x和y
   scaleY: number = 1;
   rotate: number = 0;
 }
 ```
 
-#### 方法
+#### 方法(对外暴露的方法，其他内置方法请勿随意调用)
 
 ```typescript
 
@@ -158,7 +158,7 @@ class Davinci {
 }
 ```
 
-#### 方法
+#### 方法(对外暴露的方法，其他内置方法请勿随意调用)
 
 ```typescript
 //用与设置画布的宽高,同时会改变底层画布交互对象的宽高,需要主动调用render才会重新渲染
