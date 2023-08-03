@@ -605,6 +605,14 @@ export class Dcharacter {
           if (point.length === 2) {
             this.dm.Dctx.lineTo(point[0], point[1]);
           }
+          if (point.length === 4) {
+            this.dm.Dctx.quadraticCurveTo(
+              point[0],
+              point[1],
+              point[2],
+              point[3]
+            );
+          }
           if (point.length === 6) {
             this.dm.Dctx.bezierCurveTo(
               point[0],
@@ -722,6 +730,14 @@ export class Dcharacter {
         collider.forEach((point) => {
           if (point.length === 2) {
             this.dm.Sctx.lineTo(point[0], point[1]);
+          }
+          if (point.length === 4) {
+            this.dm.Sctx.quadraticCurveTo(
+              point[0],
+              point[1],
+              point[2],
+              point[3]
+            );
           }
           if (point.length === 6) {
             this.dm.Sctx.bezierCurveTo(

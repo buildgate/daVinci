@@ -74,7 +74,9 @@ type Dpath_arc = {
   radius: number;
 };
 type Dpath_polygon = Array<
-  [number, number] | [number, number, number, number, number, number]
+  | [number, number]
+  | [number, number, number, number]
+  | [number, number, number, number, number, number]
 >;
 type Dpath = Dpath_rect | Dpath_arc | Dpath_polygon;
 
