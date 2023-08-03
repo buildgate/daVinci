@@ -86,6 +86,10 @@ class Dcharacter {
 
   //父角色模块，若无则是默认画布
   parent: Dcharacter | null | undefined = null; //自动赋值
+
+  scaleX: number = 1; //缩放和选择设置，但是这里的变换不会影响下级
+  scaleY: number = 1;
+  rotate: number = 0;
 }
 ```
 

@@ -22,6 +22,9 @@ setTimeout(() => {
       fillColor: "red",
       shape: shape,
       collider: shape,
+
+      scaleX: 0.5,
+      scaleY: 0.5,
     },
     test
   );
@@ -99,7 +102,7 @@ setTimeout(() => {
     type: "polygon",
     path: [
       [10, 10],
-      [110, 110, 120, 130, 140, 140],
+      [110, 110],
       [10, 110],
     ],
   });
@@ -113,9 +116,14 @@ setTimeout(() => {
       fillColor: "green",
       shape: shape3,
       collider: shape3,
+      rotate: (45 * Math.PI) / 180,
     },
     test
   );
+
+  tri.addEventListener("mousedown", () => {
+    console.log("mousedown3");
+  });
 
   testRect.addChild(testCycle);
 

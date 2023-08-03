@@ -296,6 +296,9 @@ export class Dcharacter {
     offsetX: 0,
     offsetY: 0,
   };
+  scaleX: number = 1;
+  scaleY: number = 1;
+  rotate: number = 0;
 
   dm: Davinci; //画布实例
   shape: Dshape | null = null;
@@ -452,6 +455,10 @@ export class Dcharacter {
     this.zidx = data.zidx || this.zidx;
     this.position = data.position || this.position;
 
+    this.scaleX = data.scaleX || this.scaleX;
+    this.scaleY = data.scaleY || this.scaleY;
+    this.rotate = data.rotate || this.rotate;
+
     this.shadow = data.shadow ? { ...data.shadow } : this.shadow;
 
     if (data.texture) {
@@ -590,45 +597,47 @@ export class Dcharacter {
 
     let shape;
     this.dm.Dctx.beginPath();
+    this.dm.Dctx.save();
+
+    this.dm.Dctx.setTransform(
+      this.scaleX,
+      0,
+      0,
+      this.scaleY,
+      this.x + rX + this.focusX,
+      this.y + rY + this.focusY
+    );
+    this.dm.Dctx.rotate(this.rotate);
 
     switch (this.shape.type) {
       case "rect":
         shape = (this.shape as Dshape_data_rect).path;
         this.dm.Dctx.rect(
-          this.x + rX + this.focusX - shape.width / 2,
-          this.y + rY + this.focusY - shape.height / 2,
+          -this.focusX,
+          -this.focusY,
           shape.width,
           shape.height
         );
         break;
       case "arc":
         shape = (this.shape as Dshape_data_arc).path;
-        this.dm.Dctx.arc(
-          this.x + rX + this.focusX,
-          this.y + rY + this.focusY,
-          shape.radius,
-          0,
-          Math.PI * 2
-        );
+        this.dm.Dctx.arc(0, 0, shape.radius, 0, Math.PI * 2);
         break;
       case "polygon":
         shape = (this.shape as Dshape_data_polygon).path;
-        this.dm.Dctx.moveTo(
-          shape[0][0] + this.x + rX,
-          shape[0][1] + this.y + rY
-        );
+        this.dm.Dctx.moveTo(shape[0][0], shape[0][1]);
         shape.forEach((point) => {
-          if (point.length == 2) {
-            this.dm.Dctx.lineTo(point[0] + this.x + rX, point[1] + this.y + rY);
+          if (point.length === 2) {
+            this.dm.Dctx.lineTo(point[0], point[1]);
           }
-          if (point.length == 6) {
+          if (point.length === 6) {
             this.dm.Dctx.bezierCurveTo(
-              point[0] + this.x + rX,
-              point[1] + this.y + rY,
-              point[2] + this.x + rX,
-              point[3] + this.y + rY,
-              point[4] + this.x + rX,
-              point[5] + this.y + rY
+              point[0],
+              point[1],
+              point[2],
+              point[3],
+              point[4],
+              point[5]
             );
           }
         });
@@ -638,7 +647,7 @@ export class Dcharacter {
         break;
     }
     if (this.texture) {
-      this.textureRender(rX, rY);
+      this.textureRender();
       this.dm.Dctx.fillStyle = this.texturePattern || this.dm.Dctx.fillStyle;
     } else {
       this.dm.Dctx.fillStyle = this.fillColor;
@@ -651,6 +660,8 @@ export class Dcharacter {
 
     this.dm.Dctx.fill();
 
+    this.dm.Dctx.restore();
+
     this.children.forEach((o) => {
       o.render(this.x + rX, this.y + rY);
     });
@@ -659,9 +670,7 @@ export class Dcharacter {
   }
 
   //纹理渲染
-  textureRender(relativeX: number, relativeY: number) {
-    let rx = this.position === "relative" ? relativeX : 0;
-    let rY = this.position === "relative" ? relativeY : 0;
+  textureRender() {
     if (!this.shape) {
       //无形状不渲染
       return;
@@ -675,7 +684,7 @@ export class Dcharacter {
       return;
     }
     this.texturePattern.setTransform(
-      this.textureMatrix.translate(this.x + rx, this.y + rY)
+      this.textureMatrix.translate(-this.focusX, -this.focusY)
     );
   }
 
@@ -717,53 +726,60 @@ export class Dcharacter {
     }
 
     this.dm.Sctx.beginPath();
+    this.dm.Sctx.save();
+
+    this.dm.Sctx.setTransform(
+      this.scaleX,
+      0,
+      0,
+      this.scaleY,
+      this.x + rX + this.focusX,
+      this.y + rY + this.focusY
+    );
+    this.dm.Sctx.rotate(this.rotate);
+
     let collider;
     switch (this.collider.type) {
       case "rect":
         collider = (this.collider as Dshape_data_rect).path;
         this.dm.Sctx.rect(
-          this.x + rX + this.focusX - collider.width / 2,
-          this.y + rY + this.focusY - collider.height / 2,
+          -this.focusX,
+          -this.focusY,
           collider.width,
           collider.height
         );
         break;
       case "arc":
         collider = (this.shape as Dshape_data_arc).path;
-        this.dm.Sctx.arc(
-          this.x + rX + this.focusX,
-          this.y + rY + this.focusY,
-          collider.radius,
-          0,
-          Math.PI * 2
-        );
+        this.dm.Sctx.arc(0, 0, collider.radius, 0, Math.PI * 2);
         break;
       case "polygon":
         collider = (this.shape as Dshape_data_polygon).path;
-        this.dm.Sctx.moveTo(
-          collider[0][0] + this.x + rX,
-          collider[0][1] + this.y + rY
-        );
+        this.dm.Sctx.moveTo(collider[0][0], collider[0][1]);
         collider.forEach((point) => {
-          if (point.length == 2) {
-            this.dm.Sctx.lineTo(point[0] + this.x + rX, point[1] + this.y + rY);
+          if (point.length === 2) {
+            this.dm.Sctx.lineTo(point[0], point[1]);
           }
-          if (point.length == 6) {
+          if (point.length === 6) {
             this.dm.Sctx.bezierCurveTo(
-              point[0] + this.x + rX,
-              point[1] + this.y + rY,
-              point[2] + this.x + rX,
-              point[3] + this.y + rY,
-              point[4] + this.x + rX,
-              point[5] + this.y + rY
+              point[0],
+              point[1],
+              point[2],
+              point[3],
+              point[4],
+              point[5]
             );
           }
         });
         this.dm.Sctx.closePath();
+
         break;
       default:
         break;
     }
+
+    this.dm.Sctx.restore();
+
     if (this.dm.Sctx.isPointInPath(event.x, event.y)) {
       let nextEvent = { ...event };
 

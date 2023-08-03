@@ -117,6 +117,9 @@ type Dcharacter_data = {
     offsetX: number;
     offsetY: number;
   };
+  scaleX?: number;
+  scaleY?: number;
+  rotate?: number;
 };
 
 //事件类型
