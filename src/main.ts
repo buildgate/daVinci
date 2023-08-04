@@ -1,8 +1,8 @@
 import "./style.css";
 import "./plugins/davinci.css";
-import { davinci_visual_hash } from "./plugins/davinci-visual-hash.ts";
-import { davinci_visual_classic } from "./plugins/davinci-visual-classic.ts";
-import { daVinci_free } from "./plugins/davinci-free.ts";
+import { davinci_visual_hash } from "./plugins/davinci-visual-hash__experiment.ts"; //实验性历史素材
+import { davinci_visual_classic } from "./plugins/davinci-visual-classic__experiment.ts"; //实验性历史素材
+import { daVinci_free } from "./plugins/davinci-free_experiment.ts"; //实验性历史素材
 import { Dcharacter, Davinci, Dshape } from "./plugins/davinci-engine.ts";
 import {
   shapeMethodArc,
@@ -35,8 +35,8 @@ let rect = new Dcharacter(
     opacity: 1,
     shapePaintingMethod: shapeMethodRect,
     colliderPaintingMethod: colliderMethodRect,
-    // scaleX: 0.5,
-    // scaleY: 0.5,
+    scaleX: 0.5,
+    scaleY: 0.5,
   },
   DM
 );
