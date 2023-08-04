@@ -1,3 +1,8 @@
+import {
+  shapeMethodRect,
+  colliderMethodRect,
+} from "./davinci-engine-plugins.ts";
+
 export class Davinci {
   Dcanvas = document.createElement("canvas"); //表画布
   Dcontainer = document.createElement("div");
@@ -72,6 +77,9 @@ export class Davinci {
         focusY: 0,
         fillColor: "#00000000",
         shape: canvasShape,
+        collider: canvasShape,
+        shapePaintingMethod: shapeMethodRect,
+        colliderPaintingMethod: colliderMethodRect,
       },
       this
     );
@@ -286,8 +294,8 @@ export class Dcharacter {
   opacity: number = 1;
 
   dm: Davinci; //画布实例
-  shape: Dshape | null = null;
-  collider: Dcollider | null = null;
+  shape: Dshape | any = null; //允许是自定义图形数据或者是官方图形数据
+  collider: Dcollider | any = null;
   zidx: number = 0;
   snapshot: ImageData | null = null;
 
@@ -437,6 +445,11 @@ export class Dcharacter {
 
     this.shadow = data.shadow ? { ...data.shadow } : this.shadow;
 
+    this.shapePaintingMethod =
+      data.shapePaintingMethod || this.shapePaintingMethod;
+    this.colliderPaintingMethod =
+      data.colliderPaintingMethod || this.colliderPaintingMethod;
+
     if (data.texture) {
       this.texture = data.texture;
       this.initTexture(data.texture);
@@ -512,15 +525,16 @@ export class Dcharacter {
     };
   }
 
+  //设置形变
   setTF(ctx: CanvasRenderingContext2D) {
-    //设置形变
     ctx.translate(this.x + this.focusX, this.y + this.focusY);
     ctx.scale(this.scaleX, this.scaleY);
     ctx.rotate(this.rotate);
     ctx.globalAlpha *= this.opacity;
   }
+
+  //恢复形变
   resetTF(ctx: CanvasRenderingContext2D) {
-    //恢复形变
     ctx.globalAlpha /= this.opacity;
     ctx.rotate(-this.rotate);
     ctx.scale(1 / this.scaleX, 1 / this.scaleY);
@@ -574,78 +588,10 @@ export class Dcharacter {
       }
     }
 
-    if (!this.shape) {
-      //没有图形不作渲染
-      this.setTF(this.dm.Dctx);
-      this.children.forEach((o) => {
-        o.render();
-      });
-      this.resetTF(this.dm.Dctx);
-      return found;
-    }
-
-    let shape;
-    this.dm.Dctx.beginPath();
     this.setTF(this.dm.Dctx);
-    switch (this.shape.type) {
-      case "rect":
-        shape = (this.shape as Dshape_data_rect).path;
-        this.dm.Dctx.rect(
-          -this.focusX,
-          -this.focusY,
-          shape.width,
-          shape.height
-        );
-        break;
-      case "arc":
-        shape = (this.shape as Dshape_data_arc).path;
-        this.dm.Dctx.arc(0, 0, shape.radius, 0, Math.PI * 2);
-        break;
-      case "polygon":
-        shape = (this.shape as Dshape_data_polygon).path;
-        this.dm.Dctx.moveTo(shape[0][0], shape[0][1]);
-        shape.forEach((point) => {
-          if (point.length === 2) {
-            this.dm.Dctx.lineTo(point[0], point[1]);
-          }
-          if (point.length === 4) {
-            this.dm.Dctx.quadraticCurveTo(
-              point[0],
-              point[1],
-              point[2],
-              point[3]
-            );
-          }
-          if (point.length === 6) {
-            this.dm.Dctx.bezierCurveTo(
-              point[0],
-              point[1],
-              point[2],
-              point[3],
-              point[4],
-              point[5]
-            );
-          }
-        });
-        this.dm.Dctx.closePath();
-        break;
-      default:
-        break;
-    }
+    this.dm.Dctx.beginPath();
 
-    if (this.texture) {
-      this.textureRender();
-      this.dm.Dctx.fillStyle = this.texturePattern || this.dm.Dctx.fillStyle;
-    } else {
-      this.dm.Dctx.fillStyle = this.fillColor;
-    }
-
-    this.dm.Dctx.shadowBlur = this.shadow.blur;
-    this.dm.Dctx.shadowColor = this.shadow.color;
-    this.dm.Dctx.shadowOffsetX = this.shadow.offsetX;
-    this.dm.Dctx.shadowOffsetY = this.shadow.offsetY;
-
-    this.dm.Dctx.fill();
+    this.shapePaintingMethod(this);
 
     this.children.forEach((o) => {
       o.render();
@@ -658,10 +604,6 @@ export class Dcharacter {
 
   //纹理渲染
   textureRender() {
-    if (!this.shape) {
-      //无形状不渲染
-      return;
-    }
     if (!this.textureMatrix) {
       //纹理画布未初始化
       return;
@@ -697,68 +639,9 @@ export class Dcharacter {
       return currentTarget;
     }
 
-    if (!this.collider) {
-      //没有图形不作渲染
-      return currentTarget;
-    }
-
-    this.dm.Sctx.beginPath();
-
     this.setTF(this.dm.Sctx);
 
-    let collider;
-    switch (this.collider.type) {
-      case "rect":
-        collider = (this.collider as Dshape_data_rect).path;
-        this.dm.Sctx.rect(
-          -this.focusX,
-          -this.focusY,
-          collider.width,
-          collider.height
-        );
-        this.dm.Dctx.rect(
-          -this.focusX,
-          -this.focusY,
-          collider.width,
-          collider.height
-        );
-        break;
-      case "arc":
-        collider = (this.shape as Dshape_data_arc).path;
-        this.dm.Sctx.arc(0, 0, collider.radius, 0, Math.PI * 2);
-        break;
-      case "polygon":
-        collider = (this.shape as Dshape_data_polygon).path;
-        this.dm.Sctx.moveTo(collider[0][0], collider[0][1]);
-        collider.forEach((point) => {
-          if (point.length === 2) {
-            this.dm.Sctx.lineTo(point[0], point[1]);
-          }
-          if (point.length === 4) {
-            this.dm.Sctx.quadraticCurveTo(
-              point[0],
-              point[1],
-              point[2],
-              point[3]
-            );
-          }
-          if (point.length === 6) {
-            this.dm.Sctx.bezierCurveTo(
-              point[0],
-              point[1],
-              point[2],
-              point[3],
-              point[4],
-              point[5]
-            );
-          }
-        });
-        this.dm.Sctx.closePath();
-
-        break;
-      default:
-        break;
-    }
+    this.colliderPaintingMethod(this);
 
     this.resetTF(this.dm.Sctx);
 
@@ -852,6 +735,11 @@ export class Dcharacter {
       }
     });
   }
+
+  //视觉图形渲染行为,可以由开发者自定义，也可以使用引擎提供的基础渲染函数
+  shapePaintingMethod(Dcharacter: Dcharacter) {}
+  //碰撞图形渲染行为,可以由开发者自定义，也可以使用引擎提供的基础渲染函数
+  colliderPaintingMethod(Dcharacter: Dcharacter) {}
 }
 
 export class Dshape {

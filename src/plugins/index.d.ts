@@ -123,6 +123,8 @@ type Dcharacter_data = {
   scaleY?: number;
   rotate?: number;
   opacity?: number;
+  shapePaintingMethod?: (...rest: any) => void;
+  colliderPaintingMethod?: (...rest: any) => void;
 };
 
 //事件类型

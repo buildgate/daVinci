@@ -49,8 +49,6 @@ class Dcharacter {
   height: number = 100;
   x: number = 0; //相对父级的位置
   y: number = 0;
-  realX: number = 0; //相对于画布的定位，私自修改无意义，只是一个参考值
-  realY: number = 0;
   focusX: number = 0; //焦点位置，初始化的时候会与宽度同步修改，尽量避免修改
   focusY: number = 0;
   fillColor: CanvasFillStrokeStyles["fillStyle"] = "#000000"; //填充颜色
@@ -64,8 +62,8 @@ class Dcharacter {
   };
 
   dm: davinci; //画布实例，实例化时传入
-  shape: Dshape | null = null; //视觉图形
-  collider: Dcollider | null = null; //碰撞图形
+  shape: Dshape | any = null; //允许是自定义图形数据或者是官方图形数据，实际上可以是任何需要保存在角色类中的数据，例如需要粒子渲染时候可以定义一些额外的参数
+  collider: Dcollider | any = null; //允许是自定义图形数据或者是官方图形数据，类比shape
   zidx: number = 0; //视觉层级，只在同层有效
   snapshot: ImageData | null = null; //快照缓存，请勿主动修改，涉及性能问题！！
 
@@ -88,6 +86,12 @@ class Dcharacter {
   scaleY: number = 1; //这四项变化都会影响到子级
   rotate: number = 0;
   opacity: number = 1;
+
+  //以下两项函数也会在初始化时赋值，所以放在此处解析；如果需要渲染，请务必为这两个函数赋值
+  //视觉图形渲染行为,可以由开发者自定义，也可以使用引擎提供的基础渲染函数,此函数将会在渲染本层视觉图形时调用，渲染过程可以自行控制，如果不设置则会直接进行子级的渲染，但是形变依然会继承到下一层
+  shapePaintingMethod(Dcharacter: Dcharacter) {}
+  //碰撞图形渲染行为,可以由开发者自定义，也可以使用引擎提供的基础渲染函数,此函数将会在渲染本层碰撞图形时调用，渲染过程可以自行控制，如果不设置则会直接进行子级的渲染，但是形变依然会继承到下一层
+  colliderPaintingMethod(Dcharacter: Dcharacter) {}
 }
 ```
 
