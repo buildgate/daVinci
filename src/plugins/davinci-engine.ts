@@ -126,9 +126,10 @@ export class Davinci {
           preX: this.preX,
           preY: this.preY,
           type: "mousemove",
-          preTarge: this.preTarget,
+          preTarget: this.preTarget,
         };
-        this.currentTarget = this.DcanvasCharacter.colliderTrigger(
+        this.currentTarget = this.colliderTrigger(
+          this.DcanvasCharacter,
           Devent,
           true
         );
@@ -139,7 +140,7 @@ export class Davinci {
             preX: this.preX,
             preY: this.preY,
             type: "mouseleave",
-            preTarge: null,
+            preTarget: null,
           };
           this.preTarget?.onmouseleave.forEach((o) => {
             o(Devent);
@@ -160,9 +161,13 @@ export class Davinci {
         preX: this.preX,
         preY: this.preY,
         type: "mousedown",
-        preTarge: this.currentTarget,
+        preTarget: this.currentTarget,
       };
-      this.currentTarget = this.DcanvasCharacter.colliderTrigger(Devent, true);
+      this.currentTarget = this.colliderTrigger(
+        this.DcanvasCharacter,
+        Devent,
+        true
+      );
     });
     this.Dcanvas.addEventListener("mouseup", (e) => {
       this.preX = this.x;
@@ -177,9 +182,13 @@ export class Davinci {
         preX: this.preX,
         preY: this.preY,
         type: "mouseup",
-        preTarge: this.currentTarget,
+        preTarget: this.currentTarget,
       };
-      this.currentTarget = this.DcanvasCharacter.colliderTrigger(Devent, true);
+      this.currentTarget = this.colliderTrigger(
+        this.DcanvasCharacter,
+        Devent,
+        true
+      );
     });
     this.Dcanvas.addEventListener("mouseleave", (e) => {
       //当鼠标离开画布的监控区域，那么就会被判断为mouseup和mouseleave先后触发
@@ -195,10 +204,14 @@ export class Davinci {
         preX: this.preX,
         preY: this.preY,
         type: "mouseup",
-        preTarge: this.currentTarget,
+        preTarget: this.currentTarget,
       };
 
-      this.currentTarget = this.DcanvasCharacter.colliderTrigger(Devent, true);
+      this.currentTarget = this.colliderTrigger(
+        this.DcanvasCharacter,
+        Devent,
+        true
+      );
 
       this.currentTarget?.onmouseleave.forEach((o) => {
         o(event);
@@ -206,7 +219,7 @@ export class Davinci {
     });
   }
 
-  //全局渲染
+  //执行渲染
   render(uid?: number) {
     if (!this.allowRender) {
       return;
@@ -217,7 +230,7 @@ export class Davinci {
       this.Dctx.clearRect(0, 0, this.width, this.height);
       this.nextRenderUid = 0;
       this.nextRenderAll = false;
-      this.DcanvasCharacter.render(uid);
+      this.renderer(this.DcanvasCharacter, uid);
 
       window.requestAnimationFrame(() => {
         this.block = false;
@@ -242,6 +255,147 @@ export class Davinci {
       }
       this.nextRenderAll = this.nextRenderUid !== uid || this.nextRenderAll;
       this.nextRenderUid = uid;
+    }
+  }
+
+  //设置形变
+  setTF(ctx: CanvasRenderingContext2D, target: Dcharacter) {
+    ctx.translate(target.x + target.focusX, target.y + target.focusY);
+    ctx.scale(target.scaleX, target.scaleY);
+    ctx.rotate(target.rotate);
+    ctx.globalAlpha *= target.opacity;
+  }
+
+  //恢复形变
+  resetTF(ctx: CanvasRenderingContext2D, target: Dcharacter) {
+    ctx.globalAlpha /= target.opacity;
+    ctx.rotate(-target.rotate);
+    ctx.scale(1 / target.scaleX, 1 / target.scaleY);
+    ctx.translate(-(target.x + target.focusX), -(target.y + target.focusY));
+  }
+
+  //渲染器
+  renderer(target: Dcharacter, snapshotID?: number) {
+    let found = false; //判断是否已经找到快照渲染的对象
+    if (!this.allowRender) {
+      //中断渲染
+      return found;
+    }
+
+    if (!target.snapshot) {
+      //若无快照，证明是第一次渲染，那么先保存快照，然后子级全部不使用快照渲染
+      target.snapshot = this.Dctx.getImageData(0, 0, this.width, this.height);
+    } else {
+      //若有快照，则先检测是否快照渲染的对象
+      if (snapshotID) {
+        if (snapshotID === target.uid) {
+          //uid匹配则后面全部使用常规渲染
+          this.Dctx.putImageData(target.snapshot, 0, 0);
+          found = true;
+        } else {
+          this.setTF(this.Dctx, target);
+          target.children.forEach((o) => {
+            //循环没个子级，如果在子级中找到目标，则返回true
+            if (found) {
+              this.renderer(o);
+            } else {
+              found = this.renderer(o, snapshotID) || found;
+            }
+          });
+          this.resetTF(this.Dctx, target);
+          return found;
+        }
+      } else {
+        //无目标id则常规渲染，先保存当前快照
+        target.snapshot = this.Dctx.getImageData(0, 0, this.width, this.height);
+      }
+    }
+
+    this.setTF(this.Dctx, target);
+    this.Dctx.beginPath();
+
+    target.shapePaintingMethod(target);
+
+    target.children.forEach((o) => {
+      this.renderer(o);
+    });
+
+    this.resetTF(this.Dctx, target);
+    return found;
+  }
+
+  //判断是否当前目标，并优先返回顶层对象，默认阻止冒泡
+  colliderTrigger(
+    target: Dcharacter,
+    event: Devent,
+    stop: boolean = true
+  ): Dcharacter | undefined {
+    if (!this.collisionDetect) {
+      return;
+    }
+
+    let currentTarget: Dcharacter | undefined = undefined;
+    if (target.children.length) {
+      this.setTF(this.Sctx, target);
+      for (let i = target.children.length - 1; i >= 0; i--) {
+        currentTarget = this.colliderTrigger(target.children[i], event);
+        if (currentTarget) {
+          break;
+        }
+      }
+      this.resetTF(this.Sctx, target);
+    }
+
+    if (currentTarget && stop) {
+      return currentTarget;
+    }
+
+    this.setTF(this.Sctx, target);
+
+    target.colliderPaintingMethod(target);
+
+    this.resetTF(this.Sctx, target);
+
+    if (this.Sctx.isPointInPath(event.x, event.y)) {
+      let nextEvent = { ...event };
+
+      //
+      // 执行本体事件
+      //
+      switch (event.type) {
+        case "mousemove":
+          if (event.preTarget?.uid !== target.uid) {
+            nextEvent.preTarget = target;
+            nextEvent.type = "mouseleave";
+            event.preTarget?.onmouseleave.forEach((o: any) => {
+              o(event);
+            });
+            target.onmouseenter.forEach((o) => {
+              o(event);
+            });
+          } else {
+            target.onmousemove.forEach((o) => {
+              o(event);
+            });
+          }
+          break;
+        case "mousedown":
+          target.onmousedown.forEach((o) => {
+            o(event);
+          });
+          break;
+        case "mouseup":
+          target.onmouseup.forEach((o) => {
+            o(event);
+          });
+          break;
+        default:
+          break;
+      }
+
+      return currentTarget || target;
+    } else {
+      return currentTarget;
     }
   }
 
@@ -525,83 +679,6 @@ export class Dcharacter {
     };
   }
 
-  //设置形变
-  setTF(ctx: CanvasRenderingContext2D) {
-    ctx.translate(this.x + this.focusX, this.y + this.focusY);
-    ctx.scale(this.scaleX, this.scaleY);
-    ctx.rotate(this.rotate);
-    ctx.globalAlpha *= this.opacity;
-  }
-
-  //恢复形变
-  resetTF(ctx: CanvasRenderingContext2D) {
-    ctx.globalAlpha /= this.opacity;
-    ctx.rotate(-this.rotate);
-    ctx.scale(1 / this.scaleX, 1 / this.scaleY);
-    ctx.translate(-(this.x + this.focusX), -(this.y + this.focusY));
-  }
-
-  //渲染器，区分快照渲染和常规渲染
-  render(snapshotID?: number) {
-    let found = false; //判断是否已经找到快照渲染的对象
-    if (!this.dm.allowRender) {
-      //中断渲染
-      return found;
-    }
-
-    if (!this.snapshot) {
-      //若无快照，证明是第一次渲染，那么先保存快照，然后子级全部不使用快照渲染
-      this.snapshot = this.dm.Dctx.getImageData(
-        0,
-        0,
-        this.dm.width,
-        this.dm.height
-      );
-    } else {
-      //若有快照，则先检测是否快照渲染的对象
-      if (snapshotID) {
-        if (snapshotID === this.uid) {
-          //uid匹配则后面全部使用常规渲染
-          this.dm.Dctx.putImageData(this.snapshot, 0, 0);
-          found = true;
-        } else {
-          this.setTF(this.dm.Dctx);
-          this.children.forEach((o) => {
-            //循环没个子级，如果在子级中找到目标，则返回true
-            if (found) {
-              o.render();
-            } else {
-              found = o.render(snapshotID) || found;
-            }
-          });
-          this.resetTF(this.dm.Dctx);
-          return found;
-        }
-      } else {
-        //无目标id则常规渲染，先保存当前快照
-        this.snapshot = this.dm.Dctx.getImageData(
-          0,
-          0,
-          this.dm.width,
-          this.dm.height
-        );
-      }
-    }
-
-    this.setTF(this.dm.Dctx);
-    this.dm.Dctx.beginPath();
-
-    this.shapePaintingMethod(this);
-
-    this.children.forEach((o) => {
-      o.render();
-    });
-
-    this.resetTF(this.dm.Dctx);
-
-    return found;
-  }
-
   //纹理渲染
   textureRender() {
     if (!this.textureMatrix) {
@@ -615,77 +692,6 @@ export class Dcharacter {
     this.texturePattern.setTransform(
       this.textureMatrix.translate(-this.focusX, -this.focusY)
     );
-  }
-
-  //判断是否当前目标，并优先返回顶层对象，默认阻止冒泡
-  colliderTrigger(event: Devent, stop: boolean = true): Dcharacter | undefined {
-    if (!this.dm.collisionDetect) {
-      return;
-    }
-
-    let currentTarget: Dcharacter | undefined = undefined;
-    if (this.children.length) {
-      this.setTF(this.dm.Sctx);
-      for (let i = this.children.length - 1; i >= 0; i--) {
-        currentTarget = this.children[i].colliderTrigger(event);
-        if (currentTarget) {
-          break;
-        }
-      }
-      this.resetTF(this.dm.Sctx);
-    }
-
-    if (currentTarget && stop) {
-      return currentTarget;
-    }
-
-    this.setTF(this.dm.Sctx);
-
-    this.colliderPaintingMethod(this);
-
-    this.resetTF(this.dm.Sctx);
-
-    if (this.dm.Sctx.isPointInPath(event.x, event.y)) {
-      let nextEvent = { ...event };
-
-      //
-      // 执行本体事件
-      //
-      switch (event.type) {
-        case "mousemove":
-          if (event.preTarge?.uid !== this.uid) {
-            nextEvent.preTarge = this;
-            nextEvent.type = "mouseleave";
-            event.preTarge?.onmouseleave.forEach((o: any) => {
-              o(event);
-            });
-            this.onmouseenter.forEach((o) => {
-              o(event);
-            });
-          } else {
-            this.onmousemove.forEach((o) => {
-              o(event);
-            });
-          }
-          break;
-        case "mousedown":
-          this.onmousedown.forEach((o) => {
-            o(event);
-          });
-          break;
-        case "mouseup":
-          this.onmouseup.forEach((o) => {
-            o(event);
-          });
-          break;
-        default:
-          break;
-      }
-
-      return currentTarget || this;
-    } else {
-      return currentTarget;
-    }
   }
 
   //监听器

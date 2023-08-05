@@ -134,7 +134,7 @@ type Devent = {
   preX: number;
   preY: number;
   type: Devent_type;
-  preTarge: Dcharacter;
+  preTarget: Dcharacter | null | undefined;
   //后续有更多内容
 };
 type Devent_type =
