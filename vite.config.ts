@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import { resolve } from "path";
 import electron from "vite-plugin-electron";
 import renderer from "vite-plugin-electron-renderer";
 
@@ -24,5 +25,15 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     port: 8015,
+  },
+  build: {
+    lib: {
+      // Could also be a dictionary or array of multiple entry points
+      entry: resolve(__dirname, "lib/main.ts"),
+      name: "davinci",
+      // the proper extensions will be added
+      fileName: "davinci",
+    },
+    rollupOptions: {},
   },
 });

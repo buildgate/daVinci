@@ -1,4 +1,4 @@
-import { Dcharacter } from "./davinci-engine.ts";
+import { Dcharacter } from "../davinci-engine.js";
 
 //普通矩形视觉图形绘制
 export function shapeMethodRect(Dcharacter: Dcharacter) {

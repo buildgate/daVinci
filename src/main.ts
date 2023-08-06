@@ -1,9 +1,6 @@
 import "./style.css";
-import "./plugins/davinci.css";
-import { davinci_visual_hash } from "./plugins/davinci-visual-hash__experiment.ts"; //实验性历史素材
-import { davinci_visual_classic } from "./plugins/davinci-visual-classic__experiment.ts"; //实验性历史素材
-import { daVinci_free } from "./plugins/davinci-free_experiment.ts"; //实验性历史素材
-import { Dcharacter, Davinci, Dshape } from "./plugins/davinci-engine.ts";
+import "./davinci.css";
+import { Dcharacter, Davinci, Dshape } from "../lib/davinci-engine.ts";
 import {
   shapeMethodArc,
   shapeMethodRect,
@@ -11,7 +8,7 @@ import {
   colliderMethodArc,
   colliderMethodPolygon,
   colliderMethodRect,
-} from "./plugins/davinci-engine-plugins.ts";
+} from "../lib/plugins/davinci-engine-plugins.ts";
 
 const DM = new Davinci("#app");
 
@@ -95,10 +92,10 @@ arc.addEventListener("mouseup", () => {
   console.log("mouseup2");
 });
 
-arc.addEventListener("mousedown", (e) => {
+arc.addEventListener("mousedown", () => {
   console.log("mousedown2");
 });
-arc.addEventListener("mousedown", function a(e) {
+arc.addEventListener("mousedown", function a() {
   console.log("mousedown22");
 });
 arc.removeEventListener("mousedown", "a");

@@ -1,7 +1,7 @@
 import {
   shapeMethodRect,
   colliderMethodRect,
-} from "./davinci-engine-plugins.ts";
+} from "./plugins/davinci-engine-plugins.js";
 
 export class Davinci {
   Dcanvas = document.createElement("canvas"); //表画布
@@ -668,7 +668,7 @@ export class Dcharacter {
     };
   }
 
-  //纹理渲染
+  //纹理渲染，默认将纹理图加载在元素的左上角
   textureRender() {
     if (!this.textureMatrix) {
       //纹理画布未初始化
