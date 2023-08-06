@@ -45,6 +45,7 @@ let mousedown = false;
 
 rect.addEventListener("mousedown", () => {
   mousedown = true;
+  console.log(12);
   arc.texture =
     "https://img1.baidu.com/it/u=2328766673,3584364392&fm=253&fmt=auto?w=130&h=170";
 });
@@ -61,7 +62,7 @@ rect.addEventListener("mousemove", (e) => {
   }
 });
 
-DM.DcanvasCharacter.addChild(rect);
+DM.Dboard.addChild(rect);
 
 let shape2 = new Dshape({
   type: "arc",
@@ -143,7 +144,7 @@ tri.addEventListener("mousedown", () => {
 
 rect.addChild(arc);
 
-DM.DcanvasCharacter.addChild(tri);
+DM.Dboard.addChild(tri);
 
 DM.collisionDetect = true;
 DM.render();

@@ -19,10 +19,10 @@ export function shapeMethodRect(Dcharacter: Dcharacter) {
     Dcharacter.dm.Dctx.fillStyle = Dcharacter.fillColor;
   }
 
-  Dcharacter.dm.Dctx.shadowBlur = Dcharacter.shadow.blur;
-  Dcharacter.dm.Dctx.shadowColor = Dcharacter.shadow.color;
-  Dcharacter.dm.Dctx.shadowOffsetX = Dcharacter.shadow.offsetX;
-  Dcharacter.dm.Dctx.shadowOffsetY = Dcharacter.shadow.offsetY;
+  Dcharacter.dm.Dctx.shadowBlur = Dcharacter.shadowBlur;
+  Dcharacter.dm.Dctx.shadowColor = Dcharacter.shadowColor;
+  Dcharacter.dm.Dctx.shadowOffsetX = Dcharacter.shadowOffsetX;
+  Dcharacter.dm.Dctx.shadowOffsetY = Dcharacter.shadowOffsetY;
 
   Dcharacter.dm.Dctx.fill();
 }
@@ -40,10 +40,10 @@ export function shapeMethodArc(Dcharacter: Dcharacter) {
     Dcharacter.dm.Dctx.fillStyle = Dcharacter.fillColor;
   }
 
-  Dcharacter.dm.Dctx.shadowBlur = Dcharacter.shadow.blur;
-  Dcharacter.dm.Dctx.shadowColor = Dcharacter.shadow.color;
-  Dcharacter.dm.Dctx.shadowOffsetX = Dcharacter.shadow.offsetX;
-  Dcharacter.dm.Dctx.shadowOffsetY = Dcharacter.shadow.offsetY;
+  Dcharacter.dm.Dctx.shadowBlur = Dcharacter.shadowBlur;
+  Dcharacter.dm.Dctx.shadowColor = Dcharacter.shadowColor;
+  Dcharacter.dm.Dctx.shadowOffsetX = Dcharacter.shadowOffsetX;
+  Dcharacter.dm.Dctx.shadowOffsetY = Dcharacter.shadowOffsetY;
 
   Dcharacter.dm.Dctx.fill();
 }
@@ -85,10 +85,10 @@ export function shapeMethodPolygon(Dcharacter: Dcharacter) {
     Dcharacter.dm.Dctx.fillStyle = Dcharacter.fillColor;
   }
 
-  Dcharacter.dm.Dctx.shadowBlur = Dcharacter.shadow.blur;
-  Dcharacter.dm.Dctx.shadowColor = Dcharacter.shadow.color;
-  Dcharacter.dm.Dctx.shadowOffsetX = Dcharacter.shadow.offsetX;
-  Dcharacter.dm.Dctx.shadowOffsetY = Dcharacter.shadow.offsetY;
+  Dcharacter.dm.Dctx.shadowBlur = Dcharacter.shadowBlur;
+  Dcharacter.dm.Dctx.shadowColor = Dcharacter.shadowColor;
+  Dcharacter.dm.Dctx.shadowOffsetX = Dcharacter.shadowOffsetX;
+  Dcharacter.dm.Dctx.shadowOffsetY = Dcharacter.shadowOffsetY;
 
   Dcharacter.dm.Dctx.fill();
 }

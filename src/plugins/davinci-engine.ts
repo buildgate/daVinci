@@ -15,9 +15,9 @@ export class Davinci {
   Scanvas = document.createElement("canvas"); //里画布,用于计算碰撞体
   Sctx = this.Scanvas.getContext("2d") as CanvasRenderingContext2D;
 
-  DcanvasCharacter: Dcharacter; //必须建立一个基础元素
+  Dboard: Dcharacter; //必须建立一个基础元素,渲染事件和碰撞事件的入口
 
-  allowRender: boolean = true; //防止初始化时多次渲染，默认为false
+  allowRender: boolean = true; //是否允许渲染，可以作为停顿点使用，默认为true
   collisionDetect: boolean = false; //碰撞检测开关，默认为false，防止误触需要手动开启
 
   //画布设置
@@ -30,9 +30,9 @@ export class Davinci {
   y = 0;
   preX = 0;
   preY = 0;
-  mousetype = null;
   currentTarget: Dcharacter | null | undefined = null;
   preTarget: Dcharacter | null | undefined = null;
+  stopPropagation: boolean = true; //是否冒泡，默认不冒泡，冒泡并不会影响碰撞检测的性能，所以按需开启
 
   //节流相关
   nextRenderUid: number = 0;
@@ -55,7 +55,7 @@ export class Davinci {
     };
   }
 
-  constructor(fundElement: string, options?: Doptions) {
+  constructor(fundElement: string, options?: Dcharacter_data) {
     let self = this;
 
     this.Dcanvas.setAttribute("crossOrigin", "use-credentials");
@@ -64,27 +64,27 @@ export class Davinci {
     this.Dcontainer.className = "davinci_container";
     this.Dcanvas.className = "davinci_body";
 
-    let canvasShape = new Dshape({
+    let boardShape = new Dshape({
       type: "rect",
       path: { width: this.width, height: this.height },
     });
 
-    this.DcanvasCharacter = new Dcharacter(
+    this.Dboard = new Dcharacter(
       {
         width: this.width,
         height: this.height,
         focusX: 0,
         focusY: 0,
         fillColor: "#00000000",
-        shape: canvasShape,
-        collider: canvasShape,
+        shape: boardShape,
+        collider: boardShape,
         shapePaintingMethod: shapeMethodRect,
         colliderPaintingMethod: colliderMethodRect,
       },
       this
     );
 
-    this.initData(options);
+    this.setData(options);
 
     this.initEventTrigger();
 
@@ -94,9 +94,9 @@ export class Davinci {
   }
 
   //初始化必须的数据
-  initData(options?: Doptions) {
-    this.width = options?.width || this.width;
-    this.height = options?.height || this.height;
+  setData(options?: Davinci_data) {
+    this.width = options?.width ?? this.width;
+    this.height = options?.height ?? this.height;
 
     this.Dcanvas.width = this.width;
     this.Dcanvas.height = this.width;
@@ -104,8 +104,8 @@ export class Davinci {
     this.Scanvas.width = this.width;
     this.Scanvas.height = this.height;
 
-    this.DcanvasCharacter.width = this.width;
-    this.DcanvasCharacter.height = this.height;
+    this.Dboard.width = this.width;
+    this.Dboard.height = this.height;
   }
 
   //初始化触发事件
@@ -128,11 +128,7 @@ export class Davinci {
           type: "mousemove",
           preTarget: this.preTarget,
         };
-        this.currentTarget = this.colliderTrigger(
-          this.DcanvasCharacter,
-          Devent,
-          true
-        );
+        this.currentTarget = this.colliderTrigger(this.Dboard, Devent);
         if (!this.currentTarget && this.preTarget) {
           Devent = {
             x: e.offsetX,
@@ -163,11 +159,7 @@ export class Davinci {
         type: "mousedown",
         preTarget: this.currentTarget,
       };
-      this.currentTarget = this.colliderTrigger(
-        this.DcanvasCharacter,
-        Devent,
-        true
-      );
+      this.currentTarget = this.colliderTrigger(this.Dboard, Devent);
     });
     this.Dcanvas.addEventListener("mouseup", (e) => {
       this.preX = this.x;
@@ -184,11 +176,7 @@ export class Davinci {
         type: "mouseup",
         preTarget: this.currentTarget,
       };
-      this.currentTarget = this.colliderTrigger(
-        this.DcanvasCharacter,
-        Devent,
-        true
-      );
+      this.currentTarget = this.colliderTrigger(this.Dboard, Devent);
     });
     this.Dcanvas.addEventListener("mouseleave", (e) => {
       //当鼠标离开画布的监控区域，那么就会被判断为mouseup和mouseleave先后触发
@@ -207,11 +195,7 @@ export class Davinci {
         preTarget: this.currentTarget,
       };
 
-      this.currentTarget = this.colliderTrigger(
-        this.DcanvasCharacter,
-        Devent,
-        true
-      );
+      this.currentTarget = this.colliderTrigger(this.Dboard, Devent);
 
       this.currentTarget?.onmouseleave.forEach((o) => {
         o(event);
@@ -230,7 +214,7 @@ export class Davinci {
       this.Dctx.clearRect(0, 0, this.width, this.height);
       this.nextRenderUid = 0;
       this.nextRenderAll = false;
-      this.renderer(this.DcanvasCharacter, uid);
+      this.renderer(this.Dboard, uid);
 
       window.requestAnimationFrame(() => {
         this.block = false;
@@ -325,11 +309,7 @@ export class Davinci {
   }
 
   //判断是否当前目标，并优先返回顶层对象，默认阻止冒泡
-  colliderTrigger(
-    target: Dcharacter,
-    event: Devent,
-    stop: boolean = true
-  ): Dcharacter | undefined {
+  colliderTrigger(target: Dcharacter, event: Devent): Dcharacter | undefined {
     if (!this.collisionDetect) {
       return;
     }
@@ -346,7 +326,33 @@ export class Davinci {
       this.resetTF(this.Sctx, target);
     }
 
-    if (currentTarget && stop) {
+    if (currentTarget) {
+      //子级找到目标对象开始判断是否需要冒泡
+      if (!this.stopPropagation) {
+        switch (event.type) {
+          case "mousemove":
+            if (event.preTarget?.uid !== target.uid) {
+              //按照浏览器的逻辑，mouseenter和mouseleave是不适宜触发冒泡的
+            } else {
+              target.onmousemove.forEach((o) => {
+                o(event);
+              });
+            }
+            break;
+          case "mousedown":
+            target.onmousedown.forEach((o) => {
+              o(event);
+            });
+            break;
+          case "mouseup":
+            target.onmouseup.forEach((o) => {
+              o(event);
+            });
+            break;
+          default:
+            break;
+        }
+      }
       return currentTarget;
     }
 
@@ -412,7 +418,7 @@ export class Davinci {
         }
       }
     }
-    if (check(this.DcanvasCharacter)) {
+    if (check(this.Dboard)) {
       this.onGlobalTextureComplete();
     }
   }
@@ -423,7 +429,6 @@ export class Davinci {
 
 export class Dcharacter {
   [key: string]: any;
-  position: string = "relative";
   uid: number;
   id: string | number | symbol = +new Date();
   name: string | number = "";
@@ -431,17 +436,15 @@ export class Dcharacter {
   height: number = 100;
   x: number = 0;
   y: number = 0;
-  realX: number = 0; //相对于画布的定位，私自修改无意义，只是一个参考值
-  realY: number = 0;
   focusX: number = 0;
   focusY: number = 0;
   fillColor: CanvasFillStrokeStyles["fillStyle"] = "#000000";
-  shadow = {
-    color: "#000000",
-    blur: 0,
-    offsetX: 0,
-    offsetY: 0,
-  };
+
+  shadowColor: string = "#000000";
+  shadowBlur: number = 0;
+  shadowOffsetX: number = 0;
+  shadowOffsetY: number = 0;
+
   scaleX: number = 1;
   scaleY: number = 1;
   rotate: number = 0;
@@ -473,21 +476,17 @@ export class Dcharacter {
   onmousemove = new Map();
   onmouseenter = new Map();
   onmouseleave = new Map();
-  // onmouseover: (event: Devent) => any = () => {}; 未支持
 
   ontextureonload: () => any = () => {
     this.dm.render(this.uid);
   };
-
-  onkeydown: (event: Devent) => any = () => {};
-  onkeyup: (event: Devent) => any = () => {};
 
   constructor(data: Dcharacter_data, DM: Davinci) {
     //uid是不可更改的
     this.uid = +new Date() + Math.floor(Math.random() * (10000 - 1)) + 1;
     this.dm = DM;
 
-    this.initData(data);
+    this.setData(data);
 
     //返回proxy
     return new Proxy(this, {
@@ -571,39 +570,29 @@ export class Dcharacter {
     });
   }
 
-  //初始化数据
-  initData(data: Dcharacter_data, DM?: Davinci) {
-    const self = this;
-    //先停止自动渲染，批量赋值完成后就设置回来
+  //批量赋值，可以支持额外赋值自定义的属性
+  setData(data: Dcharacter_data) {
+    Object.keys(data).forEach((o) => {
+      if (o === "focusX" || o === "focusY") {
+        return;
+      }
+      this[o] = data[o] ?? this[o];
+    });
 
-    this.dm = DM || this.dm;
+    //对焦点做特殊处理
+    if (data.width) {
+      this.focusX = data.focusX ?? this.width / 2;
+    } else {
+      this.focusX = data.focusX ?? this.focusX;
+    }
 
-    this.id = data.id || this.id;
-    this.name = data.name || this.name;
-    this.fillColor = data.fillColor || this.fillColor;
-    this.shape = data.shape || this.shape;
-    this.collider = data.collider || this.collider;
-    this.width = data.width ?? this.width;
-    this.height = data.height ?? this.height;
-    this.x = data.x ?? this.x;
-    this.y = data.y ?? this.y;
-    this.focusX = data.focusX ?? this.width / 2;
-    this.focusY = data.focusY ?? this.height / 2;
-    this.zidx = data.zidx ?? this.zidx;
-    this.position = data.position || this.position;
+    if (data.height) {
+      this.focusY = data.focusY ?? this.height / 2;
+    } else {
+      this.focusY = data.focusY ?? this.focusY;
+    }
 
-    this.scaleX = data.scaleX ?? this.scaleX;
-    this.scaleY = data.scaleY ?? this.scaleY;
-    this.rotate = data.rotate ?? this.rotate;
-    this.opacity = data.opacity ?? this.opacity;
-
-    this.shadow = data.shadow ? { ...data.shadow } : this.shadow;
-
-    this.shapePaintingMethod =
-      data.shapePaintingMethod || this.shapePaintingMethod;
-    this.colliderPaintingMethod =
-      data.colliderPaintingMethod || this.colliderPaintingMethod;
-
+    //对纹理做特殊处理
     if (data.texture) {
       this.texture = data.texture;
       this.initTexture(data.texture);

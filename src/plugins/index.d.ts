@@ -95,12 +95,12 @@ type Dshape_data_polygon = {
 };
 type Dshape_data = Dshape_data_rect | Dshape_data_arc | Dshape_data_polygon;
 
-//角色对象类型
+//角色对象类型固有属性
 type Dcharacter_data = {
+  [key: string]: any;
   autoRender?: boolean;
   id?: string | number | symbol;
   name?: string | number;
-  position?: string;
   width?: number;
   height?: number;
   x?: number;
@@ -113,12 +113,10 @@ type Dcharacter_data = {
   texture?: string;
   parent?: Dcharacter;
   zidx?: number;
-  shadow?: {
-    color: string;
-    blur: number;
-    offsetX: number;
-    offsetY: number;
-  };
+  shadowColor?: string;
+  shadowBlur?: number;
+  shadowOffsetX?: number;
+  shadowOffsetY?: number;
   scaleX?: number;
   scaleY?: number;
   rotate?: number;
@@ -145,7 +143,7 @@ type Devent_type =
   | "mousemove";
 
 //
-type Doptions = {
+type Davinci_data = {
   width?: number;
   height?: number;
 };

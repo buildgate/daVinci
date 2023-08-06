@@ -53,13 +53,10 @@ class Dcharacter {
   focusY: number = 0;
   fillColor: CanvasFillStrokeStyles["fillStyle"] = "#000000"; //填充颜色
 
-  shadow = {
-    //阴影选项，阴影是相对与视觉图形生成的
-    color: "#000000",
-    blur: 0,
-    offsetX: 0,
-    offsetY: 0,
-  };
+  shadowColor: string = "#000000"; //阴影选项
+  shadowBlur: number = 0;
+  shadowOffsetX: number = 0;
+  shadowOffsetY: number = 0;
 
   dm: davinci; //画布实例，实例化时传入
   shape: Dshape | any = null; //允许是自定义图形数据或者是官方图形数据，实际上可以是任何需要保存在角色类中的数据，例如需要粒子渲染时候可以定义一些额外的参数
@@ -101,7 +98,7 @@ class Dcharacter {
 
   //初始化数据使用，也可以用作批量设置时使用，因为函数会先停止自动渲染，赋值完后再把自动渲染的开关设置为原来的值;
   //DM值是当前画布对象，如非必要尽量不要更改，否则可能会出现一些未知的问题,建议只修改data
-  initData(data: Dcharacter_data, DM?: Davinci){...}
+  setData(data: Dcharacter_data, DM?: Davinci){...}
 
  //监听器 目前支持mouseenter,mouseleave,mousemove,mousedown,mouseup,交互内容在此设置
   addEventListener(type: Devent_type, fn: (event: Devent) => any){...}
@@ -138,7 +135,7 @@ class Davinci {
   Scanvas = document.createElement("canvas"); //里画布,用于计算碰撞体
   Sctx = this.Scanvas.getContext("2d") as CanvasRenderingContext2D;
 
-  DcanvasCharacter: Dcharacter; //实例化时会自动构建画布的角色类
+  Dboard: Dcharacter; //实例化时会自动构建画布的角色类
 
   allowRender: boolean = true; //是否允许渲染
   collisionDetect: boolean = false; //碰撞检测开关，默认为false，防止误触需要手动开启
@@ -163,7 +160,7 @@ class Davinci {
 
 ```typescript
 //用与设置画布的宽高,同时会改变底层画布交互对象的宽高,需要主动调用render才会重新渲染
-  initData(options?: Doptions)
+  setData(options?: Doptions)
 
  //全局渲染,如果输入uid则只会渲染目标的上层，下层对象将会使用快照渲染，速度会快很多，请尽量使用uid进行渲染；
   render(uid?: number){...}
@@ -200,7 +197,7 @@ let rect = new Dcharacter(
   demo
 );
 
-demo.DcanvasCharacter.addChild(rect);
+demo.Dboard.addChild(rect);
 
 let shape2 = new Dshape({
   type: "arc",
