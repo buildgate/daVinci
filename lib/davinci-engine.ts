@@ -314,6 +314,10 @@ export class Davinci {
       return;
     }
 
+    if (target.penetrate) {
+      return;
+    }
+
     let currentTarget: Dcharacter | undefined = undefined;
     if (target.children.length) {
       this.setTF(this.Sctx, target);
@@ -469,6 +473,9 @@ export class Dcharacter {
 
   //父角色模块，若无则是默认画布
   parent: Dcharacter | null | undefined = null;
+
+  //碰撞相关
+  penetrate: boolean = false; //是否击穿
 
   //事件列
   onmousedown = new Map();
@@ -650,7 +657,7 @@ export class Dcharacter {
       this.textureSource.src = originTexture;
     }
 
-    this.textureSource.onload = (e) => {
+    this.textureSource.onload = () => {
       if (!this.shape) {
         return;
       }
@@ -669,7 +676,7 @@ export class Dcharacter {
   }
 
   //纹理渲染，默认将纹理图加载在元素的左上角
-  textureRender() {
+  textureRender(tX: number, tY: number, sX: number, sY: number, r: number) {
     if (!this.textureMatrix) {
       //纹理画布未初始化
       return;
@@ -679,7 +686,7 @@ export class Dcharacter {
       return;
     }
     this.texturePattern.setTransform(
-      this.textureMatrix.translate(-this.focusX, -this.focusY)
+      this.textureMatrix.translate(tX, tY).scale(sX, sY).rotate(r)
     );
   }
 

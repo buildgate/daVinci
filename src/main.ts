@@ -130,7 +130,8 @@ const tri = new Dcharacter(
     collider: shape3,
     shapePaintingMethod: shapeMethodPolygon,
     colliderPaintingMethod: colliderMethodPolygon,
-    // rotate: (45 * Math.PI) / 180,
+    penetrate: true,
+    rotate: (30 * Math.PI) / 180,
   },
   DM
 );

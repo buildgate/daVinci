@@ -1,8 +1,10 @@
 {
-  "name": "davinci",
+  "name": "@buildgate/davinci",
   "type": "module",
-  "private": true,
   "version": "1.0.0",
+  "description":"一款轻量级canvas引擎，对canvas里的绘画元素抽象化处理，从而实现内部元素可以操作。",
+  "keywords":["canvas","engine","programmable","operational","画布","引擎","可编程","可操作"],
+  "author":"benjamin leung",
   "files": ["dist"],
   "main": "./dist/davinci.umd.cjs",
   "module": "./dist/davinci.js",

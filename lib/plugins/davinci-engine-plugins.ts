@@ -12,7 +12,7 @@ export function shapeMethodRect(Dcharacter: Dcharacter) {
   );
 
   if (Dcharacter.texture) {
-    Dcharacter.textureRender();
+    Dcharacter.textureRender(-Dcharacter.focusX, -Dcharacter.focusY, 1, 1, 0);
     Dcharacter.dm.Dctx.fillStyle =
       Dcharacter.texturePattern || Dcharacter.dm.Dctx.fillStyle;
   } else {
@@ -33,7 +33,7 @@ export function shapeMethodArc(Dcharacter: Dcharacter) {
   Dcharacter.dm.Dctx.arc(0, 0, shape.radius, 0, Math.PI * 2);
 
   if (Dcharacter.texture) {
-    Dcharacter.textureRender();
+    Dcharacter.textureRender(-Dcharacter.focusX, -Dcharacter.focusY, 1, 1, 0);
     Dcharacter.dm.Dctx.fillStyle =
       Dcharacter.texturePattern || Dcharacter.dm.Dctx.fillStyle;
   } else {
@@ -78,7 +78,7 @@ export function shapeMethodPolygon(Dcharacter: Dcharacter) {
   Dcharacter.dm.Dctx.closePath();
 
   if (Dcharacter.texture) {
-    Dcharacter.textureRender();
+    Dcharacter.textureRender(-Dcharacter.focusX, -Dcharacter.focusY, 1, 1, 0);
     Dcharacter.dm.Dctx.fillStyle =
       Dcharacter.texturePattern || Dcharacter.dm.Dctx.fillStyle;
   } else {

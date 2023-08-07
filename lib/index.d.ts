@@ -65,6 +65,7 @@ type Dcharacter_data = {
   scaleY?: number;
   rotate?: number;
   opacity?: number;
+  penetrate?: boolean;
   shapePaintingMethod?: (...rest: any) => void;
   colliderPaintingMethod?: (...rest: any) => void;
 };
