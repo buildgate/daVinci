@@ -84,6 +84,10 @@ class Dcharacter {
   rotate: number = 0;
   opacity: number = 1;
 
+  accumulateTransform: DOMMatrix = new DOMMatrix(); //累计形变，用来计算实际坐标
+
+  renderable: boolean = true; //是否可渲染，默认是，为false时将不会渲染
+
   //以下两项函数也会在初始化时赋值，所以放在此处解析；如果需要渲染，请务必为这两个函数赋值
   //视觉图形渲染行为,可以由开发者自定义，也可以使用引擎提供的基础渲染函数,此函数将会在渲染本层视觉图形时调用，渲染过程可以自行控制，如果不设置则会直接进行子级的渲染，但是形变依然会继承到下一层
   shapePaintingMethod(Dcharacter: Dcharacter) {}
