@@ -82,6 +82,7 @@ let arc = new Dcharacter(
       offsetX: 10,
       offsetY: 20,
     },
+    // renderable: false,
     shapePaintingMethod: shapeMethodArc,
     colliderPaintingMethod: colliderMethodArc,
     // texture:
@@ -137,8 +138,6 @@ const tri = new Dcharacter(
   DM
 );
 
-// createEditableTool(rect);
-
 tri.addEventListener("mousedown", () => {
   console.log("mousedown3");
 });
@@ -151,8 +150,8 @@ DM.collisionDetect = true;
 DM.render();
 
 setInterval(() => {
-  // tri.x += 0.5;
-  // arc.x += 0.5;
+  tri.x += 0.5;
+  arc.x += 0.5;
 }, 50);
 
 // setTimeout(() => {

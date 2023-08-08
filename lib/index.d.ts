@@ -66,6 +66,7 @@ type Dcharacter_data = {
   rotate?: number;
   opacity?: number;
   accumulateTransform?: DOMMatrix;
+  renderable?: boolean;
   penetrate?: boolean;
   shapePaintingMethod?: (...rest: any) => void;
   colliderPaintingMethod?: (...rest: any) => void;

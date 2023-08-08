@@ -216,7 +216,14 @@ export class Davinci {
       this.Dctx.clearRect(0, 0, this.width, this.height);
       this.nextRenderUid = 0;
       this.nextRenderAll = false;
-      this.renderer(this.Dboard, uid);
+      if (uid) {
+        if (!this.renderer(this.Dboard, uid)) {
+          //如果没找到匹配的uid则采用全局渲染
+          this.renderer(this.Dboard);
+        }
+      } else {
+        this.renderer(this.Dboard);
+      }
 
       window.requestAnimationFrame(() => {
         this.block = false;
@@ -299,6 +306,7 @@ export class Davinci {
     }
 
     this.setTF(this.Dctx, target);
+
     target.accumulateTransform = this.Dctx.getTransform();
     this.Dctx.beginPath();
 
@@ -314,7 +322,7 @@ export class Davinci {
 
   //判断是否当前目标，并优先返回顶层对象，默认阻止冒泡
   colliderTrigger(target: Dcharacter, event: Devent): Dcharacter | undefined {
-    if (!this.collisionDetect) {
+    if (!this.collisionDetect || !target.renderable) {
       return;
     }
 
@@ -431,6 +439,14 @@ export class Davinci {
     }
   }
 
+  //计算使用变化矩阵后的实际坐标
+  matrixCalc(matrix: DOMMatrix, x: number, y: number) {
+    console.log(matrix);
+    let cX = matrix.a * x + matrix.b * y + matrix.e;
+    let cY = matrix.c * x + matrix.d * y + matrix.f;
+    return { x: cX, y: cY };
+  }
+
   //全局纹理加载完成后调用
   onGlobalTextureComplete() {}
 }
@@ -518,6 +534,10 @@ export class Dcharacter {
           case "uid":
             throw Error('"uid" is Not modifiable!!!');
             //不触发render
+            break;
+          case "accumulateTransform":
+            //不触发render
+            Reflect.set(target, key, value, receiver);
             break;
           case "texture":
             Reflect.set(target, key, value, receiver);
