@@ -1,4 +1,4 @@
-import { Dcharacter } from "../davinci-engine.js";
+import { Dcharacter, Davinci, Dshape } from "../davinci-engine.js";
 
 //普通矩形视觉图形绘制
 export function shapeMethodRect(Dcharacter: Dcharacter) {
@@ -139,4 +139,146 @@ export function colliderMethodPolygon(Dcharacter: Dcharacter) {
     }
   });
   Dcharacter.dm.Sctx.closePath();
+}
+
+export function createEditableTool(dc: Dcharacter) {
+  const toolShape = new Dshape({
+    type: "rect",
+    path: { width: dc.width, height: dc.height },
+  });
+  const pointShape = new Dshape({
+    type: "rect",
+    path: { width: 10, height: 10 },
+  });
+
+  const tool = new Dcharacter(
+    {
+      width: dc.width,
+      height: dc.height,
+      x: -dc.focusX,
+      y: -dc.focusY,
+      zidx: 9999999999,
+      fillColor: "red",
+      shape: toolShape,
+      collider: toolShape,
+      colliderPaintingMethod: colliderMethodRect,
+      shapePaintingMethod: shapeMethodRect,
+    },
+    dc.dm
+  );
+  const lt = new Dcharacter(
+    {
+      width: 10,
+      height: 10,
+      x: -tool.focusX - 5,
+      y: -tool.focusY - 5,
+      shape: pointShape,
+      collider: pointShape,
+      colliderPaintingMethod: colliderMethodRect,
+      shapePaintingMethod: shapeMethodRect,
+    },
+    dc.dm
+  );
+  const lm = new Dcharacter(
+    {
+      width: 10,
+      height: 10,
+      x: -tool.focusX - 5,
+      y: 0 - 5,
+      shape: pointShape,
+      collider: pointShape,
+      colliderPaintingMethod: colliderMethodRect,
+      shapePaintingMethod: shapeMethodRect,
+    },
+    dc.dm
+  );
+  const lb = new Dcharacter(
+    {
+      width: 10,
+      height: 10,
+      x: -tool.focusX - 5,
+      y: tool.focusY - 5,
+      shape: pointShape,
+      collider: pointShape,
+      colliderPaintingMethod: colliderMethodRect,
+      shapePaintingMethod: shapeMethodRect,
+    },
+    dc.dm
+  );
+  const mt = new Dcharacter(
+    {
+      width: 10,
+      height: 10,
+      x: 0 - 5,
+      y: -tool.focusY - 5,
+      shape: pointShape,
+      collider: pointShape,
+      colliderPaintingMethod: colliderMethodRect,
+      shapePaintingMethod: shapeMethodRect,
+    },
+    dc.dm
+  );
+  const mb = new Dcharacter(
+    {
+      width: 10,
+      height: 10,
+      x: 0 - 5,
+      y: tool.focusY - 5,
+      shape: pointShape,
+      collider: pointShape,
+      colliderPaintingMethod: colliderMethodRect,
+      shapePaintingMethod: shapeMethodRect,
+    },
+    dc.dm
+  );
+  const rt = new Dcharacter(
+    {
+      width: 10,
+      height: 10,
+      x: tool.focusX - 5,
+      y: -tool.focusY - 5,
+      shape: pointShape,
+      collider: pointShape,
+      colliderPaintingMethod: colliderMethodRect,
+      shapePaintingMethod: shapeMethodRect,
+    },
+    dc.dm
+  );
+  const rm = new Dcharacter(
+    {
+      width: 10,
+      height: 10,
+      x: tool.focusX - 5,
+      y: 0 - 5,
+      shape: pointShape,
+      collider: pointShape,
+      colliderPaintingMethod: colliderMethodRect,
+      shapePaintingMethod: shapeMethodRect,
+    },
+    dc.dm
+  );
+  const rb = new Dcharacter(
+    {
+      width: 10,
+      height: 10,
+      x: tool.focusX - 5,
+      y: tool.focusY - 5,
+      shape: pointShape,
+      collider: pointShape,
+      colliderPaintingMethod: colliderMethodRect,
+      shapePaintingMethod: shapeMethodRect,
+    },
+    dc.dm
+  );
+
+  tool.addChild(lt);
+  tool.addChild(lm);
+  tool.addChild(lb);
+  tool.addChild(mt);
+  tool.addChild(mb);
+  tool.addChild(rt);
+  tool.addChild(rm);
+  tool.addChild(rb);
+
+  dc.addChild(tool);
 }

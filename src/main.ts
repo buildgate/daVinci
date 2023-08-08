@@ -8,6 +8,7 @@ import {
   colliderMethodArc,
   colliderMethodPolygon,
   colliderMethodRect,
+  createEditableTool,
 } from "../lib/plugins/davinci-engine-plugins.ts";
 
 const DM = new Davinci("#app");
@@ -136,6 +137,8 @@ const tri = new Dcharacter(
   DM
 );
 
+// createEditableTool(rect);
+
 tri.addEventListener("mousedown", () => {
   console.log("mousedown3");
 });
@@ -148,8 +151,8 @@ DM.collisionDetect = true;
 DM.render();
 
 setInterval(() => {
-  tri.x += 0.5;
-  arc.x += 0.5;
+  // tri.x += 0.5;
+  // arc.x += 0.5;
 }, 50);
 
 // setTimeout(() => {

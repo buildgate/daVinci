@@ -197,8 +197,10 @@ export class Davinci {
 
       this.currentTarget = this.colliderTrigger(this.Dboard, Devent);
 
+      Devent.type = "mouseleave";
+
       this.currentTarget?.onmouseleave.forEach((o) => {
-        o(event);
+        o(Devent);
       });
     });
   }
@@ -261,7 +263,7 @@ export class Davinci {
   //渲染器
   renderer(target: Dcharacter, snapshotID?: number) {
     let found = false; //判断是否已经找到快照渲染的对象
-    if (!this.allowRender) {
+    if (!this.allowRender || !target.renderable) {
       //中断渲染
       return found;
     }
@@ -278,6 +280,7 @@ export class Davinci {
           found = true;
         } else {
           this.setTF(this.Dctx, target);
+          target.accumulateTransform = this.Dctx.getTransform();
           target.children.forEach((o) => {
             //循环没个子级，如果在子级中找到目标，则返回true
             if (found) {
@@ -296,6 +299,7 @@ export class Davinci {
     }
 
     this.setTF(this.Dctx, target);
+    target.accumulateTransform = this.Dctx.getTransform();
     this.Dctx.beginPath();
 
     target.shapePaintingMethod(target);
@@ -454,6 +458,10 @@ export class Dcharacter {
   rotate: number = 0;
   opacity: number = 1;
 
+  accumulateTransform: DOMMatrix = new DOMMatrix(); //累计形变，用来计算实际坐标
+
+  renderable: boolean = true; //是否可渲染，默认是，为false时将不会渲染
+
   dm: Davinci; //画布实例
   shape: Dshape | any = null; //允许是自定义图形数据或者是官方图形数据
   collider: Dcollider | any = null;
@@ -557,14 +565,6 @@ export class Dcharacter {
           case "dm":
             //不触发render
             throw Error('"dm" is Not modifiable!!!');
-            break;
-          case "realX":
-            //不触发render
-            Reflect.set(target, key, value, receiver);
-            break;
-          case "realY":
-            //不触发render
-            Reflect.set(target, key, value, receiver);
             break;
           default:
             Reflect.set(target, key, value, receiver);
