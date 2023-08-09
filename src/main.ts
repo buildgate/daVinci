@@ -132,7 +132,7 @@ const tri = new Dcharacter(
     collider: shape3,
     shapePaintingMethod: shapeMethodPolygon,
     colliderPaintingMethod: colliderMethodPolygon,
-    penetrate: true,
+    // penetrate: true,
     rotate: (30 * Math.PI) / 180,
   },
   DM
@@ -149,9 +149,11 @@ DM.Dboard.addChild(tri);
 DM.collisionDetect = true;
 DM.render();
 
+// createEditableTool(rect, DM);
+
 setInterval(() => {
-  tri.x += 0.5;
-  arc.x += 0.5;
+  // tri.x += 0.5;
+  // arc.x += 0.5;
 }, 50);
 
 // setTimeout(() => {

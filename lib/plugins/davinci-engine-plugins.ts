@@ -141,7 +141,7 @@ export function colliderMethodPolygon(Dcharacter: Dcharacter) {
   Dcharacter.dm.Sctx.closePath();
 }
 
-export function createEditableTool(dc: Dcharacter) {
+export function createEditableTool(dc: Dcharacter, dm: Davinci) {
   const toolShape = new Dshape({
     type: "rect",
     path: { width: dc.width, height: dc.height },
@@ -151,18 +151,34 @@ export function createEditableTool(dc: Dcharacter) {
     path: { width: 10, height: 10 },
   });
 
+  const c = dm.matrixCalc(dc.accumulateTransform, -dc.focusX, -dc.focusY);
+
   const tool = new Dcharacter(
     {
       width: dc.width,
       height: dc.height,
-      x: -dc.focusX,
-      y: -dc.focusY,
+      x: c.x,
+      y: c.y,
       zidx: 9999999999,
       fillColor: "red",
       shape: toolShape,
       collider: toolShape,
-      colliderPaintingMethod: colliderMethodRect,
-      shapePaintingMethod: shapeMethodRect,
+      targetMatrix: new DOMMatrix(),
+      colliderPaintingMethod: (target) => {
+        let matrix = dm.Sctx.getTransform();
+        dm.Sctx.setTransform(dc.accumulateTransform);
+        colliderMethodRect(target);
+        dm.Sctx.setTransform(matrix);
+      },
+      shapePaintingMethod: (target) => {
+        let matrix = dm.Dctx.getTransform();
+        dm.Dctx.setTransform(dc.accumulateTransform);
+        shapeMethodRect(target);
+        dm.Dctx.setTransform(matrix);
+      },
+      beforeChildrenCollider: () => {
+        dm.Sctx.setTransform(dc.accumulateTransform);
+      },
     },
     dc.dm
   );
@@ -280,5 +296,5 @@ export function createEditableTool(dc: Dcharacter) {
   tool.addChild(rm);
   tool.addChild(rb);
 
-  dc.addChild(tool);
+  dm.Dboard.addChild(tool);
 }

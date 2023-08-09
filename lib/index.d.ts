@@ -68,8 +68,19 @@ type Dcharacter_data = {
   accumulateTransform?: DOMMatrix;
   renderable?: boolean;
   penetrate?: boolean;
+
   shapePaintingMethod?: (...rest: any) => void;
   colliderPaintingMethod?: (...rest: any) => void;
+  beforeChildrenRender?: (...rest: any) => void;
+  afterChildrenRender?: (...rest: any) => void;
+  beforeChildrenCollider?: (...rest: any) => void;
+  afterChildrenCollider?: (...rest: any) => void;
+
+  beforeRender?: (...rest: any) => void;
+  afterRender?: (...rest: any) => void;
+
+  beforeCollider?: (...rest: any) => void;
+  afterCollider?: (...rest: any) => void;
 };
 
 //事件类型

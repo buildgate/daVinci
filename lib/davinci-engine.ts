@@ -267,22 +267,83 @@ export class Davinci {
       return found;
     }
 
-    let matrix = this.Dctx.getTransform();
+    let matrix = this.Dctx.getTransform(); //渲染前的准备工作
     let alpha = this.Dctx.globalAlpha;
+    this.setTF(this.Dctx, target);
+    target.accumulateTransform = this.Dctx.getTransform();
+
+    // if (!target.snapshot) {
+    //   //若无快照，证明是第一次渲染，那么先保存快照，然后子级全部不使用快照渲染
+    //   target.snapshot = this.Dctx.getImageData(0, 0, this.width, this.height);
+    // } else {
+    //   //若有快照，则先检测是否快照渲染的对象
+    //   if (snapshotID) {
+    //     if (snapshotID === target.uid) {
+    //       //uid匹配则后面全部使用常规渲染
+    //       this.Dctx.putImageData(target.snapshot, 0, 0);
+    //       found = true;
+    //     } else {
+    //       target.beforeChildrenRender(target);
+    //       target.children.forEach((o) => {
+    //         //循环没个子级，如果在子级中找到目标，则返回true
+    //         if (found) {
+    //           this.renderer(o);
+    //         } else {
+    //           found = this.renderer(o, snapshotID) || found;
+    //         }
+    //       });
+    //       target.afterChildrenRender(target);
+    //       this.Dctx.globalAlpha = alpha; //渲染还原工作
+    //       this.Dctx.setTransform(matrix);
+    //       return found;
+    //     }
+    //   } else {
+    //     //无目标id则常规渲染，先保存当前快照
+    //     target.snapshot = this.Dctx.getImageData(0, 0, this.width, this.height);
+    //   }
+    // }
+
+    this.Dctx.beginPath();
+
+    target.beforeRender(target); //渲染周期
+    //本层渲染
 
     if (!target.snapshot) {
       //若无快照，证明是第一次渲染，那么先保存快照，然后子级全部不使用快照渲染
       target.snapshot = this.Dctx.getImageData(0, 0, this.width, this.height);
+      target.shapePaintingMethod(target);
     } else {
       //若有快照，则先检测是否快照渲染的对象
       if (snapshotID) {
         if (snapshotID === target.uid) {
           //uid匹配则后面全部使用常规渲染
           this.Dctx.putImageData(target.snapshot, 0, 0);
+          target.shapePaintingMethod(target);
           found = true;
+        }
+      } else {
+        //无目标id则常规渲染，先保存当前快照
+        target.snapshot = this.Dctx.getImageData(0, 0, this.width, this.height);
+        target.shapePaintingMethod(target);
+      }
+    }
+
+    target.afterRender(target);
+
+    target.beforeChildrenRender(target);
+
+    if (!target.snapshot) {
+      target.children.forEach((o) => {
+        this.renderer(o);
+      });
+    } else {
+      //若有快照，则先检测是否快照渲染的对象
+      if (snapshotID) {
+        if (snapshotID === target.uid) {
+          target.children.forEach((o) => {
+            this.renderer(o);
+          });
         } else {
-          this.setTF(this.Dctx, target);
-          target.accumulateTransform = this.Dctx.getTransform();
           target.children.forEach((o) => {
             //循环没个子级，如果在子级中找到目标，则返回true
             if (found) {
@@ -291,26 +352,16 @@ export class Davinci {
               found = this.renderer(o, snapshotID) || found;
             }
           });
-          this.Dctx.globalAlpha = alpha;
-          this.Dctx.setTransform(matrix);
-          return found;
         }
       } else {
         //无目标id则常规渲染，先保存当前快照
-        target.snapshot = this.Dctx.getImageData(0, 0, this.width, this.height);
+        target.children.forEach((o) => {
+          this.renderer(o);
+        });
       }
     }
 
-    this.setTF(this.Dctx, target);
-
-    target.accumulateTransform = this.Dctx.getTransform();
-    this.Dctx.beginPath();
-
-    target.shapePaintingMethod(target);
-
-    target.children.forEach((o) => {
-      this.renderer(o);
-    });
+    target.afterChildrenRender(target);
 
     this.Dctx.globalAlpha = alpha;
     this.Dctx.setTransform(matrix);
@@ -332,12 +383,15 @@ export class Davinci {
     let currentTarget: Dcharacter | undefined = undefined;
     if (target.children.length) {
       this.setTF(this.Sctx, target);
+
+      target.beforeChildrenCollider(target);
       for (let i = target.children.length - 1; i >= 0; i--) {
         currentTarget = this.colliderTrigger(target.children[i], event);
         if (currentTarget) {
           break;
         }
       }
+      target.afterChildrenCollider(target);
       this.Sctx.setTransform(matrix);
     }
 
@@ -373,7 +427,11 @@ export class Davinci {
 
     this.setTF(this.Sctx, target);
 
+    target.beforeCollider(target);
+
     target.colliderPaintingMethod(target);
+
+    target.afterCollider(target);
 
     this.Sctx.setTransform(matrix);
 
@@ -760,6 +818,22 @@ export class Dcharacter {
   shapePaintingMethod(Dcharacter: Dcharacter) {}
   //碰撞图形渲染行为,可以由开发者自定义，也可以使用引擎提供的基础渲染函数
   colliderPaintingMethod(Dcharacter: Dcharacter) {}
+  //在进入子级渲染之前的行为
+  beforeChildrenRender(Dcharacter: Dcharacter) {}
+  //子级渲染循环结束后调用
+  afterChildrenRender(Dcharacter: Dcharacter) {}
+  //在进入子级碰撞之前的行为
+  beforeChildrenCollider(Dcharacter: Dcharacter) {}
+  //子级碰撞循环结束后调用
+  afterChildrenCollider(Dcharacter: Dcharacter) {}
+
+  //渲染本体的钩子函数
+  beforeRender(Dcharacter: Dcharacter) {}
+  afterRender(Dcharacter: Dcharacter) {}
+
+  //碰撞本体的钩子函数
+  beforeCollider(Dcharacter: Dcharacter) {}
+  afterCollider(Dcharacter: Dcharacter) {}
 }
 
 export class Dshape {
