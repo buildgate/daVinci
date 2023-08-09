@@ -90,9 +90,26 @@ class Dcharacter {
 
   //以下两项函数也会在初始化时赋值，所以放在此处解析；如果需要渲染，请务必为这两个函数赋值
   //视觉图形渲染行为,可以由开发者自定义，也可以使用引擎提供的基础渲染函数,此函数将会在渲染本层视觉图形时调用，渲染过程可以自行控制，如果不设置则会直接进行子级的渲染，但是形变依然会继承到下一层
-  shapePaintingMethod(Dcharacter: Dcharacter) {}
+  rendering(Dcharacter: Dcharacter) {}
   //碰撞图形渲染行为,可以由开发者自定义，也可以使用引擎提供的基础渲染函数,此函数将会在渲染本层碰撞图形时调用，渲染过程可以自行控制，如果不设置则会直接进行子级的渲染，但是形变依然会继承到下一层
-  colliderPaintingMethod(Dcharacter: Dcharacter) {}
+  colliding(Dcharacter: Dcharacter) {}
+
+  //在进入子级渲染之前的行为
+  beforeChildrenRender(Dcharacter: Dcharacter) {}
+  //子级渲染循环结束后调用
+  afterChildrenRender(Dcharacter: Dcharacter) {}
+  //在进入子级碰撞之前的行为
+  beforeChildrenCollider(Dcharacter: Dcharacter) {}
+  //子级碰撞循环结束后调用
+  afterChildrenCollider(Dcharacter: Dcharacter) {}
+
+  //渲染本体的钩子函数,注意渲染是先渲染本体再渲染子级的
+  beforeRender(Dcharacter: Dcharacter) {}
+  afterRender(Dcharacter: Dcharacter) {}
+
+  //碰撞本体的钩子函数，检测碰撞是先检测子级再检测本体的
+  beforeCollider(Dcharacter: Dcharacter) {}
+  afterCollider(Dcharacter: Dcharacter) {}
 }
 ```
 

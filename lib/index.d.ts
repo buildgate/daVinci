@@ -69,8 +69,8 @@ type Dcharacter_data = {
   renderable?: boolean;
   penetrate?: boolean;
 
-  shapePaintingMethod?: (...rest: any) => void;
-  colliderPaintingMethod?: (...rest: any) => void;
+  rendering?: (...rest: any) => void;
+  colliding?: (...rest: any) => void;
   beforeChildrenRender?: (...rest: any) => void;
   afterChildrenRender?: (...rest: any) => void;
   beforeChildrenCollider?: (...rest: any) => void;

@@ -164,13 +164,13 @@ export function createEditableTool(dc: Dcharacter, dm: Davinci) {
       shape: toolShape,
       collider: toolShape,
       targetMatrix: new DOMMatrix(),
-      colliderPaintingMethod: (target) => {
+      colliding: (target) => {
         let matrix = dm.Sctx.getTransform();
         dm.Sctx.setTransform(dc.accumulateTransform);
         colliderMethodRect(target);
         dm.Sctx.setTransform(matrix);
       },
-      shapePaintingMethod: (target) => {
+      rendering: (target) => {
         let matrix = dm.Dctx.getTransform();
         dm.Dctx.setTransform(dc.accumulateTransform);
         shapeMethodRect(target);
@@ -190,8 +190,8 @@ export function createEditableTool(dc: Dcharacter, dm: Davinci) {
       y: -tool.focusY - 5,
       shape: pointShape,
       collider: pointShape,
-      colliderPaintingMethod: colliderMethodRect,
-      shapePaintingMethod: shapeMethodRect,
+      colliding: colliderMethodRect,
+      rendering: shapeMethodRect,
     },
     dc.dm
   );
@@ -203,8 +203,8 @@ export function createEditableTool(dc: Dcharacter, dm: Davinci) {
       y: 0 - 5,
       shape: pointShape,
       collider: pointShape,
-      colliderPaintingMethod: colliderMethodRect,
-      shapePaintingMethod: shapeMethodRect,
+      colliding: colliderMethodRect,
+      rendering: shapeMethodRect,
     },
     dc.dm
   );
@@ -216,8 +216,8 @@ export function createEditableTool(dc: Dcharacter, dm: Davinci) {
       y: tool.focusY - 5,
       shape: pointShape,
       collider: pointShape,
-      colliderPaintingMethod: colliderMethodRect,
-      shapePaintingMethod: shapeMethodRect,
+      colliding: colliderMethodRect,
+      rendering: shapeMethodRect,
     },
     dc.dm
   );
@@ -229,8 +229,8 @@ export function createEditableTool(dc: Dcharacter, dm: Davinci) {
       y: -tool.focusY - 5,
       shape: pointShape,
       collider: pointShape,
-      colliderPaintingMethod: colliderMethodRect,
-      shapePaintingMethod: shapeMethodRect,
+      colliding: colliderMethodRect,
+      rendering: shapeMethodRect,
     },
     dc.dm
   );
@@ -242,8 +242,8 @@ export function createEditableTool(dc: Dcharacter, dm: Davinci) {
       y: tool.focusY - 5,
       shape: pointShape,
       collider: pointShape,
-      colliderPaintingMethod: colliderMethodRect,
-      shapePaintingMethod: shapeMethodRect,
+      colliding: colliderMethodRect,
+      rendering: shapeMethodRect,
     },
     dc.dm
   );
@@ -255,8 +255,8 @@ export function createEditableTool(dc: Dcharacter, dm: Davinci) {
       y: -tool.focusY - 5,
       shape: pointShape,
       collider: pointShape,
-      colliderPaintingMethod: colliderMethodRect,
-      shapePaintingMethod: shapeMethodRect,
+      colliding: colliderMethodRect,
+      rendering: shapeMethodRect,
     },
     dc.dm
   );
@@ -268,8 +268,8 @@ export function createEditableTool(dc: Dcharacter, dm: Davinci) {
       y: 0 - 5,
       shape: pointShape,
       collider: pointShape,
-      colliderPaintingMethod: colliderMethodRect,
-      shapePaintingMethod: shapeMethodRect,
+      colliding: colliderMethodRect,
+      rendering: shapeMethodRect,
     },
     dc.dm
   );
@@ -281,8 +281,8 @@ export function createEditableTool(dc: Dcharacter, dm: Davinci) {
       y: tool.focusY - 5,
       shape: pointShape,
       collider: pointShape,
-      colliderPaintingMethod: colliderMethodRect,
-      shapePaintingMethod: shapeMethodRect,
+      colliding: colliderMethodRect,
+      rendering: shapeMethodRect,
     },
     dc.dm
   );

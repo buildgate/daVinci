@@ -78,8 +78,8 @@ export class Davinci {
         fillColor: "#00000000",
         shape: boardShape,
         collider: boardShape,
-        shapePaintingMethod: shapeMethodRect,
-        colliderPaintingMethod: colliderMethodRect,
+        rendering: shapeMethodRect,
+        colliding: colliderMethodRect,
       },
       this
     );
@@ -272,37 +272,6 @@ export class Davinci {
     this.setTF(this.Dctx, target);
     target.accumulateTransform = this.Dctx.getTransform();
 
-    // if (!target.snapshot) {
-    //   //若无快照，证明是第一次渲染，那么先保存快照，然后子级全部不使用快照渲染
-    //   target.snapshot = this.Dctx.getImageData(0, 0, this.width, this.height);
-    // } else {
-    //   //若有快照，则先检测是否快照渲染的对象
-    //   if (snapshotID) {
-    //     if (snapshotID === target.uid) {
-    //       //uid匹配则后面全部使用常规渲染
-    //       this.Dctx.putImageData(target.snapshot, 0, 0);
-    //       found = true;
-    //     } else {
-    //       target.beforeChildrenRender(target);
-    //       target.children.forEach((o) => {
-    //         //循环没个子级，如果在子级中找到目标，则返回true
-    //         if (found) {
-    //           this.renderer(o);
-    //         } else {
-    //           found = this.renderer(o, snapshotID) || found;
-    //         }
-    //       });
-    //       target.afterChildrenRender(target);
-    //       this.Dctx.globalAlpha = alpha; //渲染还原工作
-    //       this.Dctx.setTransform(matrix);
-    //       return found;
-    //     }
-    //   } else {
-    //     //无目标id则常规渲染，先保存当前快照
-    //     target.snapshot = this.Dctx.getImageData(0, 0, this.width, this.height);
-    //   }
-    // }
-
     this.Dctx.beginPath();
 
     target.beforeRender(target); //渲染周期
@@ -311,20 +280,20 @@ export class Davinci {
     if (!target.snapshot) {
       //若无快照，证明是第一次渲染，那么先保存快照，然后子级全部不使用快照渲染
       target.snapshot = this.Dctx.getImageData(0, 0, this.width, this.height);
-      target.shapePaintingMethod(target);
+      target.rendering(target);
     } else {
       //若有快照，则先检测是否快照渲染的对象
       if (snapshotID) {
         if (snapshotID === target.uid) {
           //uid匹配则后面全部使用常规渲染
           this.Dctx.putImageData(target.snapshot, 0, 0);
-          target.shapePaintingMethod(target);
+          target.rendering(target);
           found = true;
         }
       } else {
         //无目标id则常规渲染，先保存当前快照
         target.snapshot = this.Dctx.getImageData(0, 0, this.width, this.height);
-        target.shapePaintingMethod(target);
+        target.rendering(target);
       }
     }
 
@@ -429,7 +398,7 @@ export class Davinci {
 
     target.beforeCollider(target);
 
-    target.colliderPaintingMethod(target);
+    target.colliding(target);
 
     target.afterCollider(target);
 
@@ -815,9 +784,9 @@ export class Dcharacter {
   }
 
   //视觉图形渲染行为,可以由开发者自定义，也可以使用引擎提供的基础渲染函数
-  shapePaintingMethod(Dcharacter: Dcharacter) {}
+  rendering(Dcharacter: Dcharacter) {}
   //碰撞图形渲染行为,可以由开发者自定义，也可以使用引擎提供的基础渲染函数
-  colliderPaintingMethod(Dcharacter: Dcharacter) {}
+  colliding(Dcharacter: Dcharacter) {}
   //在进入子级渲染之前的行为
   beforeChildrenRender(Dcharacter: Dcharacter) {}
   //子级渲染循环结束后调用
