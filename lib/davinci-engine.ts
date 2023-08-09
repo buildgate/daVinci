@@ -259,14 +259,6 @@ export class Davinci {
     ctx.globalAlpha *= target.opacity;
   }
 
-  //恢复形变
-  resetTF(ctx: CanvasRenderingContext2D, target: Dcharacter) {
-    ctx.globalAlpha /= target.opacity;
-    ctx.rotate(-target.rotate);
-    ctx.scale(1 / target.scaleX, 1 / target.scaleY);
-    ctx.translate(-(target.x + target.focusX), -(target.y + target.focusY));
-  }
-
   //渲染器
   renderer(target: Dcharacter, snapshotID?: number) {
     let found = false; //判断是否已经找到快照渲染的对象
@@ -274,6 +266,9 @@ export class Davinci {
       //中断渲染
       return found;
     }
+
+    let matrix = this.Dctx.getTransform(); //直接保留本层形变，不再进行逆向计算，提高精准度
+    let alpha = this.Dctx.globalAlpha;
 
     if (!target.snapshot) {
       //若无快照，证明是第一次渲染，那么先保存快照，然后子级全部不使用快照渲染
@@ -296,7 +291,7 @@ export class Davinci {
               found = this.renderer(o, snapshotID) || found;
             }
           });
-          this.resetTF(this.Dctx, target);
+          this.Dctx.setTransform(matrix);
           return found;
         }
       } else {
@@ -308,6 +303,7 @@ export class Davinci {
     this.setTF(this.Dctx, target);
 
     target.accumulateTransform = this.Dctx.getTransform();
+
     this.Dctx.beginPath();
 
     target.shapePaintingMethod(target);
@@ -316,7 +312,8 @@ export class Davinci {
       this.renderer(o);
     });
 
-    this.resetTF(this.Dctx, target);
+    this.Dctx.globalAlpha = alpha;
+    this.Dctx.setTransform(matrix);
     return found;
   }
 
@@ -330,6 +327,8 @@ export class Davinci {
       return;
     }
 
+    let matrix = this.Sctx.getTransform();
+
     let currentTarget: Dcharacter | undefined = undefined;
     if (target.children.length) {
       this.setTF(this.Sctx, target);
@@ -339,7 +338,7 @@ export class Davinci {
           break;
         }
       }
-      this.resetTF(this.Sctx, target);
+      this.Sctx.setTransform(matrix);
     }
 
     if (currentTarget) {
@@ -376,7 +375,7 @@ export class Davinci {
 
     target.colliderPaintingMethod(target);
 
-    this.resetTF(this.Sctx, target);
+    this.Sctx.setTransform(matrix);
 
     if (this.Sctx.isPointInPath(event.x, event.y)) {
       let nextEvent = { ...event };
@@ -442,8 +441,8 @@ export class Davinci {
   //计算使用变化矩阵后的实际坐标
   matrixCalc(matrix: DOMMatrix, x: number, y: number) {
     console.log(matrix);
-    let cX = matrix.a * x + matrix.b * y + matrix.e;
-    let cY = matrix.c * x + matrix.d * y + matrix.f;
+    let cX = matrix.m11 * x + -matrix.m12 * y + matrix.e;
+    let cY = -matrix.m21 * x + matrix.m22 * y + matrix.f;
     return { x: cX, y: cY };
   }
 
