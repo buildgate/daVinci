@@ -267,7 +267,7 @@ export class Davinci {
       return found;
     }
 
-    let matrix = this.Dctx.getTransform(); //直接保留本层形变，不再进行逆向计算，提高精准度
+    let matrix = this.Dctx.getTransform();
     let alpha = this.Dctx.globalAlpha;
 
     if (!target.snapshot) {
@@ -291,6 +291,7 @@ export class Davinci {
               found = this.renderer(o, snapshotID) || found;
             }
           });
+          this.Dctx.globalAlpha = alpha;
           this.Dctx.setTransform(matrix);
           return found;
         }
@@ -303,7 +304,6 @@ export class Davinci {
     this.setTF(this.Dctx, target);
 
     target.accumulateTransform = this.Dctx.getTransform();
-
     this.Dctx.beginPath();
 
     target.shapePaintingMethod(target);
@@ -440,9 +440,8 @@ export class Davinci {
 
   //计算使用变化矩阵后的实际坐标
   matrixCalc(matrix: DOMMatrix, x: number, y: number) {
-    console.log(matrix);
-    let cX = matrix.m11 * x + -matrix.m12 * y + matrix.e;
-    let cY = -matrix.m21 * x + matrix.m22 * y + matrix.f;
+    let cX = matrix.a * x + -matrix.b * y + matrix.e;
+    let cY = -matrix.c * x + matrix.d * y + matrix.f;
     return { x: cX, y: cY };
   }
 
