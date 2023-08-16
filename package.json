@@ -1,17 +1,28 @@
 {
   "name": "@buildgate/davinci",
   "type": "module",
-  "version": "1.0.4",
-  "description":"一款轻量级canvas引擎，对canvas里的绘画元素抽象化处理，从而实现内部元素可以操作。",
-  "keywords":["canvas","engine","programmable","operational","画布","引擎","可编程","可操作"],
-  "author":"benjamin leung <buildgate@qq.com>",
-  "license":"MIT",
+  "version": "1.0.5",
+  "description": "一款轻量级canvas引擎，对canvas里的绘画元素抽象化处理，从而实现内部元素可以操作。",
+  "keywords": [
+    "canvas",
+    "engine",
+    "programmable",
+    "operational",
+    "画布",
+    "引擎",
+    "可编程",
+    "可操作"
+  ],
+  "author": "benjamin leung <buildgate@qq.com>",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/buildgate/daVinci.git"
   },
   "homepage": "https://github.com/buildgate/daVinci",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/davinci.umd.cjs",
   "module": "./dist/davinci.js",
   "exports": {
@@ -23,15 +34,26 @@
   "scripts": {
     "dev": "vite",
     "build-electron": "tsc && vite build && electron-builder",
-    "build":"vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
-    "typescript": "^5.0.2",
-    "vite": "^4.3.2",
+    "@types/react-syntax-highlighter": "^15.5.7",
     "electron": "^24.4.0",
     "electron-builder": "^23.6.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.3.2",
     "vite-plugin-electron": "^0.11.2",
     "vite-plugin-electron-renderer": "^0.14.5"
+  },
+  "dependencies": {
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.7",
+    "highlight.js": "^11.8.0",
+    "react-router-dom": "^6.15.0",
+    "react-syntax-highlighter": "^15.5.0",
+    "styled-components": "^6.0.7"
   }
 }

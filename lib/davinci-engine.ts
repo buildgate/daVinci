@@ -55,11 +55,10 @@ export class Davinci {
     };
   }
 
-  constructor(fundElement: string, options?: Dcharacter_data) {
+  constructor(fundElement?: string, options?: Dcharacter_data) {
     let self = this;
 
     this.Dcanvas.setAttribute("crossOrigin", "use-credentials");
-    this.originElement = document.querySelector(fundElement);
 
     this.Dcontainer.className = "davinci_container";
     this.Dcanvas.className = "davinci_body";
@@ -90,7 +89,9 @@ export class Davinci {
 
     //基础元素载入
     this.Dcontainer.append(this.Dcanvas);
-    this.originElement?.append(this.Dcontainer);
+    if (fundElement) {
+      this.mount(fundElement);
+    }
   }
 
   //初始化必须的数据
@@ -99,7 +100,7 @@ export class Davinci {
     this.height = options?.height ?? this.height;
 
     this.Dcanvas.width = this.width;
-    this.Dcanvas.height = this.width;
+    this.Dcanvas.height = this.height;
 
     this.Scanvas.width = this.width;
     this.Scanvas.height = this.height;
@@ -203,6 +204,12 @@ export class Davinci {
         o(Devent);
       });
     });
+  }
+
+  //挂载根元素
+  mount(fundElement: string) {
+    this.originElement = document.querySelector(fundElement);
+    this.originElement?.append(this.Dcontainer);
   }
 
   //执行渲染
