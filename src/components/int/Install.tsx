@@ -2,26 +2,7 @@ import styled from "styled-components";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { a11yLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
-const Fund = styled.div`
-  h1,
-  p {
-    line-height: 200%;
-  }
-  section {
-    margin-bottom: 50px;
-  }
-  .demo {
-    .context {
-      width: 800px;
-      height: 300px;
-      box-shadow: 0px 0px 2px 1px #dedede;
-    }
-    margin-top: 20px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-`;
+const Fund = styled.div``;
 
 export default function Install() {
   const code1 = `

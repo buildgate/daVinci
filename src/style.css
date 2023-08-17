@@ -1,16 +1,44 @@
-*{
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html,body,#app{
+html,
+body,
+#app {
   height: 100%;
   width: 100%;
 }
 
-.code-wapper{
+.code-wapper {
   border-radius: 10px;
   box-shadow: 0px 0px 2px 1px #dedede;
   overflow: hidden;
+}
+
+h1,
+p {
+  line-height: 200%;
+}
+section {
+  margin-bottom: 50px;
+}
+.demo {
+  .context {
+    width: 800px;
+    height: 300px;
+    box-shadow: 0px 0px 2px 1px #dedede;
+  }
+  margin-top: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.scene {
+  box-shadow: 0px 0px 2px 1px #dedede;
+  border-radius: 10px;
+  background: #e1e2ff;
+  padding: 10px;
 }

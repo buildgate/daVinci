@@ -2,26 +2,7 @@ import styled from "styled-components";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { a11yLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
-const Fund = styled.div`
-  h1,
-  p {
-    line-height: 200%;
-  }
-  section {
-    margin-bottom: 50px;
-  }
-  .demo {
-    .context {
-      width: 800px;
-      height: 300px;
-      box-shadow: 0px 0px 2px 1px #dedede;
-    }
-    margin-top: 20px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-`;
+const Fund = styled.div``;
 
 export default function Fundamentals() {
   return (
@@ -59,14 +40,15 @@ export default function Fundamentals() {
           <b>快照渲染</b>是必须依赖从底层向顶层的渲染方式。
         </p>
         <br />
-        <p>试想一下以下场景：</p>
-        <p>
-          你已经设置了100个角色在画布里面。如果需要改动第98号元素10次，那么就需要这100个元素都重新渲染10次，那么你将做了1000次渲染操作。
-        </p>
-        <p>
-          但是实际上你其实只需要重新渲染第98、99、100号元素，因为下层元素实际上是不会对上层有影响的。那么理论上情况下只需要进行30次的渲染操作。
-        </p>
-
+        <div className="scene">
+          <p>试想一下以下场景：</p>
+          <p>
+            你已经设置了100个角色在画布里面。如果需要改动第98号元素10次，那么就需要这100个元素都重新渲染10次，那么你将做了1000次渲染操作。
+          </p>
+          <p>
+            但是实际上你其实只需要重新渲染第98、99、100号元素，因为下层元素实际上是不会对上层有影响的。那么理论上情况下只需要进行30次的渲染操作。
+          </p>
+        </div>
         <br />
         <p>
           这里就引入了<b>快照渲染</b>

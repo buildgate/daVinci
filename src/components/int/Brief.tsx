@@ -10,26 +10,7 @@ import {
 } from "../../../lib/main";
 import { useEffect, useRef } from "react";
 
-const Fund = styled.div`
-  h1,
-  p {
-    line-height: 200%;
-  }
-  section {
-    margin-bottom: 50px;
-  }
-  .demo {
-    .context {
-      width: 800px;
-      height: 300px;
-      box-shadow: 0px 0px 2px 1px #dedede;
-    }
-    margin-top: 20px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-`;
+const Fund = styled.div``;
 
 export default function Brief() {
   const code1 = `
@@ -210,7 +191,7 @@ setInterval(() => {
       <section>
         <h1>创建图形</h1>
         <p>
-          每一个图形类都由三大部分组成：
+          每一个图形都称为一个<b>角色</b>，都由三大部分组成：
           <b>本体属性，shape（视觉体），collider（碰撞体）</b>。
         </p>
         <p>

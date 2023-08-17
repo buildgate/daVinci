@@ -685,6 +685,14 @@ export class Dcharacter {
     }
   }
 
+  //计算使用变化矩阵后的实际坐标
+  matrixCalc(x: number, y: number) {
+    let matrix = this.accumulateTransform;
+    let cX = matrix.a * x + -matrix.b * y + matrix.e;
+    let cY = -matrix.c * x + matrix.d * y + matrix.f;
+    return { x: cX, y: cY };
+  }
+
   //初始化纹理
   initTexture(originTexture: string) {
     if (!originTexture) {
