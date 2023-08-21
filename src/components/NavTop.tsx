@@ -14,7 +14,7 @@ export default function NavTop() {
     <Fund>
       <div style={{ color: "#ff6a00", margin: "0 5px" }}>DaVinci</div>
       <div style={{ color: "#9a9a9a", margin: "0 5px" }}>for</div>
-      <div style={{ color: "#9a9a9a", margin: "0 5px" }}>canvas</div>
+      <div style={{ color: "#258125", margin: "0 5px" }}>canvas</div>
     </Fund>
   );
 }

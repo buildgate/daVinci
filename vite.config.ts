@@ -36,4 +36,9 @@ export default defineConfig({
     },
     rollupOptions: {},
   },
+  resolve: {
+    alias: {
+      "@root": resolve(__dirname, "./"),
+    },
+  },
 });

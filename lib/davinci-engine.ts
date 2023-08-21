@@ -7,8 +7,8 @@ export class Davinci {
   Dcanvas = document.createElement("canvas"); //表画布
   Dcontainer = document.createElement("div");
   Dctx = this.Dcanvas.getContext("2d", {
-    alpha: true,
-    willReadfrontly: true,
+    alpha: false,
+    willReadFrequently: true,
   }) as CanvasRenderingContext2D;
   originElement: Element | null = null;
 
@@ -74,7 +74,7 @@ export class Davinci {
         height: this.height,
         focusX: 0,
         focusY: 0,
-        fillColor: "#00000000",
+        fillColor: "#ffffff",
         shape: boardShape,
         collider: boardShape,
         rendering: shapeMethodRect,
@@ -107,6 +107,9 @@ export class Davinci {
 
     this.Dboard.width = this.width;
     this.Dboard.height = this.height;
+
+    this.Dboard.shape.path.width = this.width;
+    this.Dboard.shape.path.height = this.height;
   }
 
   //初始化触发事件
@@ -281,32 +284,32 @@ export class Davinci {
 
     this.Dctx.beginPath();
 
-    target.beforeRender(target); //渲染周期
+    target.beforeRender(target, this.Dctx); //渲染周期
     //本层渲染
 
     if (!target.snapshot) {
       //若无快照，证明是第一次渲染，那么先保存快照，然后子级全部不使用快照渲染
       target.snapshot = this.Dctx.getImageData(0, 0, this.width, this.height);
-      target.rendering(target);
+      target.rendering(target, this.Dctx);
     } else {
       //若有快照，则先检测是否快照渲染的对象
       if (snapshotID) {
         if (snapshotID === target.uid) {
           //uid匹配则后面全部使用常规渲染
           this.Dctx.putImageData(target.snapshot, 0, 0);
-          target.rendering(target);
+          target.rendering(target, this.Dctx);
           found = true;
         }
       } else {
         //无目标id则常规渲染，先保存当前快照
         target.snapshot = this.Dctx.getImageData(0, 0, this.width, this.height);
-        target.rendering(target);
+        target.rendering(target, this.Dctx);
       }
     }
 
-    target.afterRender(target);
+    target.afterRender(target, this.Dctx);
 
-    target.beforeChildrenRender(target);
+    target.beforeChildrenRender(target, this.Dctx);
 
     if (!target.snapshot) {
       target.children.forEach((o) => {
@@ -337,7 +340,7 @@ export class Davinci {
       }
     }
 
-    target.afterChildrenRender(target);
+    target.afterChildrenRender(target, this.Dctx);
 
     this.Dctx.globalAlpha = alpha;
     this.Dctx.setTransform(matrix);
@@ -360,14 +363,14 @@ export class Davinci {
     if (target.children.length) {
       this.setTF(this.Sctx, target);
 
-      target.beforeChildrenCollider(target);
+      target.beforeChildrenCollider(target, this.Sctx);
       for (let i = target.children.length - 1; i >= 0; i--) {
         currentTarget = this.colliderTrigger(target.children[i], event);
         if (currentTarget) {
           break;
         }
       }
-      target.afterChildrenCollider(target);
+      target.afterChildrenCollider(target, this.Sctx);
       this.Sctx.setTransform(matrix);
     }
 
@@ -403,11 +406,11 @@ export class Davinci {
 
     this.setTF(this.Sctx, target);
 
-    target.beforeCollider(target);
+    target.beforeCollider(target, this.Sctx);
 
-    target.colliding(target);
+    target.colliding(target, this.Sctx);
 
-    target.afterCollider(target);
+    target.afterCollider(target, this.Sctx);
 
     this.Sctx.setTransform(matrix);
 
@@ -494,12 +497,19 @@ export class Dcharacter {
   y: number = 0;
   focusX: number = 0;
   focusY: number = 0;
-  fillColor: CanvasFillStrokeStyles["fillStyle"] = "#000000";
+  fillColor: CanvasRenderingContext2D["fillStyle"] = "#000000";
 
   shadowColor: string = "#000000";
   shadowBlur: number = 0;
   shadowOffsetX: number = 0;
   shadowOffsetY: number = 0;
+
+  strokeStyle: CanvasRenderingContext2D["strokeStyle"] | null = null;
+  lineWidth: number = 0;
+  lineCap: CanvasRenderingContext2D["lineCap"] = "butt";
+  lineDashOffset: CanvasRenderingContext2D["lineDashOffset"] = 0;
+  lineJoin: CanvasRenderingContext2D["lineJoin"] = "miter";
+  miterLimit: CanvasRenderingContext2D["miterLimit"] = 0;
 
   scaleX: number = 1;
   scaleY: number = 1;
@@ -799,25 +809,34 @@ export class Dcharacter {
   }
 
   //视觉图形渲染行为,可以由开发者自定义，也可以使用引擎提供的基础渲染函数
-  rendering(Dcharacter: Dcharacter) {}
+  rendering(Dcharacter: Dcharacter, Dctx: CanvasRenderingContext2D) {}
   //碰撞图形渲染行为,可以由开发者自定义，也可以使用引擎提供的基础渲染函数
-  colliding(Dcharacter: Dcharacter) {}
+  colliding(Dcharacter: Dcharacter, Sctx: CanvasRenderingContext2D) {}
   //在进入子级渲染之前的行为
-  beforeChildrenRender(Dcharacter: Dcharacter) {}
+  beforeChildrenRender(
+    Dcharacter: Dcharacter,
+    Dctx: CanvasRenderingContext2D
+  ) {}
   //子级渲染循环结束后调用
-  afterChildrenRender(Dcharacter: Dcharacter) {}
+  afterChildrenRender(Dcharacter: Dcharacter, Dctx: CanvasRenderingContext2D) {}
   //在进入子级碰撞之前的行为
-  beforeChildrenCollider(Dcharacter: Dcharacter) {}
+  beforeChildrenCollider(
+    Dcharacter: Dcharacter,
+    Sctx: CanvasRenderingContext2D
+  ) {}
   //子级碰撞循环结束后调用
-  afterChildrenCollider(Dcharacter: Dcharacter) {}
+  afterChildrenCollider(
+    Dcharacter: Dcharacter,
+    Sctx: CanvasRenderingContext2D
+  ) {}
 
   //渲染本体的钩子函数
-  beforeRender(Dcharacter: Dcharacter) {}
-  afterRender(Dcharacter: Dcharacter) {}
+  beforeRender(Dcharacter: Dcharacter, Dctx: CanvasRenderingContext2D) {}
+  afterRender(Dcharacter: Dcharacter, Dctx: CanvasRenderingContext2D) {}
 
   //碰撞本体的钩子函数
-  beforeCollider(Dcharacter: Dcharacter) {}
-  afterCollider(Dcharacter: Dcharacter) {}
+  beforeCollider(Dcharacter: Dcharacter, Sctx: CanvasRenderingContext2D) {}
+  afterCollider(Dcharacter: Dcharacter, Sctx: CanvasRenderingContext2D) {}
 }
 
 export class Dshape {

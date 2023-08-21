@@ -1,11 +1,14 @@
-import Home from "./components/Home";
-import Brief from "./components/int/Brief";
-import Install from "./components/int/Install";
-import Fundamentals from "./components/doc/Fundamentals";
-import Character from "./components/doc/Character";
-import Position from "./components/doc/Position";
+import Home from "@root/src/components/Home";
+import Brief from "@root/src/components/int/Brief";
+import Install from "@root/src/components/int/Install";
+import Fundamentals from "@root/src/components/doc/Fundamentals";
+import Character from "@root/src/components/doc/Character";
+import Position from "@root/src/components/doc/Position";
+import Transform from "@root/src/components/doc/Transform";
+import Texture from "@root/src/components/doc/Texture";
+import Advanced from "@root/src/components/doc/Advanced";
+
 import { Outlet } from "react-router-dom";
-import Transform from "./components/doc/Transform";
 
 export const paths_int = {
   path: "/learn",
@@ -54,6 +57,18 @@ export const paths_doc = {
       path: "/doc/transform",
       element: <Transform />,
       name: "形变",
+      children: [],
+    },
+    {
+      path: "/doc/texture",
+      element: <Texture />,
+      name: "纹理",
+      children: [],
+    },
+    {
+      path: "/doc/advanced",
+      element: <Advanced />,
+      name: "进阶",
       children: [],
     },
   ],

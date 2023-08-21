@@ -1,71 +1,92 @@
 import { Dcharacter, Davinci, Dshape } from "../davinci-engine.js";
 
 //普通矩形视觉图形绘制
-export function shapeMethodRect(Dcharacter: Dcharacter) {
+export function shapeMethodRect(
+  Dcharacter: Dcharacter,
+  Dctx: CanvasRenderingContext2D
+) {
   let shape = (Dcharacter.shape as Dshape_data_rect).path;
-  Dcharacter.dm.Dctx.beginPath();
-  Dcharacter.dm.Dctx.rect(
-    -Dcharacter.focusX,
-    -Dcharacter.focusY,
-    shape.width,
-    shape.height
-  );
+  Dctx.beginPath();
+  Dctx.rect(-Dcharacter.focusX, -Dcharacter.focusY, shape.width, shape.height);
 
+  Dctx.save();
   if (Dcharacter.texture) {
     Dcharacter.textureRender(-Dcharacter.focusX, -Dcharacter.focusY, 1, 1, 0);
-    Dcharacter.dm.Dctx.fillStyle =
-      Dcharacter.texturePattern || Dcharacter.dm.Dctx.fillStyle;
+    Dctx.fillStyle = Dcharacter.texturePattern || Dctx.fillStyle;
   } else {
-    Dcharacter.dm.Dctx.fillStyle = Dcharacter.fillColor;
+    Dctx.fillStyle = Dcharacter.fillColor;
   }
 
-  Dcharacter.dm.Dctx.shadowBlur = Dcharacter.shadowBlur;
-  Dcharacter.dm.Dctx.shadowColor = Dcharacter.shadowColor;
-  Dcharacter.dm.Dctx.shadowOffsetX = Dcharacter.shadowOffsetX;
-  Dcharacter.dm.Dctx.shadowOffsetY = Dcharacter.shadowOffsetY;
+  Dctx.shadowBlur = Dcharacter.shadowBlur;
+  Dctx.shadowColor = Dcharacter.shadowColor;
+  Dctx.shadowOffsetX = Dcharacter.shadowOffsetX;
+  Dctx.shadowOffsetY = Dcharacter.shadowOffsetY;
 
-  Dcharacter.dm.Dctx.fill();
+  if (Dcharacter.strokeStyle) {
+    Dctx.strokeStyle = Dcharacter.strokeStyle;
+    Dctx.lineCap = Dcharacter.lineCap;
+    Dctx.lineDashOffset = Dcharacter.lineDashOffset;
+    Dctx.lineJoin = Dcharacter.lineJoin;
+    Dctx.lineWidth = Dcharacter.lineWidth;
+    Dctx.miterLimit = Dcharacter.miterLimit;
+    Dctx.stroke();
+  }
+
+  Dctx.fill();
+  Dctx.restore();
 }
 //普通圆形视觉图形绘制
-export function shapeMethodArc(Dcharacter: Dcharacter) {
+export function shapeMethodArc(
+  Dcharacter: Dcharacter,
+  Dctx: CanvasRenderingContext2D
+) {
   let shape = (Dcharacter.shape as Dshape_data_arc).path;
-  Dcharacter.dm.Dctx.beginPath();
-  Dcharacter.dm.Dctx.arc(0, 0, shape.radius, 0, Math.PI * 2);
+  Dctx.beginPath();
+  Dctx.arc(0, 0, shape.radius, 0, Math.PI * 2);
 
+  Dctx.save();
   if (Dcharacter.texture) {
     Dcharacter.textureRender(-Dcharacter.focusX, -Dcharacter.focusY, 1, 1, 0);
-    Dcharacter.dm.Dctx.fillStyle =
-      Dcharacter.texturePattern || Dcharacter.dm.Dctx.fillStyle;
+    Dctx.fillStyle = Dcharacter.texturePattern || Dctx.fillStyle;
   } else {
-    Dcharacter.dm.Dctx.fillStyle = Dcharacter.fillColor;
+    Dctx.fillStyle = Dcharacter.fillColor;
   }
 
-  Dcharacter.dm.Dctx.shadowBlur = Dcharacter.shadowBlur;
-  Dcharacter.dm.Dctx.shadowColor = Dcharacter.shadowColor;
-  Dcharacter.dm.Dctx.shadowOffsetX = Dcharacter.shadowOffsetX;
-  Dcharacter.dm.Dctx.shadowOffsetY = Dcharacter.shadowOffsetY;
+  Dctx.shadowBlur = Dcharacter.shadowBlur;
+  Dctx.shadowColor = Dcharacter.shadowColor;
+  Dctx.shadowOffsetX = Dcharacter.shadowOffsetX;
+  Dctx.shadowOffsetY = Dcharacter.shadowOffsetY;
 
-  Dcharacter.dm.Dctx.fill();
+  if (Dcharacter.strokeStyle) {
+    Dctx.strokeStyle = Dcharacter.strokeStyle;
+    Dctx.lineCap = Dcharacter.lineCap;
+    Dctx.lineDashOffset = Dcharacter.lineDashOffset;
+    Dctx.lineJoin = Dcharacter.lineJoin;
+    Dctx.lineWidth = Dcharacter.lineWidth;
+    Dctx.miterLimit = Dcharacter.miterLimit;
+    Dctx.stroke();
+  }
+
+  Dctx.fill();
+  Dctx.restore();
 }
 //普通多边形视觉图形绘制
-export function shapeMethodPolygon(Dcharacter: Dcharacter) {
+export function shapeMethodPolygon(
+  Dcharacter: Dcharacter,
+  Dctx: CanvasRenderingContext2D
+) {
   let shape = (Dcharacter.shape as Dshape_data_polygon).path;
-  Dcharacter.dm.Dctx.beginPath();
-  Dcharacter.dm.Dctx.moveTo(shape[0][0], shape[0][1]);
+  Dctx.beginPath();
+  Dctx.moveTo(shape[0][0], shape[0][1]);
   shape.forEach((point) => {
     if (point.length === 2) {
-      Dcharacter.dm.Dctx.lineTo(point[0], point[1]);
+      Dctx.lineTo(point[0], point[1]);
     }
     if (point.length === 4) {
-      Dcharacter.dm.Dctx.quadraticCurveTo(
-        point[0],
-        point[1],
-        point[2],
-        point[3]
-      );
+      Dctx.quadraticCurveTo(point[0], point[1], point[2], point[3]);
     }
     if (point.length === 6) {
-      Dcharacter.dm.Dctx.bezierCurveTo(
+      Dctx.bezierCurveTo(
         point[0],
         point[1],
         point[2],
@@ -75,29 +96,43 @@ export function shapeMethodPolygon(Dcharacter: Dcharacter) {
       );
     }
   });
-  Dcharacter.dm.Dctx.closePath();
+  Dctx.closePath();
 
+  Dctx.save();
   if (Dcharacter.texture) {
     Dcharacter.textureRender(-Dcharacter.focusX, -Dcharacter.focusY, 1, 1, 0);
-    Dcharacter.dm.Dctx.fillStyle =
-      Dcharacter.texturePattern || Dcharacter.dm.Dctx.fillStyle;
+    Dctx.fillStyle = Dcharacter.texturePattern || Dctx.fillStyle;
   } else {
-    Dcharacter.dm.Dctx.fillStyle = Dcharacter.fillColor;
+    Dctx.fillStyle = Dcharacter.fillColor;
   }
 
-  Dcharacter.dm.Dctx.shadowBlur = Dcharacter.shadowBlur;
-  Dcharacter.dm.Dctx.shadowColor = Dcharacter.shadowColor;
-  Dcharacter.dm.Dctx.shadowOffsetX = Dcharacter.shadowOffsetX;
-  Dcharacter.dm.Dctx.shadowOffsetY = Dcharacter.shadowOffsetY;
+  Dctx.shadowBlur = Dcharacter.shadowBlur;
+  Dctx.shadowColor = Dcharacter.shadowColor;
+  Dctx.shadowOffsetX = Dcharacter.shadowOffsetX;
+  Dctx.shadowOffsetY = Dcharacter.shadowOffsetY;
 
-  Dcharacter.dm.Dctx.fill();
+  if (Dcharacter.strokeStyle) {
+    Dctx.strokeStyle = Dcharacter.strokeStyle;
+    Dctx.lineCap = Dcharacter.lineCap;
+    Dctx.lineDashOffset = Dcharacter.lineDashOffset;
+    Dctx.lineJoin = Dcharacter.lineJoin;
+    Dctx.lineWidth = Dcharacter.lineWidth;
+    Dctx.miterLimit = Dcharacter.miterLimit;
+    Dctx.stroke();
+  }
+
+  Dctx.fill();
+  Dctx.restore();
 }
 
 //普通矩形碰撞图形绘制
-export function colliderMethodRect(Dcharacter: Dcharacter) {
+export function colliderMethodRect(
+  Dcharacter: Dcharacter,
+  Sctx: CanvasRenderingContext2D
+) {
   let collider = (Dcharacter.collider as Dshape_data_rect).path;
-  Dcharacter.dm.Sctx.beginPath();
-  Dcharacter.dm.Sctx.rect(
+  Sctx.beginPath();
+  Sctx.rect(
     -Dcharacter.focusX,
     -Dcharacter.focusY,
     collider.width,
@@ -105,30 +140,31 @@ export function colliderMethodRect(Dcharacter: Dcharacter) {
   );
 }
 //普通圆形碰撞图形绘制
-export function colliderMethodArc(Dcharacter: Dcharacter) {
+export function colliderMethodArc(
+  Dcharacter: Dcharacter,
+  Sctx: CanvasRenderingContext2D
+) {
   let collider = (Dcharacter.collider as Dshape_data_arc).path;
-  Dcharacter.dm.Sctx.beginPath();
-  Dcharacter.dm.Sctx.arc(0, 0, collider.radius, 0, Math.PI * 2);
+  Sctx.beginPath();
+  Sctx.arc(0, 0, collider.radius, 0, Math.PI * 2);
 }
 //普通多边形碰撞图形绘制
-export function colliderMethodPolygon(Dcharacter: Dcharacter) {
+export function colliderMethodPolygon(
+  Dcharacter: Dcharacter,
+  Sctx: CanvasRenderingContext2D
+) {
   let collider = (Dcharacter.collider as Dshape_data_polygon).path;
-  Dcharacter.dm.Sctx.beginPath();
-  Dcharacter.dm.Sctx.moveTo(collider[0][0], collider[0][1]);
+  Sctx.beginPath();
+  Sctx.moveTo(collider[0][0], collider[0][1]);
   collider.forEach((point) => {
     if (point.length === 2) {
-      Dcharacter.dm.Sctx.lineTo(point[0], point[1]);
+      Sctx.lineTo(point[0], point[1]);
     }
     if (point.length === 4) {
-      Dcharacter.dm.Sctx.quadraticCurveTo(
-        point[0],
-        point[1],
-        point[2],
-        point[3]
-      );
+      Sctx.quadraticCurveTo(point[0], point[1], point[2], point[3]);
     }
     if (point.length === 6) {
-      Dcharacter.dm.Sctx.bezierCurveTo(
+      Sctx.bezierCurveTo(
         point[0],
         point[1],
         point[2],
@@ -138,7 +174,7 @@ export function colliderMethodPolygon(Dcharacter: Dcharacter) {
       );
     }
   });
-  Dcharacter.dm.Sctx.closePath();
+  Sctx.closePath();
 }
 
 export function createEditableTool(dc: Dcharacter, dm: Davinci) {
@@ -164,16 +200,16 @@ export function createEditableTool(dc: Dcharacter, dm: Davinci) {
       shape: toolShape,
       collider: toolShape,
       targetMatrix: new DOMMatrix(),
-      colliding: (target) => {
+      colliding: (target, Dctx) => {
         let matrix = dm.Sctx.getTransform();
         dm.Sctx.setTransform(dc.accumulateTransform);
-        colliderMethodRect(target);
+        colliderMethodRect(target, Dctx);
         dm.Sctx.setTransform(matrix);
       },
-      rendering: (target) => {
+      rendering: (target, Sctx) => {
         let matrix = dm.Dctx.getTransform();
         dm.Dctx.setTransform(dc.accumulateTransform);
-        shapeMethodRect(target);
+        shapeMethodRect(target, Sctx);
         dm.Dctx.setTransform(matrix);
       },
       beforeChildrenCollider: () => {

@@ -68,6 +68,12 @@ type Dcharacter_data = {
   accumulateTransform?: DOMMatrix;
   renderable?: boolean;
   penetrate?: boolean;
+  strokeStyle?: CanvasRenderingContext2D["strokeStyle"];
+  lineWidth?: number;
+  lineCap?: CanvasRenderingContext2D["lineCap"];
+  lineDashOffset?: CanvasRenderingContext2D["lineDashOffset"];
+  lineJoin?: CanvasRenderingContext2D["lineJoin"];
+  miterLimit?: CanvasRenderingContext2D["miterLimit"];
 
   rendering?: (...rest: any) => void;
   colliding?: (...rest: any) => void;

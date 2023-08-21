@@ -21,6 +21,9 @@ h1,
 p {
   line-height: 200%;
 }
+h1 {
+  color: #258125;
+}
 section {
   margin-bottom: 50px;
 }
@@ -41,4 +44,13 @@ section {
   border-radius: 10px;
   background: #e1e2ff;
   padding: 10px;
+}
+
+b {
+  color: #ff6a00;
+}
+
+pre {
+  font-weight: bold;
+  font-size: 13px;
 }

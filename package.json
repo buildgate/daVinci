@@ -1,7 +1,7 @@
 {
   "name": "@buildgate/davinci",
   "type": "module",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "一款轻量级canvas引擎，对canvas里的绘画元素抽象化处理，从而实现内部元素可以操作。",
   "keywords": [
     "canvas",

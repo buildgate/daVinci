@@ -7,7 +7,7 @@ import {
   Dcharacter,
   shapeMethodRect,
   colliderMethodRect,
-} from "../../../lib/main";
+} from "@root/lib/main";
 import { useEffect, useRef } from "react";
 
 const Fund = styled.div``;
