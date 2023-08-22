@@ -26,7 +26,15 @@ export default function Fundamentals() {
         <br />
       </section>
       <section>
-        <h1>渲染机制</h1>
+        <h1>渲染机制（重要更新1.1.0）</h1>
+        <p>
+          重大更新 1.1.0 版本后快照渲染暂时删除。考虑到 getImageData 和
+          putImageData 的效率比较消耗性能，而且生成的 imageData
+          是无压缩数据，占用空间将会很大，当角色数量增加时，占用空间和性能花销会逐渐使得快照渲染无优势，这样反而会本末倒置，所以暂时取消快照渲染，后续考虑使用脏矩形渲染作为性能优化的替代，对于多个重复的元素建议使用自定义渲染来提升性能。
+        </p>
+      </section>
+      <section>
+        <h1>渲染机制（旧）</h1>
         <p>
           davinci里面有且仅有一个根角色<b>Dboard</b>。所有的角色都通过
           <b>addChild</b>
@@ -77,6 +85,7 @@ export default function Fundamentals() {
           这样就可以确保每一帧都只有一个状态，并且不会让数据落后。
         </p>
       </section>
+
       <section>
         <h1>碰撞机制</h1>
         <p>

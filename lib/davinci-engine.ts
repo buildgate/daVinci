@@ -35,8 +35,7 @@ export class Davinci {
   stopPropagation: boolean = true; //是否冒泡，默认不冒泡，冒泡并不会影响碰撞检测的性能，所以按需开启
 
   //节流相关
-  nextRenderUid: number = 0;
-  nextRenderAll: boolean = false;
+  nextRender: boolean = false;
   block: boolean = false;
 
   //按帧节流
@@ -216,7 +215,7 @@ export class Davinci {
   }
 
   //执行渲染
-  render(uid?: number) {
+  render() {
     if (!this.allowRender) {
       return;
     }
@@ -224,40 +223,18 @@ export class Davinci {
     if (!this.block) {
       this.block = true;
       this.Dctx.clearRect(0, 0, this.width, this.height);
-      this.nextRenderUid = 0;
-      this.nextRenderAll = false;
-      if (uid) {
-        if (!this.renderer(this.Dboard, uid)) {
-          //如果没找到匹配的uid则采用全局渲染
-          this.renderer(this.Dboard);
-        }
-      } else {
-        this.renderer(this.Dboard);
-      }
+      this.nextRender = false;
+      this.renderer(this.Dboard);
 
       window.requestAnimationFrame(() => {
         this.block = false;
 
-        if (this.nextRenderUid === 0) {
-          return;
-        } else {
-          if (this.nextRenderAll) {
-            this.render();
-          } else {
-            this.render(this.nextRenderUid);
-          }
+        if (this.nextRender) {
+          this.render();
         }
       });
     } else {
-      if (this.nextRenderAll) {
-        return;
-      }
-      if (!uid) {
-        this.nextRenderAll = true;
-        return;
-      }
-      this.nextRenderAll = this.nextRenderUid !== uid || this.nextRenderAll;
-      this.nextRenderUid = uid;
+      this.nextRender = true;
     }
   }
 
@@ -270,11 +247,10 @@ export class Davinci {
   }
 
   //渲染器
-  renderer(target: Dcharacter, snapshotID?: number) {
-    let found = false; //判断是否已经找到快照渲染的对象
+  renderer(target: Dcharacter) {
     if (!this.allowRender || !target.renderable) {
       //中断渲染
-      return found;
+      return;
     }
 
     let matrix = this.Dctx.getTransform(); //渲染前的准备工作
@@ -285,66 +261,21 @@ export class Davinci {
     this.Dctx.beginPath();
 
     target.beforeRender(target, this.Dctx); //渲染周期
-    //本层渲染
 
-    if (!target.snapshot) {
-      //若无快照，证明是第一次渲染，那么先保存快照，然后子级全部不使用快照渲染
-      target.snapshot = this.Dctx.getImageData(0, 0, this.width, this.height);
-      target.rendering(target, this.Dctx);
-    } else {
-      //若有快照，则先检测是否快照渲染的对象
-      if (snapshotID) {
-        if (snapshotID === target.uid) {
-          //uid匹配则后面全部使用常规渲染
-          this.Dctx.putImageData(target.snapshot, 0, 0);
-          target.rendering(target, this.Dctx);
-          found = true;
-        }
-      } else {
-        //无目标id则常规渲染，先保存当前快照
-        target.snapshot = this.Dctx.getImageData(0, 0, this.width, this.height);
-        target.rendering(target, this.Dctx);
-      }
-    }
+    target.rendering(target, this.Dctx);
 
     target.afterRender(target, this.Dctx);
 
     target.beforeChildrenRender(target, this.Dctx);
 
-    if (!target.snapshot) {
-      target.children.forEach((o) => {
-        this.renderer(o);
-      });
-    } else {
-      //若有快照，则先检测是否快照渲染的对象
-      if (snapshotID) {
-        if (snapshotID === target.uid) {
-          target.children.forEach((o) => {
-            this.renderer(o);
-          });
-        } else {
-          target.children.forEach((o) => {
-            //循环没个子级，如果在子级中找到目标，则返回true
-            if (found) {
-              this.renderer(o);
-            } else {
-              found = this.renderer(o, snapshotID) || found;
-            }
-          });
-        }
-      } else {
-        //无目标id则常规渲染，先保存当前快照
-        target.children.forEach((o) => {
-          this.renderer(o);
-        });
-      }
-    }
+    target.children.forEach((o) => {
+      this.renderer(o);
+    });
 
     target.afterChildrenRender(target, this.Dctx);
 
     this.Dctx.globalAlpha = alpha;
     this.Dctx.setTransform(matrix);
-    return found;
   }
 
   //判断是否当前目标，并优先返回顶层对象，默认阻止冒泡
@@ -524,7 +455,6 @@ export class Dcharacter {
   shape: Dshape | any = null; //允许是自定义图形数据或者是官方图形数据
   collider: Dcollider | any = null;
   zidx: number = 0;
-  snapshot: ImageData | null = null;
 
   //纹理相关
   texture: string | null = null;
@@ -551,7 +481,7 @@ export class Dcharacter {
   onmouseleave = new Map();
 
   ontextureonload: () => any = () => {
-    this.dm.render(this.uid);
+    this.dm.render();
   };
 
   constructor(data: Dcharacter_data, DM: Davinci) {
@@ -598,11 +528,7 @@ export class Dcharacter {
             //触发render
             Reflect.set(target, key, value, receiver);
             target.parent?.childrenSort();
-            target.dm.render(target.parent?.uid); //注意，如果修改的是zidx，改变的实际是父级的内容，所以这里的uid需要用父级的
-            break;
-          case "snapshot":
-            //不触发render
-            Reflect.set(target, key, value, receiver);
+            target.dm.render(); //注意，如果修改的是zidx，改变的实际是父级的内容，所以这里的uid需要用父级的
             break;
           case "onmouseenter":
             //不触发render
@@ -630,7 +556,7 @@ export class Dcharacter {
             break;
           default:
             Reflect.set(target, key, value, receiver);
-            target.dm.render(target.uid);
+            target.dm.render();
             //其余属性均需要触发render
             break;
         }
@@ -783,7 +709,7 @@ export class Dcharacter {
     let res = this.children.every((o, idx) => {
       if (o.zidx > child.zidx) {
         this.children.splice(idx, 0, child);
-        this.dm.render(this.uid);
+        this.dm.render();
         return false;
       } else {
         return true;
@@ -791,7 +717,7 @@ export class Dcharacter {
     });
     if (res) {
       this.children.push(child);
-      this.dm.render(this.uid);
+      this.dm.render();
     }
   }
 
@@ -800,7 +726,7 @@ export class Dcharacter {
     this.children.every((o, idx) => {
       if (o.uid === child.uid) {
         this.children.splice(idx, 0);
-        this.dm.render(this.uid);
+        this.dm.render();
         return false;
       } else {
         return true;
