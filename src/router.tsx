@@ -8,6 +8,8 @@ import Transform from "@root/src/components/doc/Transform";
 import Texture from "@root/src/components/doc/Texture";
 import Advanced from "@root/src/components/doc/Advanced";
 
+import Dclass from "@root/src/components/api/Dclass";
+
 import { Outlet } from "react-router-dom";
 
 export const paths_int = {
@@ -74,11 +76,46 @@ export const paths_doc = {
   ],
 };
 
+export const paths_api = {
+  path: "/api",
+  element: <Outlet />,
+  name: "API",
+  children: [
+    {
+      path: "/api/class",
+      element: <Dclass />,
+      name: "类",
+      children: [],
+    },
+    {
+      path: "/api/attribute",
+      element: <Advanced />,
+      name: "属性",
+      children: [],
+    },
+    {
+      path: "/api/method",
+      element: <Advanced />,
+      name: "方法",
+      children: [],
+    },
+  ],
+};
+
 export const paths = [
   {
     path: "/",
     element: <Home></Home>,
     name: "主页",
-    children: [paths_int, paths_doc],
+    children: [paths_int, paths_doc, paths_api],
   },
 ];
+
+export const api_anchor = {
+  class: [
+    { name: "Davinci" },
+    { name: "Dcharacter" },
+    { name: "Dshape" },
+    { name: "Dcollider" },
+  ],
+};

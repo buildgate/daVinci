@@ -27,7 +27,7 @@ export default function Install() {
     useEffect(() => {
         DM.mount("#app");
         DM.render();
-      });
+      },[]);
     `;
 
   return (

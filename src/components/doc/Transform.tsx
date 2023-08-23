@@ -127,7 +127,7 @@ export default function Transform() {
     DM1.mount("#demo1");
     DM1.collisionDetect = true;
     DM1.render();
-  });
+  }, []);
   return (
     <Fund>
       <section>

@@ -162,7 +162,7 @@ setInterval(() => {
     DM2.render();
     DM3.mount("#demo3");
     DM3.render();
-  });
+  }, []);
 
   return (
     <Fund>

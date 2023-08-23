@@ -60,7 +60,7 @@ export default function Transform() {
       scaleY: 0.5,
       rendering: shapeMethodRect,
       colliding: colliderMethodRect,
-      texture: new URL("@root/public/texture.jpg", import.meta.url).href,
+      texture: new URL("@root/src/assets/texture.jpg", import.meta.url).href,
     },
     DM1
   );
@@ -70,7 +70,7 @@ export default function Transform() {
     DM1.mount("#demo1");
     DM1.collisionDetect = true;
     DM1.render();
-  });
+  }, []);
   return (
     <Fund>
       <section>

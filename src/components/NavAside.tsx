@@ -1,6 +1,8 @@
 import styled from "styled-components";
-import { paths, paths_int, paths_doc } from "../router";
+import { paths, paths_int, paths_doc, paths_api, api_anchor } from "../router";
 import { useNavigate } from "react-router-dom";
+import { Collapse } from "@root/src/components/common/Collapse";
+import { useEffect } from "react";
 
 const Fund = styled.div`
   width: 300px;
@@ -8,19 +10,19 @@ const Fund = styled.div`
   box-shadow: 2px 0px 5px 1px #dedede;
   display: flex;
   flex-direction: column;
-  .block {
+  > .block {
     width: 100%;
     padding: 10px;
     font-size: 16px;
     display: flex;
     flex-direction: column;
     border-bottom: 1px #cacaca solid;
-    .title {
+    > .title {
       font-size: 14px;
       color: #9a9a9a;
       padding: 10px;
     }
-    .menu-item {
+    > .menu-item {
       font-size: 16px;
       color: #000000;
       padding: 10px;
@@ -66,6 +68,24 @@ export default function NavAside() {
             </div>
           );
         })}
+      </div>
+      <div className="api block">
+        <div className="title">API</div>
+        <Collapse title={"类"}>
+          {api_anchor.class.map((o) => {
+            return (
+              <div
+                className="menu-item"
+                key={o.name}
+                onClick={() => {
+                  navigate("/api/class", { state: { anchor: o.name } });
+                }}
+              >
+                {o.name}
+              </div>
+            );
+          })}
+        </Collapse>
       </div>
     </Fund>
   );
