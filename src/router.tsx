@@ -7,8 +7,9 @@ import Position from "@root/src/components/doc/Position";
 import Transform from "@root/src/components/doc/Transform";
 import Texture from "@root/src/components/doc/Texture";
 import Advanced from "@root/src/components/doc/Advanced";
-
 import Dclass from "@root/src/components/api/Dclass";
+import Dparam from "@root/src/components/api/Dparam";
+import Dmethod from "@root/src/components/api/Dmethod";
 
 import { Outlet } from "react-router-dom";
 
@@ -89,13 +90,13 @@ export const paths_api = {
     },
     {
       path: "/api/attribute",
-      element: <Advanced />,
+      element: <Dparam />,
       name: "属性",
       children: [],
     },
     {
       path: "/api/method",
-      element: <Advanced />,
+      element: <Dmethod />,
       name: "方法",
       children: [],
     },
@@ -117,5 +118,60 @@ export const api_anchor = {
     { name: "Dcharacter" },
     { name: "Dshape" },
     { name: "Dcollider" },
+  ],
+  param: [
+    { name: "Dboard" },
+    { name: "allowRender" },
+    { name: "collisionDetect" },
+    { name: "stopPropagation" },
+    { name: "id" },
+    { name: "name" },
+    { name: "width" },
+    { name: "height" },
+    { name: "x" },
+    { name: "y" },
+    { name: "focusX" },
+    { name: "focusY" },
+    { name: "fillColor" },
+    { name: "shadowColor" },
+    { name: "shadowBlur" },
+    { name: "shadowOffsetX" },
+    { name: "shadowOffsetY" },
+    { name: "strokeStyle" },
+    { name: "lineWidth" },
+    { name: "lineCap" },
+    { name: "lineDashOffset" },
+    { name: "lineJoin" },
+    { name: "miterLimit" },
+    { name: "scaleX" },
+    { name: "scaleY" },
+    { name: "rotate" },
+    { name: "opacity" },
+    { name: "accumulateTransform" },
+    { name: "renderable" },
+    { name: "collisionable" },
+    { name: "dm" },
+    { name: "shape" },
+    { name: "collider" },
+    { name: "texture" },
+    { name: "children" },
+    { name: "penetrate" },
+    { name: "visiable" },
+  ],
+  method: [
+    { name: "setData" },
+    { name: "mount" },
+    { name: "render" },
+    { name: "globalTextureComplete" },
+    { name: "onGlobalTextureComplete" },
+    { name: "matrixCalc" },
+    { name: "Dcharacter.setData" },
+    { name: "Dcharacter.matrixCalc" },
+    { name: "childrenSort" },
+    { name: "initTexture" },
+    { name: "addEventListener" },
+    { name: "removeEventListener" },
+    { name: "addChild" },
+    { name: "deleteChild" },
   ],
 };

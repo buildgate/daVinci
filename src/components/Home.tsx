@@ -4,6 +4,10 @@ import NavAside from "./NavAside";
 import styled from "styled-components";
 
 import { Outlet } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+import { useEffect, useRef } from "react";
 
 const Fund = styled.div`
   width: 100%;
@@ -34,6 +38,15 @@ const Page = styled.div`
 `;
 
 export default function Home() {
+  const pathname = useLocation().pathname;
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (pathname === "/") {
+      navigate("/learn/brief");
+    }
+  }, [pathname]);
   return (
     <Fund>
       <NavTop></NavTop>

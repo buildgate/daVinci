@@ -1,7 +1,7 @@
 {
   "name": "@buildgate/davinci",
   "type": "module",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "一款轻量级canvas引擎，对canvas里的绘画元素抽象化处理，从而实现内部元素可以操作。",
   "keywords": [
     "canvas",
@@ -34,8 +34,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "build-electron": "tsc && vite build && electron-builder",
-    "build": "vite build",
+    "build-electron": "tsc && vite build -m electron && electron-builder",
+    "build-lib": "vite build -m lib",
+    "build-demo": "vite build -m doc",
     "preview": "vite preview"
   },
   "devDependencies": {
@@ -52,9 +53,11 @@
   "dependencies": {
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-legacy": "^4.1.1",
     "highlight.js": "^11.8.0",
     "react-router-dom": "^6.15.0",
     "react-syntax-highlighter": "^15.5.0",
-    "styled-components": "^6.0.7"
+    "styled-components": "^6.0.7",
+    "vite-plugin-singlefile": "^0.13.5"
   }
 }

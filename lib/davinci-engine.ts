@@ -23,7 +23,6 @@ export class Davinci {
   //画布设置
   width: number = 500;
   height: number = 500;
-  globalCompositeOperation = "source-over";
 
   //鼠标事件参数
   x = 0;
@@ -260,11 +259,13 @@ export class Davinci {
 
     this.Dctx.beginPath();
 
-    target.beforeRender(target, this.Dctx); //渲染周期
+    if (target.visiable) {
+      target.beforeRender(target, this.Dctx); //渲染周期
 
-    target.rendering(target, this.Dctx);
+      target.rendering(target, this.Dctx);
 
-    target.afterRender(target, this.Dctx);
+      target.afterRender(target, this.Dctx);
+    }
 
     target.beforeChildrenRender(target, this.Dctx);
 
@@ -280,11 +281,7 @@ export class Davinci {
 
   //判断是否当前目标，并优先返回顶层对象，默认阻止冒泡
   colliderTrigger(target: Dcharacter, event: Devent): Dcharacter | undefined {
-    if (!this.collisionDetect || !target.renderable) {
-      return;
-    }
-
-    if (target.penetrate) {
+    if (!this.collisionDetect || !target.collisionable) {
       return;
     }
 
@@ -337,11 +334,13 @@ export class Davinci {
 
     this.setTF(this.Sctx, target);
 
-    target.beforeCollider(target, this.Sctx);
+    if (!target.penetrate) {
+      target.beforeCollider(target, this.Sctx);
 
-    target.colliding(target, this.Sctx);
+      target.colliding(target, this.Sctx);
 
-    target.afterCollider(target, this.Sctx);
+      target.afterCollider(target, this.Sctx);
+    }
 
     this.Sctx.setTransform(matrix);
 
@@ -450,6 +449,7 @@ export class Dcharacter {
   accumulateTransform: DOMMatrix = new DOMMatrix(); //累计形变，用来计算实际坐标
 
   renderable: boolean = true; //是否可渲染，默认是，为false时将不会渲染
+  collisionable: boolean = true; //是否可检测碰撞，默认是，为false时将不会被检测
 
   dm: Davinci; //画布实例
   shape: Dshape | any = null; //允许是自定义图形数据或者是官方图形数据
@@ -471,7 +471,10 @@ export class Dcharacter {
   parent: Dcharacter | null | undefined = null;
 
   //碰撞相关
-  penetrate: boolean = false; //是否击穿
+  penetrate: boolean = false; //是否击穿，不会影响子级碰撞检测
+
+  //渲染相关
+  visiable: boolean = true; //是否可是，有别于renderable，visiable不影响子级
 
   //事件列
   onmousedown = new Map();
@@ -704,20 +707,39 @@ export class Dcharacter {
   }
 
   //添加子级
-  addChild(child: Dcharacter) {
-    child.parent = this;
-    let res = this.children.every((o, idx) => {
-      if (o.zidx > child.zidx) {
-        this.children.splice(idx, 0, child);
-        this.dm.render();
-        return false;
-      } else {
-        return true;
-      }
-    });
-    if (res) {
-      this.children.push(child);
+  addChild(data: Dcharacter | Array<Dcharacter>) {
+    if (data instanceof Array) {
+      let children = data;
+      children.forEach((child) => {
+        let res = this.children.every((o, idx) => {
+          if (o.zidx > child.zidx) {
+            this.children.splice(idx, 0, child);
+            return false;
+          } else {
+            return true;
+          }
+        });
+        if (res) {
+          this.children.push(child);
+        }
+      });
       this.dm.render();
+    } else {
+      let child = data as Dcharacter;
+      child.parent = this;
+      let res = this.children.every((o, idx) => {
+        if (o.zidx > child.zidx) {
+          this.children.splice(idx, 0, child);
+          this.dm.render();
+          return false;
+        } else {
+          return true;
+        }
+      });
+      if (res) {
+        this.children.push(child);
+        this.dm.render();
+      }
     }
   }
 

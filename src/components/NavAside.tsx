@@ -10,6 +10,7 @@ const Fund = styled.div`
   box-shadow: 2px 0px 5px 1px #dedede;
   display: flex;
   flex-direction: column;
+  overflow: auto;
   > .block {
     width: 100%;
     padding: 10px;
@@ -79,6 +80,36 @@ export default function NavAside() {
                 key={o.name}
                 onClick={() => {
                   navigate("/api/class", { state: { anchor: o.name } });
+                }}
+              >
+                {o.name}
+              </div>
+            );
+          })}
+        </Collapse>
+        <Collapse title={"属性"}>
+          {api_anchor.param.map((o) => {
+            return (
+              <div
+                className="menu-item"
+                key={o.name}
+                onClick={() => {
+                  navigate("/api/attribute", { state: { anchor: o.name } });
+                }}
+              >
+                {o.name}
+              </div>
+            );
+          })}
+        </Collapse>
+        <Collapse title={"方法"}>
+          {api_anchor.method.map((o) => {
+            return (
+              <div
+                className="menu-item"
+                key={o.name}
+                onClick={() => {
+                  navigate("/api/method", { state: { anchor: o.name } });
                 }}
               >
                 {o.name}

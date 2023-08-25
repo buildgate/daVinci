@@ -43,7 +43,7 @@ const Fund = styled.div`
 
 export function Collapse(props: props) {
   let { title, children } = props;
-  let [isCollapse, setIsCollapse] = useState(true);
+  let [isCollapse, setIsCollapse] = useState(false);
   return (
     <Fund>
       <div

@@ -8,11 +8,11 @@ const Fund = styled.div``;
 
 export default function Dclass() {
   const code1 = `
-new Davinci(fundElement?: string, options?: Dcharacter_data) 
+    new Davinci(fundElement?: string, options?: Dcharacter_data) 
 
 `;
   const code2 = `
-new Dcharacter(data: Dcharacter_data, DM: Davinci) 
+    new Dcharacter(data: Dcharacter_data, DM: Davinci) 
 
 `;
   const code3 = `
@@ -69,8 +69,8 @@ new Dcharacter(data: Dcharacter_data, DM: Davinci)
           本章将介绍官方提供的类，强烈建议使用typescript进行开发，因为类型提示功能将在插件中发挥重要的作用。
         </b>
       </section>
-      <section>
-        <h1 id="Davinci">Davinci</h1>
+      <section id="Davinci">
+        <h1>Davinci</h1>
         <br />
         <div className="code-wapper">
           <SyntaxHighlighter language="typescript" style={a11yLight}>
@@ -82,8 +82,8 @@ new Dcharacter(data: Dcharacter_data, DM: Davinci)
           可以使用自定义挂载，宽高设置可以通过setdata方法设置。初始化时会自动生成一个Dcharacter作为画布的基础元素，这个Dcharacter会与画布的宽高进行同步。
         </p>
       </section>
-      <section>
-        <h1 id="Dcharacter">Dcharacter</h1>
+      <section id="Dcharacter">
+        <h1>Dcharacter</h1>
         <br />
         <div className="code-wapper">
           <SyntaxHighlighter language="typescript" style={a11yLight}>
@@ -94,8 +94,8 @@ new Dcharacter(data: Dcharacter_data, DM: Davinci)
           Dcharacter类是初始化时会返回一个proxy对象，Dcharacter的属性值会被监听，当检测到修改时会自动调用render函数。初始化时需要传入一个Davinci实例来绑定视图更新的操作。
         </p>
       </section>
-      <section>
-        <h1 id="Dshape">Dshape</h1>
+      <section id="Dshape">
+        <h1>Dshape</h1>
         <br />
         <div className="code-wapper">
           <SyntaxHighlighter language="typescript" style={a11yLight}>
@@ -106,8 +106,8 @@ new Dcharacter(data: Dcharacter_data, DM: Davinci)
           Dshape类用于创建一个视觉体图形，目前官方提供了矩形，圆形，多边形三种图形。多边形提供三种线段类型：直线，二次贝塞尔曲线，三次贝塞尔曲线。
         </p>
       </section>
-      <section>
-        <h1 id="Dcollider">Dcollider</h1>
+      <section id="Dcollider">
+        <h1>Dcollider</h1>
         <br />
         <div className="code-wapper">
           <SyntaxHighlighter language="typescript" style={a11yLight}>
