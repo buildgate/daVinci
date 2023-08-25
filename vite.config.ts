@@ -37,7 +37,7 @@ export default defineConfig(({ command, mode }) => {
       // plugins: [viteSingleFile()],
       base: "./",
       build: {
-        outDir: "doc",
+        outDir: "docs",
         rollupOptions: {
           input: resolve(__dirname, "index.html"),
         },
