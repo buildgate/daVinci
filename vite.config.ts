@@ -34,7 +34,7 @@ export default defineConfig(({ command, mode }) => {
   }
   if (mode === "doc") {
     return {
-      plugins: [viteSingleFile()],
+      // plugins: [viteSingleFile()],
       base: "./",
       build: {
         outDir: "doc",
