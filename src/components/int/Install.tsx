@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { a11yLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 const Fund = styled.div``;
 
@@ -35,7 +35,7 @@ export default function Install() {
       <section>
         <h1>使用npm</h1>
         <div className="code-wapper">
-          <SyntaxHighlighter language="auto" style={a11yLight}>
+          <SyntaxHighlighter language="auto" style={a11yDark}>
             {code1}
           </SyntaxHighlighter>
         </div>
@@ -46,7 +46,7 @@ export default function Install() {
           其实在其他框架上的使用也是一样的，只需要保证画布在挂载的时候，目标dom已经被渲染完成即可。
         </p>
         <div className="code-wapper">
-          <SyntaxHighlighter language="typescript" style={a11yLight}>
+          <SyntaxHighlighter language="typescript" style={a11yDark}>
             {code2}
           </SyntaxHighlighter>
         </div>

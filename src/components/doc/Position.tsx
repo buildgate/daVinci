@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { a11yLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import {
   Davinci,
   Dshape,
@@ -149,7 +149,7 @@ export default function Position() {
         </p>
         <br />
         <div className="code-wapper">
-          <SyntaxHighlighter language="typescript" style={a11yLight}>
+          <SyntaxHighlighter language="typescript" style={a11yDark}>
             {code1}
           </SyntaxHighlighter>
         </div>

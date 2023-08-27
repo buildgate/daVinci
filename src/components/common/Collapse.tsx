@@ -48,6 +48,7 @@ export function Collapse(props: props) {
     <Fund>
       <div
         className="title"
+        style={{ borderBottom: isCollapse ? "1px solid #dedede" : "" }}
         onClick={() => {
           setIsCollapse(!isCollapse);
         }}

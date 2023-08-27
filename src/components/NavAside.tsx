@@ -23,11 +23,15 @@ const Fund = styled.div`
       color: #9a9a9a;
       padding: 10px;
     }
-    > .menu-item {
+    .menu-item {
       font-size: 16px;
       color: #000000;
       padding: 10px;
       text-indent: 0.5em;
+      width: 100%;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
       cursor: pointer;
     }
   }

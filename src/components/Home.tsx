@@ -33,7 +33,8 @@ const Page = styled.div`
     margin: 0 auto;
     width: 1040px;
     padding: 20px;
-    box-shadow: 0px 0px 2px 1px #dedede;
+    box-shadow: 0px 0px 5px 1px #dedede;
+    background: #ffffff;
   }
 `;
 

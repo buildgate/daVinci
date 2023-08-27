@@ -173,5 +173,11 @@ export const api_anchor = {
     { name: "removeEventListener" },
     { name: "addChild" },
     { name: "deleteChild" },
+    { name: "shapeMethodRect" },
+    { name: "shapeMethodArc" },
+    { name: "shapeMethodPolygon" },
+    { name: "colliderMethodRect" },
+    { name: "colliderMethodArc" },
+    { name: "colliderMethodPolygon" },
   ],
 };

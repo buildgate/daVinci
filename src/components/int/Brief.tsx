@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { a11yLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import {
   Davinci,
   Dshape,
@@ -14,60 +14,60 @@ const Fund = styled.div``;
 
 export default function Brief() {
   const code1 = `
-import { Dcharacter, Davinci, Dshape } from "davinci";
+  import { Dcharacter, Davinci, Dshape } from "davinci";
 
-const DM = new Davinci("#app");
+  const DM = new Davinci("#app");
 
 `;
 
   const code2 = `
-import { Dcharacter, Davinci } from "davinci";
+  import { Dcharacter, Davinci } from "davinci";
 
-const DM = new Davinci();
+  const DM = new Davinci();
 
-DM.mount("#app")
+  DM.mount("#app")
 
 `;
 
   const code3 = `
-import { Dshape,Dcharacter,shapeMethodRect,colliderMethodRect } from "davinci";
+  import { Dshape,Dcharacter,shapeMethodRect,colliderMethodRect } from "davinci";
 
-let shape = new Dshape({
-  type: "rect",
-  path: { width: 200, height: 200 },
-});
+  let shape = new Dshape({
+    type: "rect",
+    path: { width: 200, height: 200 },
+  });
 
-let rect = new Dcharacter(
-  {
-    x: 10,
-    y: 10,
-    width: 200,
-    height: 200,
-    shape: shape,
-    collider: shape,
-    rendering: shapeMethodRect,
-    colliding: colliderMethodRect,
-  },
-  DM
-);
+  let rect = new Dcharacter(
+    {
+      x: 10,
+      y: 10,
+      width: 200,
+      height: 200,
+      shape: shape,
+      collider: shape,
+      rendering: shapeMethodRect,
+      colliding: colliderMethodRect,
+    },
+    DM
+  );
 
-DM.Dboard.addChild(rect);//向画板添加元素
+  DM.Dboard.addChild(rect);//向画板添加元素
 
 `;
 
   const code4 = `
-rect.addEventListener("mousedown", () => {
-  alret("mousedown");
-});
+  rect.addEventListener("mousedown", () => {
+    alret("mousedown");
+  });
 
-DM.collisionDetect = true;//需要开启碰撞检测
+  DM.collisionDetect = true;//需要开启碰撞检测
 
 `;
 
   const code5 = `
-setInterval(() => {
-  rect.x >= 500 ? (rect.x = 10) : (rect.x += 0.5);
-}, 20);
+  setInterval(() => {
+    rect.x >= 500 ? (rect.x = 10) : (rect.x += 0.5);
+  }, 20);
 
 `;
 
@@ -177,13 +177,13 @@ setInterval(() => {
       <section>
         <h1>创建画布</h1>
         <div className="code-wapper">
-          <SyntaxHighlighter language="typescript" style={a11yLight}>
+          <SyntaxHighlighter language="typescript" style={a11yDark}>
             {code1}
           </SyntaxHighlighter>
         </div>
         <p>或者自定义挂载时机</p>
         <div className="code-wapper">
-          <SyntaxHighlighter language="typescript" style={a11yLight}>
+          <SyntaxHighlighter language="typescript" style={a11yDark}>
             {code2}
           </SyntaxHighlighter>
         </div>
@@ -210,7 +210,7 @@ setInterval(() => {
           shape和collider没有必然联系，例如一个矩形视觉体可以拥有一个圆形碰撞体。
         </p>
         <div className="code-wapper">
-          <SyntaxHighlighter language="typescript" style={a11yLight}>
+          <SyntaxHighlighter language="typescript" style={a11yDark}>
             {code3}
           </SyntaxHighlighter>
         </div>
@@ -228,7 +228,7 @@ setInterval(() => {
         </p>
         <p>当确保画布已经初始化之后可以把该属性设置为true，启动碰撞检测。</p>
         <div className="code-wapper">
-          <SyntaxHighlighter language="typescript" style={a11yLight}>
+          <SyntaxHighlighter language="typescript" style={a11yDark}>
             {code4}
           </SyntaxHighlighter>
         </div>
@@ -242,7 +242,7 @@ setInterval(() => {
           添加的图形不仅仅可以触发鼠标事件，动态改变属性可以使得元素重新渲染，从而实现动态元素。
         </p>
         <div className="code-wapper">
-          <SyntaxHighlighter language="typescript" style={a11yLight}>
+          <SyntaxHighlighter language="typescript" style={a11yDark}>
             {code5}
           </SyntaxHighlighter>
         </div>

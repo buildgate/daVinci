@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { a11yLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 const Fund = styled.div``;
 
@@ -102,7 +102,7 @@ export default function Transform() {
         <p>以下是官方提供的用于渲染矩形的rendering函数</p>
         <br />
         <div className="code-wapper">
-          <SyntaxHighlighter language="typescript" style={a11yLight}>
+          <SyntaxHighlighter language="typescript" style={a11yDark}>
             {code1}
           </SyntaxHighlighter>
         </div>
@@ -121,7 +121,7 @@ export default function Transform() {
         <p>以下是官方提供的用于渲染矩形的colliding函数</p>
         <br />
         <div className="code-wapper">
-          <SyntaxHighlighter language="typescript" style={a11yLight}>
+          <SyntaxHighlighter language="typescript" style={a11yDark}>
             {code2}
           </SyntaxHighlighter>
         </div>
@@ -144,7 +144,7 @@ export default function Transform() {
 
         <br />
         <div className="code-wapper">
-          <SyntaxHighlighter language="typescript" style={a11yLight}>
+          <SyntaxHighlighter language="typescript" style={a11yDark}>
             {code3}
           </SyntaxHighlighter>
         </div>

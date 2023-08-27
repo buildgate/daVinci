@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { a11yLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -73,7 +73,7 @@ export default function Dclass() {
         <h1>Davinci</h1>
         <br />
         <div className="code-wapper">
-          <SyntaxHighlighter language="typescript" style={a11yLight}>
+          <SyntaxHighlighter language="typescript" style={a11yDark}>
             {code1}
           </SyntaxHighlighter>
         </div>
@@ -86,7 +86,7 @@ export default function Dclass() {
         <h1>Dcharacter</h1>
         <br />
         <div className="code-wapper">
-          <SyntaxHighlighter language="typescript" style={a11yLight}>
+          <SyntaxHighlighter language="typescript" style={a11yDark}>
             {code2}
           </SyntaxHighlighter>
         </div>
@@ -98,7 +98,7 @@ export default function Dclass() {
         <h1>Dshape</h1>
         <br />
         <div className="code-wapper">
-          <SyntaxHighlighter language="typescript" style={a11yLight}>
+          <SyntaxHighlighter language="typescript" style={a11yDark}>
             {code3}
           </SyntaxHighlighter>
         </div>
@@ -110,7 +110,7 @@ export default function Dclass() {
         <h1>Dcollider</h1>
         <br />
         <div className="code-wapper">
-          <SyntaxHighlighter language="typescript" style={a11yLight}>
+          <SyntaxHighlighter language="typescript" style={a11yDark}>
             {code4}
           </SyntaxHighlighter>
         </div>
