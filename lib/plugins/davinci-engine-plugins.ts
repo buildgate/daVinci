@@ -1,5 +1,86 @@
 import { Dcharacter, Davinci, Dshape } from "../davinci-engine.js";
 
+export function setTexture(
+  Dcharacter: Dcharacter,
+  Dctx: CanvasRenderingContext2D
+) {
+  if (Dcharacter.texture) {
+    Dcharacter.textureRender(-Dcharacter.focusX, -Dcharacter.focusY, 1, 1, 0);
+    Dctx.fillStyle = Dcharacter.texturePattern || Dctx.fillStyle;
+  } else {
+    Dctx.fillStyle = Dcharacter.fillColor;
+  }
+}
+
+export function setShadow(
+  Dcharacter: Dcharacter,
+  Dctx: CanvasRenderingContext2D
+) {
+  Dctx.shadowBlur = Dcharacter.shadowBlur;
+  Dctx.shadowColor = Dcharacter.shadowColor;
+  Dctx.shadowOffsetX = Dcharacter.shadowOffsetX;
+  Dctx.shadowOffsetY = Dcharacter.shadowOffsetY;
+}
+
+export function setStorke(
+  Dcharacter: Dcharacter,
+  Dctx: CanvasRenderingContext2D
+) {
+  if (Dcharacter.strokeStyle) {
+    Dctx.strokeStyle = Dcharacter.strokeStyle;
+    Dctx.lineCap = Dcharacter.lineCap;
+    Dctx.lineDashOffset = Dcharacter.lineDashOffset;
+    Dctx.lineJoin = Dcharacter.lineJoin;
+    Dctx.lineWidth = Dcharacter.lineWidth;
+    Dctx.miterLimit = Dcharacter.miterLimit;
+    Dctx.stroke();
+  }
+}
+
+export function setText(
+  Dcharacter: Dcharacter,
+  Dctx: CanvasRenderingContext2D
+) {
+  if (Dcharacter.text !== null) {
+    Dctx.font = Dcharacter.font;
+    Dctx.fillStyle = Dcharacter.fontColor;
+    if (Dcharacter.textMaxWidth) {
+      Dctx.fillText(
+        Dcharacter.text,
+        Dcharacter.textOffsetX,
+        Dcharacter.textOffsetY,
+        Dcharacter.textMaxWidth
+      );
+    } else {
+      Dctx.fillText(
+        Dcharacter.text,
+        Dcharacter.textOffsetX,
+        Dcharacter.textOffsetY
+      );
+    }
+
+    Dctx.strokeStyle = Dcharacter.fontStrokeColor;
+    Dctx.lineWidth = Dcharacter.fontStrokeLineWidth;
+
+    if (Dcharacter.fontStrokeLineWidth) {
+      if (Dcharacter.textMaxWidth) {
+        Dctx.strokeText(
+          Dcharacter.text,
+          Dcharacter.textOffsetX,
+          Dcharacter.textOffsetY,
+          Dcharacter.textMaxWidth
+        );
+      } else {
+        Dctx.strokeText(
+          Dcharacter.text,
+          Dcharacter.textOffsetX,
+          Dcharacter.textOffsetY
+        );
+      }
+    }
+  }
+}
+
 //普通矩形视觉图形绘制
 export function shapeMethodRect(
   Dcharacter: Dcharacter,
@@ -10,29 +91,16 @@ export function shapeMethodRect(
   Dctx.rect(-Dcharacter.focusX, -Dcharacter.focusY, shape.width, shape.height);
 
   Dctx.save();
-  if (Dcharacter.texture) {
-    Dcharacter.textureRender(-Dcharacter.focusX, -Dcharacter.focusY, 1, 1, 0);
-    Dctx.fillStyle = Dcharacter.texturePattern || Dctx.fillStyle;
-  } else {
-    Dctx.fillStyle = Dcharacter.fillColor;
-  }
+  setTexture(Dcharacter, Dctx);
 
-  Dctx.shadowBlur = Dcharacter.shadowBlur;
-  Dctx.shadowColor = Dcharacter.shadowColor;
-  Dctx.shadowOffsetX = Dcharacter.shadowOffsetX;
-  Dctx.shadowOffsetY = Dcharacter.shadowOffsetY;
-
-  if (Dcharacter.strokeStyle) {
-    Dctx.strokeStyle = Dcharacter.strokeStyle;
-    Dctx.lineCap = Dcharacter.lineCap;
-    Dctx.lineDashOffset = Dcharacter.lineDashOffset;
-    Dctx.lineJoin = Dcharacter.lineJoin;
-    Dctx.lineWidth = Dcharacter.lineWidth;
-    Dctx.miterLimit = Dcharacter.miterLimit;
-    Dctx.stroke();
-  }
+  setShadow(Dcharacter, Dctx);
 
   Dctx.fill();
+
+  setStorke(Dcharacter, Dctx);
+
+  setText(Dcharacter, Dctx);
+
   Dctx.restore();
 }
 //普通圆形视觉图形绘制
@@ -45,29 +113,16 @@ export function shapeMethodArc(
   Dctx.arc(0, 0, shape.radius, 0, Math.PI * 2);
 
   Dctx.save();
-  if (Dcharacter.texture) {
-    Dcharacter.textureRender(-Dcharacter.focusX, -Dcharacter.focusY, 1, 1, 0);
-    Dctx.fillStyle = Dcharacter.texturePattern || Dctx.fillStyle;
-  } else {
-    Dctx.fillStyle = Dcharacter.fillColor;
-  }
+  setTexture(Dcharacter, Dctx);
 
-  Dctx.shadowBlur = Dcharacter.shadowBlur;
-  Dctx.shadowColor = Dcharacter.shadowColor;
-  Dctx.shadowOffsetX = Dcharacter.shadowOffsetX;
-  Dctx.shadowOffsetY = Dcharacter.shadowOffsetY;
-
-  if (Dcharacter.strokeStyle) {
-    Dctx.strokeStyle = Dcharacter.strokeStyle;
-    Dctx.lineCap = Dcharacter.lineCap;
-    Dctx.lineDashOffset = Dcharacter.lineDashOffset;
-    Dctx.lineJoin = Dcharacter.lineJoin;
-    Dctx.lineWidth = Dcharacter.lineWidth;
-    Dctx.miterLimit = Dcharacter.miterLimit;
-    Dctx.stroke();
-  }
+  setShadow(Dcharacter, Dctx);
 
   Dctx.fill();
+
+  setStorke(Dcharacter, Dctx);
+
+  setText(Dcharacter, Dctx);
+
   Dctx.restore();
 }
 //普通多边形视觉图形绘制
@@ -99,29 +154,16 @@ export function shapeMethodPolygon(
   Dctx.closePath();
 
   Dctx.save();
-  if (Dcharacter.texture) {
-    Dcharacter.textureRender(-Dcharacter.focusX, -Dcharacter.focusY, 1, 1, 0);
-    Dctx.fillStyle = Dcharacter.texturePattern || Dctx.fillStyle;
-  } else {
-    Dctx.fillStyle = Dcharacter.fillColor;
-  }
+  setTexture(Dcharacter, Dctx);
 
-  Dctx.shadowBlur = Dcharacter.shadowBlur;
-  Dctx.shadowColor = Dcharacter.shadowColor;
-  Dctx.shadowOffsetX = Dcharacter.shadowOffsetX;
-  Dctx.shadowOffsetY = Dcharacter.shadowOffsetY;
-
-  if (Dcharacter.strokeStyle) {
-    Dctx.strokeStyle = Dcharacter.strokeStyle;
-    Dctx.lineCap = Dcharacter.lineCap;
-    Dctx.lineDashOffset = Dcharacter.lineDashOffset;
-    Dctx.lineJoin = Dcharacter.lineJoin;
-    Dctx.lineWidth = Dcharacter.lineWidth;
-    Dctx.miterLimit = Dcharacter.miterLimit;
-    Dctx.stroke();
-  }
+  setShadow(Dcharacter, Dctx);
 
   Dctx.fill();
+
+  setStorke(Dcharacter, Dctx);
+
+  setText(Dcharacter, Dctx);
+
   Dctx.restore();
 }
 

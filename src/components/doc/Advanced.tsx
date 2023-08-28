@@ -10,39 +10,23 @@ export default function Transform() {
     Dcharacter: Dcharacter,
     Dctx: CanvasRenderingContext2D
   ) {
-
-    //part 1
+    //第一步
     let shape = (Dcharacter.shape as Dshape_data_rect).path;
     Dctx.beginPath();
     Dctx.rect(-Dcharacter.focusX, -Dcharacter.focusY, shape.width, shape.height);
-  
-    //part 2
+
     Dctx.save();
-    if (Dcharacter.texture) {
-      Dcharacter.textureRender(-Dcharacter.focusX, -Dcharacter.focusY, 1, 1, 0);
-      Dctx.fillStyle = Dcharacter.texturePattern || Dctx.fillStyle;
-    } else {
-      Dctx.fillStyle = Dcharacter.fillColor;
-    }
-  
-    //part3
-    Dctx.shadowBlur = Dcharacter.shadowBlur;
-    Dctx.shadowColor = Dcharacter.shadowColor;
-    Dctx.shadowOffsetX = Dcharacter.shadowOffsetX;
-    Dctx.shadowOffsetY = Dcharacter.shadowOffsetY;
-  
-    if (Dcharacter.strokeStyle) {
-      Dctx.strokeStyle = Dcharacter.strokeStyle;
-      Dctx.lineCap = Dcharacter.lineCap;
-      Dctx.lineDashOffset = Dcharacter.lineDashOffset;
-      Dctx.lineJoin = Dcharacter.lineJoin;
-      Dctx.lineWidth = Dcharacter.lineWidth;
-      Dctx.miterLimit = Dcharacter.miterLimit;
-      Dctx.stroke();
-    }
-  
-    //part4
+    //第二部
+    setTexture(Dcharacter, Dctx);
+    //第三步
+    setShadow(Dcharacter, Dctx);
+    //第四步
     Dctx.fill();
+    //第五步
+    setStorke(Dcharacter, Dctx);
+    //第六步
+    setText(Dcharacter, Dctx);
+
     Dctx.restore();
   }
   `;
@@ -107,9 +91,9 @@ export default function Transform() {
           </SyntaxHighlighter>
         </div>
         <p>
-          上述例子可以看到，rendering函数会传入当前角色作为参数，第一步是绘制路径，第二步是设置纹理填充设置，第三步分是设置阴影和描边的处理，最后是进行绘制。
+          上述例子可以看到，rendering函数会传入当前角色作为参数，第一步是绘制路径，第二步是设置纹理填充设置，第三步分是设置阴影，第四步开始本体绘制，第五步描边绘制，第六步绘制文字内容。
           <b>
-            有一点十分值得注意，在第二步的开头可以看到save函数，在第四步结尾会有restore函数，这是因为填充色、描边、阴影这些属性都属于画布里面的属性，
+            有一点十分值得注意，在第二步的开头可以看到save函数，在第六步结尾会有restore函数，这是因为填充色、描边、阴影这些属性都属于画布里面的属性，
             如果不将这些属性局限在当前角色，那么子角色将会继承。官方提供的默认方法都做了这个限制，如有需要可以自行设置。
           </b>
         </p>

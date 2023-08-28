@@ -16,10 +16,10 @@ export default function Dparam() {
       type: "Dcharacter",
       defVal: "Dcharacter",
       des: (
-        <p>
+        <span>
           画布角色，在Davinci初始化时自动生成，默认是一个和画布等高等宽的图形。
           <b>如非必要请不要自行修改。</b>
-        </p>
+        </span>
       ),
     },
     {
@@ -180,6 +180,83 @@ export default function Dparam() {
       des: "图形描边最大斜接长度。详情参考mdn。",
     },
     {
+      id: "text",
+      name: "text",
+      type: `string | null`,
+      defVal: `null`,
+      des: "文字内容。文字渲染是基于焦点作为（0，0）的，默认不会换行处理。",
+    },
+    {
+      id: "font",
+      name: "font",
+      type: `CanvasRenderingContext2D["font"]`,
+      defVal: `"10px sans-serif"`,
+      des: "文字样式，可参考mdn进行设置。",
+    },
+    {
+      id: "textAlign",
+      name: "textAlign",
+      type: `CanvasRenderingContext2D["textAlign"]`,
+      defVal: `"start"`,
+      des: "文字对齐。",
+    },
+    {
+      id: "textBaseline",
+      name: "textBaseline",
+      type: `CanvasRenderingContext2D["textBaseline"]`,
+      defVal: `"alphabetic"`,
+      des: "文字基线。",
+    },
+    {
+      id: "direction",
+      name: "direction",
+      type: `CanvasRenderingContext2D["direction"]`,
+      defVal: `"inherit"`,
+      des: "文字方向。属于实验性内容。",
+    },
+    {
+      id: "textMaxWidth",
+      name: "textMaxWidth",
+      type: `number | null`,
+      defVal: `null`,
+      des: "文字总宽度。",
+    },
+    {
+      id: "fontColor",
+      name: "fontColor",
+      type: `CanvasRenderingContext2D["fillStyle"]`,
+      defVal: `"#000000"`,
+      des: "文字填充色。",
+    },
+    {
+      id: "fontStrokeColor",
+      name: "fontStrokeColor",
+      type: `CanvasRenderingContext2D["fillStyle"]`,
+      defVal: `"#000000"`,
+      des: "文字描边填充色。",
+    },
+    {
+      id: "textOffsetX",
+      name: "textOffsetX",
+      type: `number`,
+      defVal: `0`,
+      des: "文字X轴偏移值。参考坐标系为当前角色。",
+    },
+    {
+      id: "textOffsetY",
+      name: "textOffsetY",
+      type: `number`,
+      defVal: `0`,
+      des: "文字Y轴偏移值。参考坐标系为当前角色。",
+    },
+    {
+      id: "fontStrokeLineWidth",
+      name: "fontStrokeLineWidth",
+      type: `number`,
+      defVal: `0`,
+      des: "文字描边宽度。如需描边需要将fontStrokeLineWidth设置为一个正数。",
+    },
+    {
       id: "scaleX",
       name: "scaleX",
       type: `number`,
@@ -298,6 +375,7 @@ export default function Dparam() {
       {Davinci_data.map((o) => {
         return (
           <ApiParamItem
+            key={o.id}
             id={o.id}
             name={o.name}
             type={o.type}
@@ -312,6 +390,7 @@ export default function Dparam() {
       {Dcharacter_data.map((o) => {
         return (
           <ApiParamItem
+            key={o.id}
             id={o.id}
             name={o.name}
             type={o.type}

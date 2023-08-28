@@ -164,6 +164,34 @@ export default function Dmethod() {
       param: `Dcharacter: Dcharacter,Sctx: CanvasRenderingContext2D`,
       des: "官方提供的多边形碰撞体绘制函数。",
     },
+    {
+      id: "setTexture",
+      name: "setTexture",
+      type: "void",
+      param: `Dcharacter: Dcharacter,Dctx: CanvasRenderingContext2D`,
+      des: "纹理渲染函数，在官方视觉体渲染流程中被调用。可以在自定义渲染中使用。",
+    },
+    {
+      id: "setShadow",
+      name: "setShadow",
+      type: "void",
+      param: `Dcharacter: Dcharacter,Dctx: CanvasRenderingContext2D`,
+      des: "阴影渲染函数，在官方视觉体渲染流程中被调用。可以在自定义渲染中使用。",
+    },
+    {
+      id: "setStorke",
+      name: "setStorke",
+      type: "void",
+      param: `Dcharacter: Dcharacter,Dctx: CanvasRenderingContext2D`,
+      des: "图形描边渲染函数，在官方视觉体渲染流程中被调用。可以在自定义渲染中使用。",
+    },
+    {
+      id: "setText",
+      name: "setText",
+      type: "void",
+      param: `Dcharacter: Dcharacter,Dctx: CanvasRenderingContext2D`,
+      des: "文字渲染函数，在官方视觉体渲染流程中被调用。可以在自定义渲染中使用。",
+    },
   ];
 
   return (
@@ -178,6 +206,7 @@ export default function Dmethod() {
       {Davinci_data.map((o) => {
         return (
           <ApiMethodItem
+            key={o.id}
             id={o.id}
             name={o.name}
             type={o.type}
@@ -192,6 +221,7 @@ export default function Dmethod() {
       {Dcharacter_data.map((o) => {
         return (
           <ApiMethodItem
+            key={o.id}
             id={o.id}
             name={o.name}
             type={o.type}
@@ -205,6 +235,7 @@ export default function Dmethod() {
       {plugin_data.map((o) => {
         return (
           <ApiMethodItem
+            key={o.id}
             id={o.id}
             name={o.name}
             type={o.type}

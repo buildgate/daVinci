@@ -446,6 +446,18 @@ export class Dcharacter {
   rotate: number = 0;
   opacity: number = 1;
 
+  text: string | null = null;
+  font: CanvasRenderingContext2D["font"] = "10px sans-serif";
+  textAlign: CanvasRenderingContext2D["textAlign"] = "start";
+  textBaseline: CanvasRenderingContext2D["textBaseline"] = "alphabetic";
+  direction: CanvasRenderingContext2D["direction"] = "inherit";
+  textMaxWidth: number | null = null;
+  fontColor: CanvasRenderingContext2D["fillStyle"] = "#000000";
+  fontStrokeColor: CanvasRenderingContext2D["fillStyle"] = "#000000";
+  textOffsetX: number = 0;
+  textOffsetY: number = 0;
+  fontStrokeLineWidth: number = 0;
+
   accumulateTransform: DOMMatrix = new DOMMatrix(); //累计形变，用来计算实际坐标
 
   renderable: boolean = true; //是否可渲染，默认是，为false时将不会渲染

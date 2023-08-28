@@ -75,6 +75,19 @@ type Dcharacter_data = {
   lineJoin?: CanvasRenderingContext2D["lineJoin"];
   miterLimit?: CanvasRenderingContext2D["miterLimit"];
 
+  text?: string | null;
+  textStroke?: boolean;
+  font?: CanvasRenderingContext2D["font"];
+  textAlign?: CanvasRenderingContext2D["textAlign"];
+  textBaseline?: CanvasRenderingContext2D["textBaseline"];
+  direction?: CanvasRenderingContext2D["direction"];
+  textMaxWidth?: number | null = null;
+  fontColor?: CanvasRenderingContext2D["fillStyle"];
+  fontStrokeColor?: CanvasRenderingContext2D["fillStyle"];
+  textOffsetX?: number;
+  textOffsetY?: number;
+  fontStrokeLineWidth?: number;
+
   rendering?: (...rest: any) => void;
   colliding?: (...rest: any) => void;
   beforeChildrenRender?: (...rest: any) => void;

@@ -6,6 +6,10 @@ import {
   colliderMethodArc,
   colliderMethodPolygon,
   colliderMethodRect,
+  setTexture,
+  setStorke,
+  setShadow,
+  setText,
 } from "./plugins/davinci-engine-plugins";
 
 export {
@@ -19,4 +23,8 @@ export {
   colliderMethodArc,
   colliderMethodPolygon,
   colliderMethodRect,
+  setTexture,
+  setStorke,
+  setShadow,
+  setText,
 };
