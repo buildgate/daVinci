@@ -3,7 +3,9 @@
 
 name: NPM Package
 
-on: workflow_dispatch
+on: 
+  release:
+    types: [created]
 jobs:
   build:
     runs-on: ubuntu-latest
