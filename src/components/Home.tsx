@@ -18,6 +18,7 @@ const Fund = styled.div`
 
 const Container = styled.div`
   width: 100%;
+  height: 0;
   flex-grow: 1;
   overflow: auto;
   display: flex;

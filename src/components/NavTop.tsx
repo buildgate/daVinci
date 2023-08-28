@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 const Fund = styled.div`
   width: 100%;
-  height: 80px;
+  height: 60px;
   box-shadow: inset 0px -2px 2px 1px #ffffff;
   display: flex;
   align-items: center;
