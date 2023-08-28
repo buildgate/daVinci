@@ -66,6 +66,10 @@ export default function Transform() {
   );
   DM1.Dboard.addChild(rect);
 
+  rect.addEventListener("wheel", () => {
+    console.log(111);
+  });
+
   useEffect(() => {
     DM1.mount("#demo1");
     DM1.collisionDetect = true;

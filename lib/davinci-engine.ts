@@ -128,6 +128,7 @@ export class Davinci {
           preX: this.preX,
           preY: this.preY,
           type: "mousemove",
+          originEvent: e,
           preTarget: this.preTarget,
         };
         this.currentTarget = this.colliderTrigger(this.Dboard, Devent);
@@ -137,6 +138,7 @@ export class Davinci {
             y: e.offsetY,
             preX: this.preX,
             preY: this.preY,
+            originEvent: e,
             type: "mouseleave",
             preTarget: null,
           };
@@ -159,6 +161,7 @@ export class Davinci {
         preX: this.preX,
         preY: this.preY,
         type: "mousedown",
+        originEvent: e,
         preTarget: this.currentTarget,
       };
       this.currentTarget = this.colliderTrigger(this.Dboard, Devent);
@@ -176,6 +179,7 @@ export class Davinci {
         preX: this.preX,
         preY: this.preY,
         type: "mouseup",
+        originEvent: e,
         preTarget: this.currentTarget,
       };
       this.currentTarget = this.colliderTrigger(this.Dboard, Devent);
@@ -193,6 +197,7 @@ export class Davinci {
         y: e.offsetY,
         preX: this.preX,
         preY: this.preY,
+        originEvent: e,
         type: "mouseup",
         preTarget: this.currentTarget,
       };
@@ -204,6 +209,24 @@ export class Davinci {
       this.currentTarget?.onmouseleave.forEach((o) => {
         o(Devent);
       });
+    });
+    this.Dcanvas.addEventListener("wheel", (e) => {
+      this.preX = this.x;
+      this.preY = this.y;
+
+      this.x = e.offsetX;
+      this.y = e.offsetY;
+
+      let Devent: Devent = {
+        x: e.offsetX,
+        y: e.offsetY,
+        preX: this.preX,
+        preY: this.preY,
+        type: "wheel",
+        originEvent: e,
+        preTarget: this.currentTarget,
+      };
+      this.currentTarget = this.colliderTrigger(this.Dboard, Devent);
     });
   }
 
@@ -325,6 +348,11 @@ export class Davinci {
               o(event);
             });
             break;
+          case "wheel":
+            target.onwheel.forEach((o) => {
+              o(event);
+            });
+            break;
           default:
             break;
         }
@@ -374,6 +402,11 @@ export class Davinci {
           break;
         case "mouseup":
           target.onmouseup.forEach((o) => {
+            o(event);
+          });
+          break;
+        case "wheel":
+          target.onwheel.forEach((o) => {
             o(event);
           });
           break;
@@ -494,6 +527,7 @@ export class Dcharacter {
   onmousemove = new Map();
   onmouseenter = new Map();
   onmouseleave = new Map();
+  onwheel = new Map();
 
   ontextureonload: () => any = () => {
     this.dm.render();
@@ -564,6 +598,10 @@ export class Dcharacter {
           case "onmousemove":
             //不触发render
             throw Error('"onmousemove" is Not modifiable!!!');
+            break;
+          case "onwheel":
+            //不触发render
+            throw Error('"onwheel" is Not modifiable!!!');
             break;
           case "dm":
             //不触发render

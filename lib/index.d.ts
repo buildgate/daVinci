@@ -110,6 +110,7 @@ type Devent = {
   preY: number;
   type: Devent_type;
   preTarget: Dcharacter | null | undefined;
+  originEvent: any; //原生事件源
   //后续有更多内容
 };
 type Devent_type =
@@ -117,7 +118,8 @@ type Devent_type =
   | "mouseleave"
   | "mousedown"
   | "mouseup"
-  | "mousemove";
+  | "mousemove"
+  | "wheel";
 
 //
 type Davinci_data = {
