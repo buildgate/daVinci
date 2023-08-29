@@ -150,6 +150,7 @@ export default function Brief() {
     DM3
   );
   DM3.Dboard.addChild(rect3);
+
   setInterval(() => {
     rect3.x >= 500 ? (rect3.x = 10) : (rect3.x += 0.5);
   }, 20);

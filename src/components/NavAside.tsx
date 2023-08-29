@@ -121,6 +121,21 @@ export default function NavAside() {
             );
           })}
         </Collapse>
+        <Collapse title={"Hook"}>
+          {api_anchor.hook.map((o) => {
+            return (
+              <div
+                className="menu-item"
+                key={o.name}
+                onClick={() => {
+                  navigate("/api/hook", { state: { anchor: o.name } });
+                }}
+              >
+                {o.name}
+              </div>
+            );
+          })}
+        </Collapse>
       </div>
     </Fund>
   );

@@ -47,13 +47,6 @@ export default function Dmethod() {
       des: "检测所有角色的纹理是否已经加载完成，如果完成将会调用onGlobalTextureComplete()方法。",
     },
     {
-      id: "onGlobalTextureComplete",
-      name: "onGlobalTextureComplete",
-      type: "any",
-      param: "",
-      des: "自定义方法，所有角色纹理加载完成后被调用。",
-    },
-    {
       id: "matrixCalc",
       name: "matrixCalc",
       type: "{ x: number, y: number }",

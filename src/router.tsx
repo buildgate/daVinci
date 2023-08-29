@@ -10,6 +10,7 @@ import Advanced from "@root/src/components/doc/Advanced";
 import Dclass from "@root/src/components/api/Dclass";
 import Dparam from "@root/src/components/api/Dparam";
 import Dmethod from "@root/src/components/api/Dmethod";
+import Dhook from "@root/src/components/api/Dhook";
 
 import { Outlet } from "react-router-dom";
 
@@ -100,6 +101,12 @@ export const paths_api = {
       name: "方法",
       children: [],
     },
+    {
+      path: "/api/hook",
+      element: <Dhook />,
+      name: "方法",
+      children: [],
+    },
   ],
 };
 
@@ -174,7 +181,6 @@ export const api_anchor = {
     { name: "mount" },
     { name: "render" },
     { name: "globalTextureComplete" },
-    { name: "onGlobalTextureComplete" },
     { name: "matrixCalc" },
     { name: "Dcharacter.setData" },
     { name: "Dcharacter.matrixCalc" },
@@ -194,5 +200,18 @@ export const api_anchor = {
     { name: "setShadow" },
     { name: "setStorke" },
     { name: "setText" },
+  ],
+  hook: [
+    { name: "onGlobalTextureComplete" },
+    { name: "onGlobalRenderComplete" },
+    { name: "beforeRender" },
+    { name: "afterRender" },
+    { name: "beforeChildrenRender" },
+    { name: "afterChildrenRender" },
+    { name: "afterGlobalRender" },
+    { name: "beforeCollider" },
+    { name: "afterCollider" },
+    { name: "beforeChildrenCollider" },
+    { name: "afterChildrenCollider" },
   ],
 };

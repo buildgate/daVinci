@@ -37,6 +37,9 @@ export class Davinci {
   nextRender: boolean = false;
   block: boolean = false;
 
+  //钩子相关
+  characterRenderedMethodList: Array<(...rest: any) => any> = [];
+
   //按帧节流
   throttle(fn: (...rest: any) => any) {
     let block = false;
@@ -247,6 +250,8 @@ export class Davinci {
       this.Dctx.clearRect(0, 0, this.width, this.height);
       this.nextRender = false;
       this.renderer(this.Dboard);
+      this.dealingCharacterRendered();
+      this.onGlobalRenderComplete();
 
       window.requestAnimationFrame(() => {
         this.block = false;
@@ -259,6 +264,17 @@ export class Davinci {
       this.nextRender = true;
     }
   }
+
+  //角色内的渲染结束处理
+  dealingCharacterRendered() {
+    this.characterRenderedMethodList.forEach((o) => {
+      o();
+    });
+    this.characterRenderedMethodList = [];
+  }
+
+  //全局渲染结束后调用
+  onGlobalRenderComplete() {}
 
   //设置形变
   setTF(ctx: CanvasRenderingContext2D, target: Dcharacter) {
@@ -283,20 +299,27 @@ export class Davinci {
     this.Dctx.beginPath();
 
     if (target.visiable) {
-      target.beforeRender(target, this.Dctx); //渲染周期
+      if (target.afterGlobalRender) {
+        this.characterRenderedMethodList.push(
+          target.afterGlobalRender.bind(Dcharacter)
+        );
+      }
 
-      target.rendering(target, this.Dctx);
+      target.beforeRender && target.beforeRender(target, this.Dctx); //渲染周期
 
-      target.afterRender(target, this.Dctx);
+      target.rendering && target.rendering(target, this.Dctx);
+
+      target.afterRender && target.afterRender(target, this.Dctx);
     }
 
-    target.beforeChildrenRender(target, this.Dctx);
+    target.beforeChildrenRender &&
+      target.beforeChildrenRender(target, this.Dctx);
 
     target.children.forEach((o) => {
       this.renderer(o);
     });
 
-    target.afterChildrenRender(target, this.Dctx);
+    target.afterChildrenRender && target.afterChildrenRender(target, this.Dctx);
 
     this.Dctx.globalAlpha = alpha;
     this.Dctx.setTransform(matrix);
@@ -314,14 +337,16 @@ export class Davinci {
     if (target.children.length) {
       this.setTF(this.Sctx, target);
 
-      target.beforeChildrenCollider(target, this.Sctx);
+      target.beforeChildrenCollider &&
+        target.beforeChildrenCollider(target, this.Sctx);
       for (let i = target.children.length - 1; i >= 0; i--) {
         currentTarget = this.colliderTrigger(target.children[i], event);
         if (currentTarget) {
           break;
         }
       }
-      target.afterChildrenCollider(target, this.Sctx);
+      target.afterChildrenCollider &&
+        target.afterChildrenCollider(target, this.Sctx);
       this.Sctx.setTransform(matrix);
     }
 
@@ -363,11 +388,11 @@ export class Davinci {
     this.setTF(this.Sctx, target);
 
     if (!target.penetrate) {
-      target.beforeCollider(target, this.Sctx);
+      target.beforeCollider && target.beforeCollider(target, this.Sctx);
 
-      target.colliding(target, this.Sctx);
+      target.colliding && target.colliding(target, this.Sctx);
 
-      target.afterCollider(target, this.Sctx);
+      target.afterCollider && target.afterCollider(target, this.Sctx);
     }
 
     this.Sctx.setTransform(matrix);
@@ -807,34 +832,48 @@ export class Dcharacter {
   }
 
   //视觉图形渲染行为,可以由开发者自定义，也可以使用引擎提供的基础渲染函数
-  rendering(Dcharacter: Dcharacter, Dctx: CanvasRenderingContext2D) {}
+  rendering:
+    | ((Dcharacter: Dcharacter, Dctx: CanvasRenderingContext2D) => void)
+    | null = null;
   //碰撞图形渲染行为,可以由开发者自定义，也可以使用引擎提供的基础渲染函数
-  colliding(Dcharacter: Dcharacter, Sctx: CanvasRenderingContext2D) {}
+  colliding:
+    | ((Dcharacter: Dcharacter, Sctx: CanvasRenderingContext2D) => void)
+    | null = null;
   //在进入子级渲染之前的行为
-  beforeChildrenRender(
-    Dcharacter: Dcharacter,
-    Dctx: CanvasRenderingContext2D
-  ) {}
+  beforeChildrenRender:
+    | ((Dcharacter: Dcharacter, Dctx: CanvasRenderingContext2D) => void)
+    | null = null;
   //子级渲染循环结束后调用
-  afterChildrenRender(Dcharacter: Dcharacter, Dctx: CanvasRenderingContext2D) {}
+  afterChildrenRender:
+    | ((Dcharacter: Dcharacter, Dctx: CanvasRenderingContext2D) => void)
+    | null = null;
   //在进入子级碰撞之前的行为
-  beforeChildrenCollider(
-    Dcharacter: Dcharacter,
-    Sctx: CanvasRenderingContext2D
-  ) {}
+  beforeChildrenCollider:
+    | ((Dcharacter: Dcharacter, Sctx: CanvasRenderingContext2D) => void)
+    | null = null;
   //子级碰撞循环结束后调用
-  afterChildrenCollider(
-    Dcharacter: Dcharacter,
-    Sctx: CanvasRenderingContext2D
-  ) {}
+  afterChildrenCollider:
+    | ((Dcharacter: Dcharacter, Sctx: CanvasRenderingContext2D) => void)
+    | null = null;
 
   //渲染本体的钩子函数
-  beforeRender(Dcharacter: Dcharacter, Dctx: CanvasRenderingContext2D) {}
-  afterRender(Dcharacter: Dcharacter, Dctx: CanvasRenderingContext2D) {}
+  beforeRender:
+    | ((Dcharacter: Dcharacter, Dctx: CanvasRenderingContext2D) => void)
+    | null = null;
+  afterRender:
+    | ((Dcharacter: Dcharacter, Dctx: CanvasRenderingContext2D) => void)
+    | null = null;
 
   //碰撞本体的钩子函数
-  beforeCollider(Dcharacter: Dcharacter, Sctx: CanvasRenderingContext2D) {}
-  afterCollider(Dcharacter: Dcharacter, Sctx: CanvasRenderingContext2D) {}
+  beforeCollider:
+    | ((Dcharacter: Dcharacter, Sctx: CanvasRenderingContext2D) => void)
+    | null = null;
+  afterCollider:
+    | ((Dcharacter: Dcharacter, Sctx: CanvasRenderingContext2D) => void)
+    | null = null;
+
+  //全局渲染结束后调用
+  afterGlobalRender: ((...rest: any) => any) | null = null;
 }
 
 export class Dshape {
