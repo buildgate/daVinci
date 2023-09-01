@@ -465,5 +465,9 @@ export class transformController {
       this.target.scaleX += e.originEvent.wheelDelta * this.wheelToScale;
       this.target.scaleY += e.originEvent.wheelDelta * this.wheelToScale;
     });
+    this.target.addEventListener("mouseleave", (e) => {
+      this.isLeftBtn = false;
+      this.isRightBtn = false;
+    });
   }
 }
