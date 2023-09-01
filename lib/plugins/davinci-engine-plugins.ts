@@ -376,3 +376,94 @@ export function createEditableTool(dc: Dcharacter, dm: Davinci) {
 
   dm.Dboard.addChild(tool);
 }
+
+export class transformController {
+  scaleX: number = 1;
+  scaleY: number = 1;
+  x: number = 0;
+  y: number = 0;
+  rotate: number = 0;
+
+  wheelToScale: number = 0.0005;
+
+  isLeftBtn: boolean = false;
+  isRightBtn: boolean = false;
+
+  enableMove: boolean = true;
+  enableScale: boolean = true;
+  enableRotate: boolean = true;
+
+  target: Dcharacter;
+
+  constructor(Dcharacter: Dcharacter) {
+    this.target = Dcharacter;
+    this.setEvent();
+  }
+
+  get2VectorRadian(v1: Dcoordinate, v2: Dcoordinate) {
+    const { x: Ax, y: Ay } = v1;
+    const { x: Bx, y: By } = v2;
+    // 与v1起始向量方向相反
+    // const _v1 = { x: -x1, y: -y1 };
+
+    // 计算向量A和向量B的点积
+    var dotProduct = Ax * Bx + Ay * By;
+
+    var direction = Ax * By - Bx * Ay;
+
+    // 计算向量A和向量B的模
+    var magnitudeA = Math.sqrt(Ax * Ax + Ay * Ay);
+    var magnitudeB = Math.sqrt(Bx * Bx + By * By);
+
+    // 计算夹角的余弦值
+    var cosAngle = dotProduct / (magnitudeA * magnitudeB);
+
+    // 使用反余弦函数计算夹角的弧度值
+    var angleRad = Math.acos(cosAngle);
+
+    if (direction < 0) {
+      return isNaN(angleRad) ? 0 : -angleRad;
+    } else {
+      return isNaN(angleRad) ? 0 : angleRad;
+    }
+  }
+
+  setEvent() {
+    this.target.addEventListener("mousedown", (e) => {
+      if (e.originEvent.button === 0 && this.enableMove) {
+        this.isLeftBtn = true;
+      }
+      if (e.originEvent.button === 2 && this.enableRotate) {
+        this.isRightBtn = true;
+      }
+    });
+    this.target.addEventListener("mousemove", (e) => {
+      if (this.isLeftBtn && this.enableMove) {
+        this.target.x += e.x - e.preX;
+        this.target.y += e.y - e.preY;
+      }
+      if (this.isRightBtn && this.enableRotate) {
+        let O = this.target.matrixCalc(0, 0);
+        this.target.rotate += this.get2VectorRadian(
+          { x: e.preX - O.x, y: e.preY - O.y },
+          { x: e.x - O.x, y: e.y - O.y }
+        );
+      }
+    });
+    this.target.addEventListener("mouseup", (e) => {
+      if (e.originEvent.button === 0) {
+        this.isLeftBtn = false;
+      }
+      if (e.originEvent.button === 2) {
+        this.isRightBtn = false;
+      }
+    });
+    this.target.addEventListener("wheel", (e) => {
+      if (!this.enableScale) {
+        return;
+      }
+      this.target.scaleX += e.originEvent.wheelDelta * this.wheelToScale;
+      this.target.scaleY += e.originEvent.wheelDelta * this.wheelToScale;
+    });
+  }
+}

@@ -115,6 +115,10 @@ export class Davinci {
 
   //初始化触发事件
   initEventTrigger() {
+    this.Dcanvas.oncontextmenu = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
     this.Dcanvas.addEventListener(
       "mousemove",
       this.throttle((e: MouseEvent) => {
@@ -214,6 +218,8 @@ export class Davinci {
       });
     });
     this.Dcanvas.addEventListener("wheel", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
       this.preX = this.x;
       this.preY = this.y;
 

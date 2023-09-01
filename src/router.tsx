@@ -11,6 +11,7 @@ import Dclass from "@root/src/components/api/Dclass";
 import Dparam from "@root/src/components/api/Dparam";
 import Dmethod from "@root/src/components/api/Dmethod";
 import Dhook from "@root/src/components/api/Dhook";
+import TransformController from "@root/src/components/addon/TransformController";
 
 import { Outlet } from "react-router-dom";
 
@@ -110,12 +111,26 @@ export const paths_api = {
   ],
 };
 
+export const paths_addon = {
+  path: "/addon",
+  element: <Outlet />,
+  name: "附加项",
+  children: [
+    {
+      path: "/addon/transformController",
+      element: <TransformController />,
+      name: "transformController",
+      children: [],
+    },
+  ],
+};
+
 export const paths = [
   {
     path: "/",
     element: <Home></Home>,
     name: "主页",
-    children: [paths_int, paths_doc, paths_api],
+    children: [paths_int, paths_doc, paths_api, paths_addon],
   },
 ];
 

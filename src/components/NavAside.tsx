@@ -1,8 +1,14 @@
 import styled from "styled-components";
-import { paths, paths_int, paths_doc, paths_api, api_anchor } from "../router";
+import {
+  paths,
+  paths_int,
+  paths_doc,
+  paths_api,
+  api_anchor,
+  paths_addon,
+} from "../router";
 import { useNavigate } from "react-router-dom";
 import { Collapse } from "@root/src/components/common/Collapse";
-import { useEffect } from "react";
 
 const Fund = styled.div`
   width: 300px;
@@ -136,6 +142,22 @@ export default function NavAside() {
             );
           })}
         </Collapse>
+      </div>
+      <div className="int block">
+        <div className="title">附加项</div>
+        {paths_addon.children.map((o) => {
+          return (
+            <div
+              className="menu-item"
+              key={o.name}
+              onClick={() => {
+                navigate(o.path);
+              }}
+            >
+              {o.name}
+            </div>
+          );
+        })}
       </div>
     </Fund>
   );

@@ -10,6 +10,7 @@ import {
   setStorke,
   setShadow,
   setText,
+  transformController,
 } from "./plugins/davinci-engine-plugins";
 
 export {
@@ -27,4 +28,5 @@ export {
   setStorke,
   setShadow,
   setText,
+  transformController,
 };
