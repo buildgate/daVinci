@@ -146,6 +146,7 @@ export const api_anchor = {
     { name: "allowRender" },
     { name: "collisionDetect" },
     { name: "stopPropagation" },
+    { name: "autoRender" },
     { name: "id" },
     { name: "name" },
     { name: "width" },

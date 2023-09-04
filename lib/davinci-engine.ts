@@ -34,6 +34,8 @@ export class Davinci {
   stopPropagation: boolean = true; //是否冒泡，默认不冒泡，冒泡并不会影响碰撞检测的性能，所以按需开启
 
   //节流相关
+  autoRender: boolean = true;
+  renderWaitting: boolean = false;
   nextRender: boolean = false;
   block: boolean = false;
 
@@ -269,6 +271,22 @@ export class Davinci {
     } else {
       this.nextRender = true;
     }
+  }
+
+  //请求渲染
+  requestRender() {
+    if (!this.autoRender) {
+      return;
+    }
+    if (this.renderWaitting) {
+      return;
+    }
+    this.renderWaitting = true;
+    new Promise((resolve, reject) => {
+      this.render();
+      this.renderWaitting = false;
+      resolve(this.renderWaitting);
+    });
   }
 
   //角色内的渲染结束处理
@@ -561,7 +579,7 @@ export class Dcharacter {
   onwheel = new Map();
 
   ontextureonload: () => any = () => {
-    this.dm.render();
+    this.dm.requestRender();
   };
 
   constructor(data: Dcharacter_data, DM: Davinci) {
@@ -608,7 +626,7 @@ export class Dcharacter {
             //触发render
             Reflect.set(target, key, value, receiver);
             target.parent?.childrenSort();
-            target.dm.render(); //注意，如果修改的是zidx，改变的实际是父级的内容，所以这里的uid需要用父级的
+            target.dm.requestRender(); //注意，如果修改的是zidx，改变的实际是父级的内容，所以这里的uid需要用父级的
             break;
           case "onmouseenter":
             //不触发render
@@ -640,7 +658,7 @@ export class Dcharacter {
             break;
           default:
             Reflect.set(target, key, value, receiver);
-            target.dm.render();
+            target.dm.requestRender();
             //其余属性均需要触发render
             break;
         }
@@ -804,14 +822,14 @@ export class Dcharacter {
           this.children.push(child);
         }
       });
-      this.dm.render();
+      this.dm.requestRender();
     } else {
       let child = data as Dcharacter;
       child.parent = this;
       let res = this.children.every((o, idx) => {
         if (o.zidx > child.zidx) {
           this.children.splice(idx, 0, child);
-          this.dm.render();
+          this.dm.requestRender();
           return false;
         } else {
           return true;
@@ -819,7 +837,7 @@ export class Dcharacter {
       });
       if (res) {
         this.children.push(child);
-        this.dm.render();
+        this.dm.requestRender();
       }
     }
   }
@@ -829,7 +847,7 @@ export class Dcharacter {
     this.children.every((o, idx) => {
       if (o.uid === child.uid) {
         this.children.splice(idx, 0);
-        this.dm.render();
+        this.dm.requestRender();
         return false;
       } else {
         return true;

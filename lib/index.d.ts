@@ -42,7 +42,6 @@ type Dshape_data = Dshape_data_rect | Dshape_data_arc | Dshape_data_polygon;
 //角色对象类型固有属性
 type Dcharacter_data = {
   [key: string]: any;
-  autoRender?: boolean;
   id?: string | number | symbol;
   name?: string | number;
   width?: number;
@@ -125,4 +124,10 @@ type Devent_type =
 type Davinci_data = {
   width?: number;
   height?: number;
+};
+
+type request_render_data = {
+  uid: number;
+  attribute: string;
+  value: any;
 };

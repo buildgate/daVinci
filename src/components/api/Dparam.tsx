@@ -43,6 +43,13 @@ export default function Dparam() {
       defVal: "true",
       des: "是否进行事件冒泡，出于便捷性的考虑，默认为true。",
     },
+    {
+      id: "autoRender",
+      name: "autoRender",
+      type: "boolean",
+      defVal: "true",
+      des: "是否进行自动化渲染。如果开启那么修改角色属性时会自动调用render函数，如果关闭后则需要手动控制render时机。与allowRender不同，allowRender是在调用render的过程中阻断，autoRender是在属性修改时阻断。",
+    },
   ];
 
   const Dcharacter_data = [
