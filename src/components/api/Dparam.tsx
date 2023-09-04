@@ -291,12 +291,20 @@ export default function Dparam() {
       defVal: `1`,
       des: "透明度。与碰撞体无关，只与视觉体有关。",
     },
+
     {
       id: "accumulateTransform",
       name: "accumulateTransform",
       type: `DOMMatrix`,
       defVal: `new DOMMatrix()`,
       des: "当前角色在渲染树中的累计形变矩阵，用于计算实际坐标，会被自动更新。",
+    },
+    {
+      id: "preAccumulateTransform",
+      name: "preAccumulateTransform",
+      type: `DOMMatrix`,
+      defVal: `new DOMMatrix()`,
+      des: "当前角色进入自身形变前的变换矩阵，用于计算实际坐标，会被自动更新。",
     },
     {
       id: "renderable",

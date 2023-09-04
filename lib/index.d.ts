@@ -64,7 +64,6 @@ type Dcharacter_data = {
   scaleY?: number;
   rotate?: number;
   opacity?: number;
-  accumulateTransform?: DOMMatrix;
   renderable?: boolean;
   penetrate?: boolean;
   strokeStyle?: CanvasRenderingContext2D["strokeStyle"];

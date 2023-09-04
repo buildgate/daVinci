@@ -242,6 +242,14 @@ export class transformController {
     this.setEvent();
   }
 
+  //反向计算矩阵
+  reverseMatrix(x: number, y: number) {
+    let matrix = this.target.preAccumulateTransform.inverse();
+    let cX = matrix.a * x + -matrix.b * y + matrix.e;
+    let cY = -matrix.c * x + matrix.d * y + matrix.f;
+    return { x: cX, y: cY };
+  }
+
   get2VectorRadian(v1: Dcoordinate, v2: Dcoordinate) {
     const { x: Ax, y: Ay } = v1;
     const { x: Bx, y: By } = v2;
@@ -281,8 +289,10 @@ export class transformController {
     });
     this.target.addEventListener("mousemove", (e) => {
       if (this.isLeftBtn && this.enableMove) {
-        this.target.x += e.x - e.preX;
-        this.target.y += e.y - e.preY;
+        let now = this.reverseMatrix(e.x, e.y);
+        let pre = this.reverseMatrix(e.preX, e.preY);
+        this.target.x += now.x - pre.x;
+        this.target.y += now.y - pre.y;
       }
       if (this.isRightBtn && this.enableRotate) {
         let O = this.target.matrixCalc(0, 0);

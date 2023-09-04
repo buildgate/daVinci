@@ -182,6 +182,7 @@ export const api_anchor = {
     { name: "rotate" },
     { name: "opacity" },
     { name: "accumulateTransform" },
+    { name: "preAccumulateTransform" },
     { name: "renderable" },
     { name: "collisionable" },
     { name: "dm" },

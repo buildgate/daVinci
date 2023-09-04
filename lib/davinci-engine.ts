@@ -317,6 +317,7 @@ export class Davinci {
 
     let matrix = this.Dctx.getTransform(); //渲染前的准备工作
     let alpha = this.Dctx.globalAlpha;
+    target.preAccumulateTransform = this.Dctx.getTransform();
     this.setTF(this.Dctx, target);
     target.accumulateTransform = this.Dctx.getTransform();
 
@@ -541,6 +542,7 @@ export class Dcharacter {
   fontStrokeLineWidth: number = 0;
 
   accumulateTransform: DOMMatrix = new DOMMatrix(); //累计形变，用来计算实际坐标
+  preAccumulateTransform: DOMMatrix = new DOMMatrix(); //未进入自身形变前的变换矩阵
 
   renderable: boolean = true; //是否可渲染，默认是，为false时将不会渲染
   collisionable: boolean = true; //是否可检测碰撞，默认是，为false时将不会被检测
@@ -606,6 +608,10 @@ export class Dcharacter {
             //不触发render
             break;
           case "accumulateTransform":
+            //不触发render
+            Reflect.set(target, key, value, receiver);
+            break;
+          case "preAccumulateTransform":
             //不触发render
             Reflect.set(target, key, value, receiver);
             break;
