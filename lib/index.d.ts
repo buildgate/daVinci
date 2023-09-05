@@ -6,10 +6,10 @@ type Dcoordinate = {
   y: number;
 };
 
-//碰撞图形类型
-type Dshape_type = "rect" | "arc" | "polygon" | "composite";
+//图形类型
+type Dshape_type = "rect" | "arc" | "polygon";
 
-//碰撞图形路径类型
+//图形路径类型
 type Dpath_rect = {
   width: number;
   height: number;
@@ -24,7 +24,7 @@ type Dpath_polygon = Array<
 >;
 type Dpath = Dpath_rect | Dpath_arc | Dpath_polygon;
 
-//碰撞图形数据类型
+//图形数据类型
 type Dshape_data_rect = {
   type: "rect";
   path: Dpath_rect;
@@ -85,6 +85,8 @@ type Dcharacter_data = {
   textOffsetX?: number;
   textOffsetY?: number;
   fontStrokeLineWidth?: number;
+
+  filter?: CanvasRenderingContext2D["filter"];
 
   rendering?: (...rest: any) => void;
   colliding?: (...rest: any) => void;

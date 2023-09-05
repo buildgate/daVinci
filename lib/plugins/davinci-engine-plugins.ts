@@ -1,5 +1,12 @@
 import { Dcharacter, Davinci, Dshape } from "../davinci-engine.js";
 
+export function setFilter(
+  Dcharacter: Dcharacter,
+  Dctx: CanvasRenderingContext2D
+) {
+  Dctx.filter = Dcharacter.filter;
+}
+
 export function setTexture(
   Dcharacter: Dcharacter,
   Dctx: CanvasRenderingContext2D
@@ -93,6 +100,8 @@ export function shapeMethodRect(
   Dctx.save();
   setTexture(Dcharacter, Dctx);
 
+  setFilter(Dcharacter, Dctx);
+
   setShadow(Dcharacter, Dctx);
 
   Dctx.fill();
@@ -114,6 +123,8 @@ export function shapeMethodArc(
 
   Dctx.save();
   setTexture(Dcharacter, Dctx);
+
+  setFilter(Dcharacter, Dctx);
 
   setShadow(Dcharacter, Dctx);
 
@@ -155,6 +166,8 @@ export function shapeMethodPolygon(
 
   Dctx.save();
   setTexture(Dcharacter, Dctx);
+
+  setFilter(Dcharacter, Dctx);
 
   setShadow(Dcharacter, Dctx);
 

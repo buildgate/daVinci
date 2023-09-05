@@ -42,6 +42,11 @@ export class Davinci {
   //钩子相关
   characterRenderedMethodList: Array<(...rest: any) => any> = [];
 
+  //性能相关
+  imageSmoothingEnabled: boolean = true; //图像抗锯齿
+  imageSmoothingQuality: CanvasRenderingContext2D["imageSmoothingQuality"] =
+    "low"; //抗锯齿质量
+
   //按帧节流
   throttle(fn: (...rest: any) => any) {
     let block = false;
@@ -255,6 +260,8 @@ export class Davinci {
 
     if (!this.block) {
       this.block = true;
+      this.Dctx.imageSmoothingEnabled = this.imageSmoothingEnabled;
+      this.Dctx.imageSmoothingQuality = this.imageSmoothingQuality;
       this.Dctx.clearRect(0, 0, this.width, this.height);
       this.nextRender = false;
       this.renderer(this.Dboard);
@@ -540,6 +547,8 @@ export class Dcharacter {
   textOffsetX: number = 0;
   textOffsetY: number = 0;
   fontStrokeLineWidth: number = 0;
+
+  filter: CanvasRenderingContext2D["filter"] = "none";
 
   accumulateTransform: DOMMatrix = new DOMMatrix(); //累计形变，用来计算实际坐标
   preAccumulateTransform: DOMMatrix = new DOMMatrix(); //未进入自身形变前的变换矩阵

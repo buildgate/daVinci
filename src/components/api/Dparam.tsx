@@ -50,6 +50,20 @@ export default function Dparam() {
       defVal: "true",
       des: "是否进行自动化渲染。如果开启那么修改角色属性时会自动调用render函数，如果关闭后则需要手动控制render时机。与allowRender不同，allowRender是在调用render的过程中阻断，autoRender是在属性修改时阻断。",
     },
+    {
+      id: "imageSmoothingEnabled",
+      name: "imageSmoothingEnabled",
+      type: "boolean",
+      defVal: "true",
+      des: "是否开启图像圆滑处理。如果需要频繁缩放图像则建议开启该选项以获得更清晰的图像。属性设置后将会在下一次渲染后生效，可以手动调用一次render函数强制刷新。",
+    },
+    {
+      id: "imageSmoothingQuality",
+      name: "imageSmoothingQuality",
+      type: `CanvasRenderingContext2D["imageSmoothingQuality"]`,
+      defVal: `"low"`,
+      des: "图像圆滑处理质量。imageSmoothingEnabled开启时生效，属性设置后将会在下一次渲染后生效，可以手动调用一次render函数强制刷新。",
+    },
   ];
 
   const Dcharacter_data = [
@@ -262,6 +276,13 @@ export default function Dparam() {
       type: `number`,
       defVal: `0`,
       des: "文字描边宽度。如需描边需要将fontStrokeLineWidth设置为一个正数。",
+    },
+    {
+      id: "filter",
+      name: "filter",
+      type: `CanvasRenderingContext2D["filter"]`,
+      defVal: `"none"`,
+      des: "滤镜设置，可参考mdn的例子。",
     },
     {
       id: "scaleX",
