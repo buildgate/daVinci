@@ -1,6 +1,10 @@
 import {
   shapeMethodRect,
   colliderMethodRect,
+  shapeMethodArc,
+  colliderMethodArc,
+  shapeMethodPolygon,
+  colliderMethodPolygon,
 } from "./plugins/davinci-engine-plugins.js";
 
 export class Davinci {
@@ -925,3 +929,52 @@ export class Dshape {
 }
 
 export class Dcollider extends Dshape {}
+
+export class Drect extends Dcharacter {
+  constructor(data: Dcharacter_data, dm: Davinci) {
+    super(data, dm);
+
+    let shape = new Dshape({
+      type: "rect",
+      path: { width: this.width, height: this.height },
+    });
+    this.shape = shape;
+    this.collider = shape;
+    this.rendering = shapeMethodRect;
+    this.colliding = colliderMethodRect;
+  }
+}
+
+export class Darc extends Dcharacter {
+  constructor(data: Dcharacter_data, dm: Davinci) {
+    super(data, dm);
+
+    let shape = new Dshape({
+      type: "arc",
+      path: { radius: this.width },
+    });
+    this.shape = shape;
+    this.collider = shape;
+    this.rendering = shapeMethodArc;
+    this.colliding = colliderMethodArc;
+  }
+}
+
+export class Dtri extends Dcharacter {
+  constructor(data: Dcharacter_data, dm: Davinci) {
+    super(data, dm);
+
+    let shape = new Dshape({
+      type: "polygon",
+      path: [
+        [-this.width / 2, this.height / 2],
+        [this.width / 2, this.height / 2],
+        [0, -this.height / 2],
+      ],
+    });
+    this.shape = shape;
+    this.collider = shape;
+    this.rendering = shapeMethodPolygon;
+    this.colliding = colliderMethodPolygon;
+  }
+}

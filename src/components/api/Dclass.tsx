@@ -118,6 +118,24 @@ export default function Dclass() {
           Dcollider类用于创建一个碰撞体图形，实际上和Dshape是通用的，因为Dcollider是继承于Dshape类的。目前只是为了规范化处理所以设置这个类。
         </p>
       </section>
+      <section id="Drect">
+        <h1>Drect</h1>
+        <p>
+          Drect类继承于Dcharacter类，属性和使用方法与Dcharacter一致，用于快速创建一个宽高和容器宽高一致的矩形。
+        </p>
+      </section>
+      <section id="Darc">
+        <h1>Darc</h1>
+        <p>
+          Darc类继承于Dcharacter类，属性和使用方法与Dcharacter一致，用于快速创建一个直径和容器的宽度一致的圆形。
+        </p>
+      </section>
+      <section id="Dtri">
+        <h1>Dtri</h1>
+        <p>
+          Dtri类继承于Dcharacter类，属性和使用方法与Dcharacter一致，用于快速创建一个高为容器的高，底为容器宽度的三角形。
+        </p>
+      </section>
     </Fund>
   );
 }

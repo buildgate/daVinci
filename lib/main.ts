@@ -1,4 +1,12 @@
-import { Davinci, Dcharacter, Dshape, Dcollider } from "./davinci-engine";
+import {
+  Davinci,
+  Dcharacter,
+  Dshape,
+  Dcollider,
+  Darc,
+  Drect,
+  Dtri,
+} from "./davinci-engine";
 import {
   shapeMethodRect,
   shapeMethodArc,
@@ -18,6 +26,9 @@ export {
   Dcharacter,
   Dshape,
   Dcollider,
+  Darc,
+  Drect,
+  Dtri,
   shapeMethodRect,
   shapeMethodArc,
   shapeMethodPolygon,

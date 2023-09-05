@@ -140,6 +140,9 @@ export const api_anchor = {
     { name: "Dcharacter" },
     { name: "Dshape" },
     { name: "Dcollider" },
+    { name: "Drect" },
+    { name: "Darc" },
+    { name: "Dtri" },
   ],
   param: [
     { name: "Dboard" },
