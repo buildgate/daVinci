@@ -197,45 +197,18 @@ export default function Dmethod() {
       <br />
 
       {Davinci_data.map((o) => {
-        return (
-          <ApiMethodItem
-            key={o.id}
-            id={o.id}
-            name={o.name}
-            type={o.type}
-            param={o.param}
-            des={o.des}
-          ></ApiMethodItem>
-        );
+        return <ApiMethodItem key={o.id} {...o}></ApiMethodItem>;
       })}
       <br />
       <h3>以下是Dcharacter类下的方法</h3>
       <br />
       {Dcharacter_data.map((o) => {
-        return (
-          <ApiMethodItem
-            key={o.id}
-            id={o.id}
-            name={o.name}
-            type={o.type}
-            param={o.param}
-            des={o.des}
-          ></ApiMethodItem>
-        );
+        return <ApiMethodItem key={o.id} {...o}></ApiMethodItem>;
       })}
       <h3>以下是官方提供的视觉体和碰撞体的默认函数，按需引入即可。</h3>
       <br />
       {plugin_data.map((o) => {
-        return (
-          <ApiMethodItem
-            key={o.id}
-            id={o.id}
-            name={o.name}
-            type={o.type}
-            param={o.param}
-            des={o.des}
-          ></ApiMethodItem>
-        );
+        return <ApiMethodItem key={o.id} {...o}></ApiMethodItem>;
       })}
     </Fund>
   );

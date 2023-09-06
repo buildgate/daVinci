@@ -108,31 +108,13 @@ export default function Dhook() {
       <br />
 
       {Davinci_data.map((o) => {
-        return (
-          <ApiMethodItem
-            key={o.id}
-            id={o.id}
-            name={o.name}
-            type={o.type}
-            param={o.param}
-            des={o.des}
-          ></ApiMethodItem>
-        );
+        return <ApiMethodItem key={o.id} {...o}></ApiMethodItem>;
       })}
       <br />
       <h3>以下是Dcharacter类下的钩子方法</h3>
       <br />
       {Dcharacter_data.map((o) => {
-        return (
-          <ApiMethodItem
-            key={o.id}
-            id={o.id}
-            name={o.name}
-            type={o.type}
-            param={o.param}
-            des={o.des}
-          ></ApiMethodItem>
-        );
+        return <ApiMethodItem key={o.id} {...o}></ApiMethodItem>;
       })}
     </Fund>
   );

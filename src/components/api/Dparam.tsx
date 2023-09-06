@@ -409,31 +409,13 @@ export default function Dparam() {
       <h3>以下是Davinci类下的属性</h3>
       <br />
       {Davinci_data.map((o) => {
-        return (
-          <ApiParamItem
-            key={o.id}
-            id={o.id}
-            name={o.name}
-            type={o.type}
-            defVal={o.defVal}
-            des={o.des}
-          ></ApiParamItem>
-        );
+        return <ApiParamItem key={o.id} {...o}></ApiParamItem>;
       })}
       <br />
       <h3>以下是Dcharacter类下的属性</h3>
       <br />
       {Dcharacter_data.map((o) => {
-        return (
-          <ApiParamItem
-            key={o.id}
-            id={o.id}
-            name={o.name}
-            type={o.type}
-            defVal={o.defVal}
-            des={o.des}
-          ></ApiParamItem>
-        );
+        return <ApiParamItem key={o.id} {...o}></ApiParamItem>;
       })}
     </Fund>
   );
