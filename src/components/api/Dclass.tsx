@@ -135,6 +135,7 @@ export default function Dclass() {
         <p>
           Dtri类继承于Dcharacter类，属性和使用方法与Dcharacter一致，用于快速创建一个高为容器的高，底为容器宽度的三角形。
         </p>
+        <p>构建新对象时，设置centerOffset可以得出不同类型的三角形。</p>
       </section>
     </Fund>
   );

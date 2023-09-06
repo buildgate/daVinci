@@ -961,7 +961,7 @@ export class Darc extends Dcharacter {
 }
 
 export class Dtri extends Dcharacter {
-  constructor(data: Dcharacter_data, dm: Davinci) {
+  constructor(data: Dcharacter_data & { centerOffset?: number }, dm: Davinci) {
     super(data, dm);
 
     let shape = new Dshape({
@@ -969,7 +969,7 @@ export class Dtri extends Dcharacter {
       path: [
         [-this.width / 2, this.height / 2],
         [this.width / 2, this.height / 2],
-        [0, -this.height / 2],
+        [data.centerOffset ?? 0, -this.height / 2],
       ],
     });
     this.shape = shape;
