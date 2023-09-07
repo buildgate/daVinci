@@ -7,12 +7,44 @@ export function setFilter(
   Dctx.filter = Dcharacter.filter;
 }
 
+//纹理渲染，默认将纹理图加载在元素的左上角
+function textureRender(
+  tX: number,
+  tY: number,
+  sX: number,
+  sY: number,
+  r: number,
+  Dcharacter: Dcharacter
+) {
+  if (!Dcharacter.textureMatrix) {
+    //纹理画布未初始化
+    return;
+  }
+  if (!Dcharacter.texture || !Dcharacter.texturePattern) {
+    //无纹理
+    return;
+  }
+
+  Dcharacter.texturePattern.setTransform(
+    Dcharacter.textureMatrix.translate(tX, tY).scale(sX, sY).rotate(r)
+  );
+
+  console.log(Dcharacter.texturePattern);
+}
+
 export function setTexture(
   Dcharacter: Dcharacter,
   Dctx: CanvasRenderingContext2D
 ) {
   if (Dcharacter.texture) {
-    Dcharacter.textureRender(-Dcharacter.focusX, -Dcharacter.focusY, 1, 1, 0);
+    textureRender(
+      -Dcharacter.focusX + Dcharacter.textureTranslateX,
+      -Dcharacter.focusY + Dcharacter.textureTranslateY,
+      Dcharacter.textureScaleX,
+      Dcharacter.textureScaleY,
+      Dcharacter.textureRotate,
+      Dcharacter
+    );
     Dctx.fillStyle = Dcharacter.texturePattern || Dctx.fillStyle;
   } else {
     Dctx.fillStyle = Dcharacter.fillColor;

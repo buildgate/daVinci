@@ -573,6 +573,12 @@ export class Dcharacter {
   textureMatrix: DOMMatrix | null = null;
   textureSource: HTMLImageElement | null = null;
 
+  textureTranslateX: number = 0;
+  textureTranslateY: number = 0;
+  textureRotate: number = 0;
+  textureScaleX: number = 1;
+  textureScaleY: number = 1;
+
   //子角色模块
   children: Array<Dcharacter> = [];
 
@@ -790,21 +796,6 @@ export class Dcharacter {
       this.ontextureonload();
       this.dm.globalTextureComplete(this.uid);
     };
-  }
-
-  //纹理渲染，默认将纹理图加载在元素的左上角
-  textureRender(tX: number, tY: number, sX: number, sY: number, r: number) {
-    if (!this.textureMatrix) {
-      //纹理画布未初始化
-      return;
-    }
-    if (!this.texture || !this.texturePattern) {
-      //无纹理
-      return;
-    }
-    this.texturePattern.setTransform(
-      this.textureMatrix.translate(tX, tY).scale(sX, sY).rotate(r)
-    );
   }
 
   //监听器

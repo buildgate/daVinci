@@ -312,7 +312,41 @@ export default function Dparam() {
       defVal: `1`,
       des: "透明度。与碰撞体无关，只与视觉体有关。",
     },
-
+    {
+      id: "textureTranslateX",
+      name: "textureScaleX",
+      type: `number`,
+      defVal: `0`,
+      des: "纹理X轴的偏移值。",
+    },
+    {
+      id: "textureTranslateY",
+      name: "textureTranslateY",
+      type: `number`,
+      defVal: `0`,
+      des: "纹理Y轴的偏移值。",
+    },
+    {
+      id: "textureScaleX",
+      name: "textureScaleX",
+      type: `number`,
+      defVal: `0`,
+      des: "纹理X轴的缩放量。",
+    },
+    {
+      id: "textureScaleY",
+      name: "textureScaleY",
+      type: `number`,
+      defVal: `0`,
+      des: "纹理Y轴的缩放量。目前mdn上matrix的scale方法只接受一个参数，但是在编译器里显示是可以接受多轴参数，具体的原因需要等待官方的回答。所以暂时只能通过设置textureScaleX做到等比缩放。",
+    },
+    {
+      id: "textureRotate",
+      name: "textureRotate",
+      type: `number`,
+      defVal: `0`,
+      des: "纹理旋转值。旋转中心为容器左上角顶点。",
+    },
     {
       id: "accumulateTransform",
       name: "accumulateTransform",

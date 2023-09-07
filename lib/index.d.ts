@@ -86,6 +86,12 @@ type Dcharacter_data = {
   textOffsetY?: number;
   fontStrokeLineWidth?: number;
 
+  textureTranslateX?: number;
+  textureTranslateY?: number;
+  textureRotate?: number;
+  textureScaleX?: number;
+  textureScaleY?: number;
+
   filter?: CanvasRenderingContext2D["filter"];
 
   rendering?: (...rest: any) => void;
