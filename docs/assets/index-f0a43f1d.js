@@ -441,10 +441,10 @@ https://github.com/highlightjs/highlight.js/issues/2277`),me=A,ie=x);const Oe={c
   background: #f5f5f5;
   padding: 10px;
   border-radius: 10px;
-  transition: all 0.5s;
+  transition: all 0.3s ease-in-out;
   &:hover {
-    box-shadow: inset 4px 4px 5px 2px #cccccccf,
-      inset -4px -4px 5px 2px #ffffffcf;
+    box-shadow: 0px 0px 0px 0px #cccccccf, 0px 0px 0px 0px #ffffffcf,
+      inset 4px 4px 5px 2px #cccccccf, inset -4px -4px 5px 2px #ffffffcf;
     background: #fff7f5;
   }
   .name {
@@ -509,10 +509,10 @@ https://github.com/highlightjs/highlight.js/issues/2277`),me=A,ie=x);const Oe={c
   background: #f5f5f5;
   padding: 10px;
   border-radius: 10px;
-  transition: all 0.5s;
+  transition: all 0.3s ease-in-out;
   &:hover {
-    box-shadow: inset 4px 4px 5px 2px #cccccccf,
-      inset -4px -4px 5px 2px #ffffffcf;
+    box-shadow: 0px 0px 0px 0px #cccccccf, 0px 0px 0px 0px #ffffffcf,
+      inset 4px 4px 5px 2px #cccccccf, inset -4px -4px 5px 2px #ffffffcf;
     background: #fff7f5;
   }
   .name {
@@ -537,10 +537,10 @@ https://github.com/highlightjs/highlight.js/issues/2277`),me=A,ie=x);const Oe={c
   background: #f5f5f5;
   padding: 10px;
   border-radius: 10px;
-  transition: all 0.5s;
+  transition: all 0.3s ease-in-out;
   &:hover {
-    box-shadow: inset 4px 4px 5px 2px #cccccccf,
-      inset -4px -4px 5px 2px #ffffffcf;
+    box-shadow: 0px 0px 0px 0px #cccccccf, 0px 0px 0px 0px #ffffffcf,
+      inset 4px 4px 5px 2px #cccccccf, inset -4px -4px 5px 2px #ffffffcf;
     background: #fff7f5;
   }
   .name {
