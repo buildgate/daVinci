@@ -30,12 +30,14 @@ const Page = styled.div`
   flex-grow: 1;
   overflow: auto;
   padding: 20px;
+  background: #f0eeef;
   .page-container {
     margin: 0 auto;
     width: 1040px;
     padding: 20px;
-    box-shadow: 0px 0px 5px 1px #dedede;
-    background: #ffffff;
+    box-shadow: 4px 4px 5px 2px #cccccc, -4px -4px 5px 2px #ffffff;
+    background: #f5f5f5;
+    border-radius: 10px;
   }
 `;
 

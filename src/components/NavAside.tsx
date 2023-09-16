@@ -13,10 +13,12 @@ import { Collapse } from "@root/src/components/common/Collapse";
 const Fund = styled.div`
   width: 300px;
   height: 100%;
-  box-shadow: 2px 0px 5px 1px #dedede;
+  box-shadow: 4px 0px 5px 1px #cccccccf;
   display: flex;
+  background: #f5f5f5;
   flex-direction: column;
   overflow: auto;
+  z-index: 2;
   > .block {
     width: 100%;
     padding: 10px;

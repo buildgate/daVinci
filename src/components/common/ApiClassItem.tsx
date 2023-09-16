@@ -16,12 +16,16 @@ interface props {
 const Fund = styled.div`
   width: 100%;
   margin-bottom: 30px;
-  box-shadow: 1px 1px 3px 1px #dedede;
+  box-shadow: 4px 4px 5px 2px #cccccccf, -4px -4px 5px 2px #ffffffcf,
+    inset 0px 0px 0px 0px #cccccccf;
+  background: #f5f5f5;
   padding: 10px;
   border-radius: 10px;
-  transition: all 0.2s;
+  transition: all 0.5s;
   &:hover {
-    box-shadow: 1px 1px 10px 5px #dedede;
+    box-shadow: inset 4px 4px 5px 2px #cccccccf,
+      inset -4px -4px 5px 2px #ffffffcf;
+    background: #fff7f5;
   }
   .name {
     color: #00495a;
